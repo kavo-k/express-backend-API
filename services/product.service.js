@@ -1,5 +1,4 @@
 const Product = require("../models/Product");
-
 const getProducts = async ({ search, page, limit, sort }) => {
   const filter = search
     ? { name: { $regex: search, $options: "i" } }
@@ -20,8 +19,8 @@ const getProductById = async (id) => {
     return Product.findById(id);
 };
 
-const createProduct = async ({ name, type, valid, price }) => {
-    return Product.create({ name, type, valid, price });
+const createProduct = async ({ name, type, valid, price, owner }) => {
+    return Product.create({ name, type, valid, price, owner });
 };
 
 const updateProduct = async (id, data) => {

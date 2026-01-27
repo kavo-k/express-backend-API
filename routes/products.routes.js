@@ -1,10 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
+const Product = require("../models/Product");
+
 
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
 
-module.exports = {
+const {
   getProducts,
   getProductById,
   createProduct,
@@ -54,13 +57,18 @@ router.post(
   console.log("type:", req.body.type, "type:", typeof req.body.type);
   console.log("Date:", req.body.date, "type:", typeof req.body.date);
   console.log("Price:", req.body.price, "type:", typeof req.body.price);
+  console.log("Owner:", req.body.owner, "owner:", typeof req.body.owner);
 
   
-    const { name, type, valid, price } = req.body;
+    const { name, type, valid, price, owner } = req.body;
 
-    if(!name || !type || !price) {
-      res.status(400).json({error: "name type, и price обязателны"});
+    if(!name || !type || !price || !owner) {
+      res.status(400).json({error: "name type, price, и owner обязательны"});
       return;
+    }
+
+    if(owner !== undefined && !mongoose.Types.ObjectId.isValid(owner)) {
+      return res.status(400).json({error: "owner должен иметь Id пользователя"});
     }
 
     if(price !== undefined && typeof price !== "number") {
@@ -68,12 +76,12 @@ router.post(
       return;
     }
 
-    if(valid !== undefined && typeof valid !== "date") {
+    if(valid !== undefined && isNaN(Date.parse(valid))) {
       res.status(400).json({error: "valid должна быть датой"});
       return;
     }
 
-    const product = await createProduct({ name, type, valid, price });
+    const product = await createProduct({ name, type, valid, price, owner });
     res.status(201).json(product);
   })
 )
@@ -83,7 +91,7 @@ router.post(
 router.put(
   "/:id",
   asyncHandler(async (req,res) => {
-   const { name, type, price } = req.body;
+   const { name, type, price, ownerId } = req.body;
    let { valid } = req.body;
 
    if (valid) {
@@ -92,7 +100,7 @@ router.put(
      valid = d;
    }
 
-   const updated = await updateProduct(req.params.id, { name, type, valid, price });
+   const updated = await updateProduct(req.params.id, { name, type, valid, price, ownerId });
 
    if (!updated) {
     return res.status(404).json({error: "Продукт не найден"});
@@ -111,12 +119,13 @@ router.delete(
   asyncHandler(async (req, res) => {
     const deleted = await deleteProduct(req.params.id);
 
-    if(!updated) {
+    if(!deleted) {
       res.status(404).json({error: "Продукт не найден, или уже удалён"});
       return;
     }
     res.json(deleted);
   })
 );
+
 
 module.exports = router;

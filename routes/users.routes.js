@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const Product = require("../models/Product");
 
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -42,6 +43,18 @@ router.get(
       }
 
       res.json(user);
+    })
+);
+
+router.get(
+    "/:id/products",
+    asyncHandler(async (req, res) => {
+      const owner = req.params.id;
+
+      const products = await Product.find({ owner }).sort({ createdAt: -1 });
+
+
+      res.json(products);
     })
 );
 
