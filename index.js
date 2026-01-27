@@ -14,6 +14,9 @@ mongoose.connect(process.env.MONGODB_URI)
 const usersRoutes = require("./routes/users.routes");
 app.use("/users", usersRoutes);
 
+const productRoutes = require("./routes/products.routes");
+app.use("/products", productRoutes)
+
 
 app.use((err, req, res, next) => {
   console.log("ERROR:", err.message);
