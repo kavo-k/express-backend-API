@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Backend UI</title>
+    <style>
+      body { background:#111; color:#eee; font-family: Arial; margin: 20px; }
+      button { padding:10px 14px; margin-right:10px; margin-bottom:10px; cursor:pointer; }
+      pre { background:#1b1b1b; padding:12px; border-radius:10px; overflow:auto; }
+      input { padding:10px; margin-right:10px; }
+    </style>
+  </head>
+  <body>
+    <h1>Мини UI для API</h1>
+
+    <div>
+      <button id="btnUsers">GET /users</button>
+      <button id="btnProducts">GET /products</button>
+    </div>
+
+    <pre id="out">Нажми кнопку…</pre>
+
+    <script>
+      const out = document.getElementById("out");
+
+      const show = (data) => {
+        out.textContent = JSON.stringify(data, null, 2);
+      };
+
+      document.getElementById("btnUsers").onclick = async () => {
+        const res = await fetch("/users?limit=10");
+        show(await res.json());
+      };
+
+      document.getElementById("btnProducts").onclick = async () => {
+        const res = await fetch("/products?limit=10");
+        show(await res.json());
+      };
+    </script>
+  </body>
+</html>

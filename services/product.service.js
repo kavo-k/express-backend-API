@@ -1,10 +1,13 @@
 const Product = require("../models/Product");
+
+
 const getProducts = async ({ search, page, limit, sort }) => {
   const filter = search
     ? { name: { $regex: search, $options: "i" } }
     : {};
 
   const products = await Product.find(filter)
+    .populate("owner", "name age")
     .sort({ createdAt: sort })
     .skip((page - 1) * limit)
     .limit(limit);
@@ -16,20 +19,24 @@ const getProducts = async ({ search, page, limit, sort }) => {
 
 
 const getProductById = async (id) => {
-    return Product.findById(id);
+    return Product.findById(id).populate("owner", "name age");
 };
+
 
 const createProduct = async ({ name, type, valid, price, owner }) => {
     return Product.create({ name, type, valid, price, owner });
 };
 
+
 const updateProduct = async (id, data) => {
   return Product.findByIdAndUpdate(id, data, { new: true });
 };
 
+
 const deleteProduct = async (id) => {
     return Product.findByIdAndDelete(id);
 }
+
 
 module.exports = {
   getProducts,

@@ -91,16 +91,35 @@ router.post(
 router.put(
   "/:id",
   asyncHandler(async (req,res) => {
-   const { name, type, price, ownerId } = req.body;
+   const { name, type, price, owner } = req.body;
    let { valid } = req.body;
 
-   if (valid) {
+    if(!name || !type || !price || !owner) {
+      res.status(400).json({error: "name type, price, и owner обязательны"});
+      return;
+    }
+
+    if(owner !== undefined && !mongoose.Types.ObjectId.isValid(owner)) {
+      return res.status(400).json({error: "owner должен иметь Id пользователя"});
+    }
+
+    if(price !== undefined && typeof price !== "number") {
+      res.status(400).json({error: "Price должен быть числом"});
+      return;
+    }
+
+    if(valid !== undefined && isNaN(Date.parse(valid))) {
+      res.status(400).json({error: "valid должна быть датой"});
+      return;
+    }
+
+    if (valid) {
      const d = new Date(valid);
      d.setHours(0, 0, 0, 0);
      valid = d;
    }
 
-   const updated = await updateProduct(req.params.id, { name, type, valid, price, ownerId });
+   const updated = await updateProduct(req.params.id, { name, type, valid, price, owner });
 
    if (!updated) {
     return res.status(404).json({error: "Продукт не найден"});
