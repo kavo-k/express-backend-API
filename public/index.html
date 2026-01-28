@@ -1,42 +1,33 @@
 <!doctype html>
 <html lang="ru">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Backend UI</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Console</title>
     <style>
-      body { background:#111; color:#eee; font-family: Arial; margin: 20px; }
-      button { padding:10px 14px; margin-right:10px; margin-bottom:10px; cursor:pointer; }
-      pre { background:#1b1b1b; padding:12px; border-radius:10px; overflow:auto; }
-      input { padding:10px; margin-right:10px; }
+      body { background:#0b0f17; color:#e6edf3; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin:0; }
+      .wrap { max-width: 1000px; margin: 0 auto; padding: 24px; }
+      .row { display:flex; gap:12px; flex-wrap:wrap; margin: 12px 0 18px; }
+      button { background:#1f2a44; color:#e6edf3; border:1px solid #2b3a5e; padding:10px 14px; border-radius:10px; cursor:pointer; }
+      button:hover { filter: brightness(1.1); }
+      pre { background:#0f1626; border:1px solid #1c2a45; padding:16px; border-radius:14px; overflow:auto; min-height: 260px; }
     </style>
   </head>
   <body>
-    <h1>Мини UI для API</h1>
+    <div class="wrap">
+      <h1>Mini Frontend: API Console</h1>
 
-    <div>
-      <button id="btnUsers">GET /users</button>
-      <button id="btnProducts">GET /products</button>
+      <div class="row">
+        <button id="btnUsers">GET /users</button>
+        <button id="btnProducts">GET /products</button>
+        <button id="btnUserProducts">GET /users/:id/products</button>
+      </div>
+      
+      <!-- добавить перелистывание страницы -->
+
+      <pre id="out">Нажми кнопку</pre>
     </div>
 
-    <pre id="out">Нажми кнопку…</pre>
-
-    <script>
-      const out = document.getElementById("out");
-
-      const show = (data) => {
-        out.textContent = JSON.stringify(data, null, 2);
-      };
-
-      document.getElementById("btnUsers").onclick = async () => {
-        const res = await fetch("/users?limit=10");
-        show(await res.json());
-      };
-
-      document.getElementById("btnProducts").onclick = async () => {
-        const res = await fetch("/products?limit=10");
-        show(await res.json());
-      };
-    </script>
+    <script src="./app.js"></script>
   </body>
 </html>
