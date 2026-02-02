@@ -27,6 +27,7 @@ router.get(
         const { users, total } = await getUsers({ search, page, limit, sort });
       
         res.json({ page, limit, total, users,});
+        console.log("page:", page, "limit:", limit, "total:", total, "search:", users.length);
     })
 );
 

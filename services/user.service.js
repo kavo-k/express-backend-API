@@ -12,8 +12,6 @@ const getUsers = async ({ search, page, limit, sort }) => {
 
   const total = await User.countDocuments(filter);
 
-  console.log("search:", users.length,);
-
   return { users, total };
 };
 
