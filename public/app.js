@@ -5,7 +5,7 @@ const btnPrev = document.getElementById("btnPrev");
 const btnNext = document.getElementById("btnNext");
 
 page.classList.add("hidden");
-let state = { currentPage: 1 };
+let state = { activePage: 1, usersPage: 1, productsPage: 1, view: ""};
 
 
 async function getJson(url) {
@@ -26,14 +26,14 @@ function print(data) {
     return;
   }
 
-  if ( state.currentPage === 1) {
+  if ( state.activePage === 1) {
   btnPrev.classList.add("hidden");
   }
   else {
   btnPrev.classList.remove("hidden");
   }
 
-  if (state.currentPage === state.maxPage) {
+  if (state.activePage === state.maxPage) {
     btnNext.classList.add("hidden");
   }
   else {
@@ -44,11 +44,69 @@ function print(data) {
 }
 
 
+
+// кнопки
+
+document.getElementById("btnUsers").onclick = () => {
+  try {
+    state.view = "users";
+    state.activePage = state.usersPage;
+    loadActive();
+  } catch (e) {
+    print({ error: e.message });
+  }
+};
+
+
+document.getElementById("btnProducts").onclick = () => {
+  try {
+    state.view = "products";
+    state.activePage = state.productsPage;
+    loadActive();
+  } catch (e) {
+    print({ error: e.message });
+  }
+};
+
+
+
+function loadActive() {
+  if (state.view === "users") {
+    loadUsers();
+  }
+  else if (state.view === "products") {
+    loadProducts();
+  }
+};
+
+
+document.getElementById("btnNext").onclick = () => {
+  state.activePage = Math.min(state.maxPage, state.activePage + 1);
+  if (state.view === "users") {
+    state.usersPage = state.activePage;
+  } else if (state.view === "products") {
+    state.productsPage = state.activePage;
+  }
+  loadActive();
+};
+
+document.getElementById("btnPrev").onclick = () => {
+  state.activePage = Math.max(1, state.activePage - 1);
+    if (state.view === "users") {
+    state.usersPage = state.activePage;
+  } else if (state.view === "products") {
+    state.productsPage = state.activePage;
+  }
+  loadActive();
+};
+
+
+
 async function loadUsers() {
   try {
     print("loading");
     page.classList.remove("hidden");
-    const data = await getJson(`/users?limit=5&page=${state.currentPage}&sort=desc`);
+    const data = await getJson(`/users?limit=5&page=${state.usersPage}&sort=desc`);
     state.maxPage = Math.max(1, Math.ceil(data.total / data.limit));
     print(data);
   } catch (e) {
@@ -56,11 +114,12 @@ async function loadUsers() {
   }
 }
 
+
 async function loadProducts() {
   try {
     print("loading");
     page.classList.remove("hidden");
-    const data = await getJson(`/products?limit=5&page=${state.currentPage}&sort=desc`);
+    const data = await getJson(`/products?limit=5&page=${state.productsPage}&sort=desc`);
     state.maxPage = Math.max(1, Math.ceil(data.total / data.limit));
     console.log(data);
     print(data);
@@ -71,42 +130,6 @@ async function loadProducts() {
 
 
 
-document.getElementById("btnNext").onclick = () => {
-  state.currentPage = Math.min(state.maxPage, state.currentPage + 1);
-  loadUsers();
-};
-
-
-document.getElementById("btnPrev").onclick = () => {
-  console.log("BtnLeft =", btnPrev);
-  state.currentPage = Math.max(1, state.currentPage - 1); 
-  loadUsers();
-};
-
-
-
-
-document.getElementById("btnUsers").onclick = () => {
-    try {
-  page.classList.remove("hidden");
-  state.currentPage = 1;
-  loadUsers();
-    } catch (e) {
-    print({ error: e.message });
-  }
-};
-
-
-
-document.getElementById("btnProducts").onclick = () => {
-  try {
-    page.classList.remove("hidden");
-    state.currentPage = 1;
-    loadProducts()
-  } catch (e) {
-    print({ error: e.message });
-  }
-};
 
 document.getElementById("btnUserProducts").addEventListener("click", async () => {
   try {
