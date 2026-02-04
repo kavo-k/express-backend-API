@@ -13,6 +13,9 @@
       button { background:#1f2a44; color:#e6edf3; border:1px solid #2b3a5e; padding:10px 14px; border-radius:10px; cursor:pointer; }
       button:hover { filter: brightness(1.1); }
       pre { background:#0f1626; border:1px solid #1c2a45; padding:16px; border-radius:14px; overflow:auto; min-height: 260px; }
+      .search-input { width: 280px; padding: 10px 12px; border-radius: 10px; border: 1px solid #2b3a5e; background: #0f1626; color: #e6edf3; outline: none; }
+      .search-input::placeholder { color: #9aa4b2; }
+      .search-input:focus { border-color: #3a4f7a; box-shadow: 0 0 0 3px rgba(58,79,122,0.25); }
     </style>
   </head>
   <body>
@@ -27,6 +30,8 @@
           <button id="btnText">Text</button>
         </div>
         <div class="row_right">
+          <input id="inputSearch" class="search-input" type="text" placeholder="Поиск...">
+          <button id="btnSearch">Search users</button>
           <button id="btnPrev"><-</button>
           <button id="btnNext">-></button>
         </div>

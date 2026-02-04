@@ -3,9 +3,10 @@ const out = document.getElementById("out");
 const page =   document.querySelector(".row_right");
 const btnPrev = document.getElementById("btnPrev");
 const btnNext = document.getElementById("btnNext");
+const btnSearch = document.getElementById("btnSearch");
 
 page.classList.add("hidden");
-let state = { activePage: 1, usersPage: 1, productsPage: 1, view: ""};
+let state = { activePage: 1, usersPage: 1, productsPage: 1, view: "", userSearch: ""};
 
 
 async function getJson(url) {
@@ -101,12 +102,20 @@ document.getElementById("btnPrev").onclick = () => {
 };
 
 
+document.getElementById("btnSearch").onclick = () => {
+  const inputValue = document.getElementById("inputSearch").value;
+  state.userSearch = inputValue;
+  usersPage = 1, activePage = 1;
+  loadUsers();
+}
+
+
 
 async function loadUsers() {
   try {
     print("loading");
     page.classList.remove("hidden");
-    const data = await getJson(`/users?limit=5&page=${state.usersPage}&sort=desc`);
+    const data = await getJson(`/users?search=${state.userSearch}&limit=5&page=${state.usersPage}&sort=desc`);
     state.maxPage = Math.max(1, Math.ceil(data.total / data.limit));
     print(data);
   } catch (e) {
