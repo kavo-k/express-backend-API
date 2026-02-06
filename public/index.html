@@ -4,23 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>API Console</title>
-    <style>
-      body { background:#0b0f17; color:#e6edf3; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin:0; }
-      .wrap { max-width: 1000px; margin: 0 auto; padding: 24px; }
-      .row { display: flex; justify-content: space-between; gap:12px; flex-wrap:wrap; margin: 12px 0 18px; }
-      /* .row_right {  } */
-      .hidden { visibility: hidden; }
-      button { background:#1f2a44; color:#e6edf3; border:1px solid #2b3a5e; padding:10px 14px; border-radius:10px; cursor:pointer; }
-      button:hover { filter: brightness(1.1); }
-      pre { background:#0f1626; border:1px solid #1c2a45; padding:16px; border-radius:14px; overflow:auto; min-height: 260px; }
-      .search-input { width: 280px; padding: 10px 12px; border-radius: 10px; border: 1px solid #2b3a5e; background: #0f1626; color: #e6edf3; outline: none; }
-      .search-input::placeholder { color: #9aa4b2; }
-      .search-input:focus { border-color: #3a4f7a; box-shadow: 0 0 0 3px rgba(58,79,122,0.25); }
-    </style>
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <div class="wrap">
       <h1>Mini Frontend: API Console</h1>
+      <a href="/products.html"><button>Shop</button></a>
 
       <div class="row">
         <div class="row_left">
@@ -36,10 +25,11 @@
           <button id="btnNext">-></button>
         </div>
       </div>
-      
-      <!-- добавить перелистывание страницы -->
 
+      <div class="output">
       <pre id="out">Нажми кнопку</pre>
+      </div>
+
     </div>
 
     <script src="./app.js"></script>
