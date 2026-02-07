@@ -1,16 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products</title>
     <link rel="stylesheet" href="./styles.css" />
 </head>
+
 <body>
     <header>
         <h1>Products</h1>
     </header>
+    </div>
     <main>
+        <div class="row">
+            <div class="row_left">
+                <a href="/index.html"><button>Back to API Console</button></a>
+            </div>
+            <div class="row_right">
+                <button id="btnPrev"><-</button>
+                <span id="pageInfo">1</span>
+                <button id="btnNext">-></button>
+            </div>
+        </div>
         <div class="output">
             <!-- Product cards will be inserted here by JavaScript -->
             <div class="productsList" id="product-card"></div>
@@ -18,4 +31,5 @@
     </main>
     <script src="./products.js"></script>
 </body>
+
 </html>

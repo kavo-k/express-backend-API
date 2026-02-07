@@ -4,6 +4,7 @@ const page =   document.querySelector(".row_right");
 const btnPrev = document.getElementById("btnPrev");
 const btnNext = document.getElementById("btnNext");
 const btnSearch = document.getElementById("btnSearch");
+const pageInfo = document.getElementById("pageInfo");
 
 page.classList.add("hidden");
 let state = { activePage: 1, usersPage: 1, productsPage: 1, view: "", userSearch: ""};
@@ -72,6 +73,7 @@ document.getElementById("btnProducts").onclick = () => {
 
 
 function loadActive() {
+  pageInfo.textContent = state.activePage;
   if (state.view === "users") {
     loadUsers();
   }

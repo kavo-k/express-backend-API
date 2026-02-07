@@ -13,3 +13,6 @@
       header { text-align: center; margin: 24px 0; }
       .product-card { background:#1f2a44; border:1px solid #2b3a5e; border-radius:12px; padding:16px; }
       main { max-width: 800px; margin: 0 auto; }
+      button:disabled { opacity: 0.5; pointer-events: none; }
+      button:disabled:hover { filter: none; }
+      .product-card h3 { margin: 0 0 8px; }

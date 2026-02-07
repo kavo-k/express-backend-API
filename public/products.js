@@ -1,17 +1,59 @@
 console.log("products.js LOADED");
 const productsList = document.getElementById("product-card");
+const btnPrev = document.getElementById("btnPrev");
+const btnNext = document.getElementById("btnNext");
+const LIMIT = 2;
+const pageInfo = document.getElementById("pageInfo");
+
+
+let state = { currentPage: 1, maxPage: 1 };
+
+
+
+async function getJson(url) { 
+  const res = await fetch(url);
+  const data = await res.json().catch(() => null);
+  
+  if (!res.ok) {
+    throw new Error(data?.message || `HTTP ${res.status}`);
+  }
+  return data;
+}
 
 loadProducts();
 
+
+function updatePageButtons() {
+  btnPrev.disabled = state.currentPage === 1; 
+
+  btnNext.disabled = state.currentPage === state.maxPage;
+}
+
+
+btnNext.onclick = () => {
+  state.currentPage = Math.min(state.currentPage + 1, state.maxPage); // вернёт большее число из двух: либо currentPage(2) + 1, либо maxPage (не даст уйти дальше последней страницы)
+  loadProducts();
+}
+
+btnPrev.onclick = () => {
+  state.currentPage = Math.max(state.currentPage - 1, 1); // вернёт меньшее число из двух: либо currentPage - 1, либо 1 (не даст уйти в 0 или отрицательные страницы)
+  loadProducts();
+}
+
+
 async function loadProducts() {
   try {
-    const data = await getJson(`/products?limit=5&page=1&sort=desc`);
+    pageInfo.textContent = state.currentPage;
+    const data = await getJson(`/products?limit=${LIMIT}&page=${state.currentPage}&sort=desc`);
     console.log(data);
+    state.maxPage = Math.max(1, Math.ceil(data.total / LIMIT));
     renderProducts(data.products);
+    updatePageButtons();
   } catch (e) {
     print({ error: e.message });
   }
 }
+
 
 
 function renderProducts(products) {
@@ -32,19 +74,11 @@ function renderProducts(products) {
   }
 }
 
+
 function print(data) {
   productsList.textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);
 }
 
-async function getJson(url) {
-  const res = await fetch(url);
-  const data = await res.json().catch(() => null);
-
-  if (!res.ok) {
-    throw new Error(data?.message || `HTTP ${res.status}`);
-  }
-  return data;
-}
 
 
 
