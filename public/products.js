@@ -6,16 +6,17 @@ const LIMIT = 2;
 const pageInfo = document.getElementById("pageInfo");
 const inputSearch = document.getElementById("inputSearch");
 const btnSearch = document.getElementById("btnSearch");
+const sortSelect = document.getElementById("sortSelect");
 
 
-let state = { currentPage: 1, maxPage: 1, inputSearch: "" };
+let state = { currentPage: 1, maxPage: 1, inputSearch: "", sort: "desc" };
 
 
 
-async function getJson(url) { 
+async function getJson(url) {
   const res = await fetch(url);
   const data = await res.json().catch(() => null);
-  
+
   if (!res.ok) {
     throw new Error(data?.message || `HTTP ${res.status}`);
   }
@@ -24,31 +25,25 @@ async function getJson(url) {
 
 loadProducts();
 
+sortSelect.addEventListener("change", (e) => {
+  state.sort = sortSelect.value;
+  state.currentPage = 1;
+  loadProducts();
+});
 
 function updatePageButtons() {
-  btnPrev.disabled = state.currentPage === 1; 
+  btnPrev.disabled = state.currentPage === 1;
 
   btnNext.disabled = state.currentPage === state.maxPage;
 }
 
-btnSearch.onclick = () => {
-  inputValue = inputSearch.value.trim();
-  state.inputSearch = inputValue;
-  state.currentPage = 1;
-  loadProducts();
-}
-
 inputSearch.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    btnSearch.click();
+    state.inputSearch = inputSearch.value.trim();
+    state.currentPage = 1;
+    loadProducts();
   }
 });
-
-function updateButtonState() {
-  btnSearch.disabled = inputSearch.value.trim() === "";
-}
-
-inputSearch.oninput = updateButtonState;
 
 btnNext.onclick = () => {
   state.currentPage = Math.min(state.currentPage + 1, state.maxPage); // вернёт большее число из двух: либо currentPage(2) + 1, либо maxPage (не даст уйти дальше последней страницы)
@@ -64,10 +59,16 @@ btnPrev.onclick = () => {
 async function loadProducts() {
   try {
     pageInfo.textContent = state.currentPage;
-    const data = await getJson(`/products?search=${state.inputSearch}&limit=${LIMIT}&page=${state.currentPage}&sort=desc`);
+    const data = await getJson(`/products?search=${state.inputSearch}&limit=${LIMIT}&page=${state.currentPage}&sort=${state.sort}`);
     console.log(data);
     state.maxPage = Math.max(1, Math.ceil(data.total / LIMIT));
-    renderProducts(data.products);
+
+    if (data.products.length === 0) {
+      productsList.innerHTML = '<p class="empty-state">Такого у нас нет :(</p>';
+    }
+    else {
+      renderProducts(data.products);
+    }
     updatePageButtons();
   } catch (e) {
     print({ error: e.message });

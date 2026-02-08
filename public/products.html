@@ -9,22 +9,30 @@
 </head>
 
 <body>
+    <div class="backButton">
+        <a href="/index.html"><button class="back-button">Back to API Console</button></a>
+    </div>
+
     <header>
         <h1>Products</h1>
+        <input id="inputSearch" class="search-input" type="text" placeholder="Search products...">
     </header>
     </div>
     <main>
         <div class="row">
-            <div class="row_left">
-                <a href="/index.html"><button>Back to API Console</button></a>
+            <select name="sort" id="sortSelect">
+                <option value="desc">Newest First</option>
+                <option value="asc">Oldest First</option>
+            </select>
+
+            <div class="pagination">
+                <button id="btnPrev"> <- </button>
+                        <span id="pageInfo">1</span>
+
+                        <button id="btnNext"> -> </button>
             </div>
-            <div class="row_right">
-                <input id="inputSearch" class="search-input" type="text" placeholder="Search products...">
-                <button id="btnSearch">Search</button>
-                <button id="btnPrev"><-</button>
-                <span id="pageInfo">1</span>
-                <button id="btnNext">-></button>
-            </div>
+
+
         </div>
         <div class="output">
             <!-- Product cards will be inserted here by JavaScript -->
