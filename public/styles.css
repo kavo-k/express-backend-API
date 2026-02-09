@@ -66,9 +66,7 @@
       }
 
 
-      .output {
-            background: #0f1626;
-            border: 1px solid #1c2a45;
+      .product_cards_list {
             padding: 16px;
             border-radius: 14px;
             overflow: auto;
@@ -104,7 +102,6 @@
 
       .product-card {
             background: #1f2a44;
-            border: 1px solid #2b3a5e;
             border-radius: 12px;
             padding: 16px;
       }
