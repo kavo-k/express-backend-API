@@ -1,38 +1,36 @@
-<!doctype html>
-<html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>API Console</title>
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <div class="wrap">
-      <h1>Mini Frontend: API Console</h1>
-      <a href="/products.html"><button>Shop</button></a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Products</h1>
+    <input id="inputSearch" class="search-input" type="text" placeholder="Search products...">
+  </header>
 
-      <div class="row">
-        <div class="row_left">
-          <button id="btnUsers">GET /users</button>
-          <button id="btnProducts">GET /products</button>
-          <button id="btnUserProducts">GET /users/:id/products</button>
-          <button id="btnText">Text</button>
-        </div>
-        <div class="row_right">
-          <input id="inputSearch" class="search-input" type="text" placeholder="Поиск...">
-          <button id="btnSearch">Search users</button>
-          <button id="btnPrev"><-</button>
-          <span id="pageInfo">1</span>
-          <button id="btnNext">-></button>
-        </div>
+  <main>
+    <div class="row">
+      <select name="sort" id="sortSelect">
+        <option value="desc">Newest First</option>
+        <option value="asc">Oldest First</option>
+      </select>
+
+      <div class="pagination">
+        <button id="btnPrev"> <- </button>
+        <span id="pageInfo">1</span>
+        <button id="btnNext"> -> </button>
       </div>
-
-      <div class="output">
-      <pre id="out">Нажми кнопку</pre>
-      </div>
-
     </div>
 
-    <script src="./app.js"></script>
-  </body>
+    <div class="product_cards_list">
+      <div class="productsList" id="product-card"></div>
+    </div>
+  </main>
+
+  <script src="./products.js"></script>
+</body>
 </html>
