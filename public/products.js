@@ -22,7 +22,7 @@ function syncStateWithUrl() {
   if (state.search) params.set("search", state.search);
 
 
-  history.replaceState(null, "", `?${params.toString()}`);
+  history.pushState(null, "", `?${params.toString()}`);
 }
 
 
@@ -39,6 +39,14 @@ async function getJson(url) {
 readStateFromUrl();
 
 loadProducts();
+
+window.addEventListener("popstate", () => {
+  readStateFromUrl();
+  search.value = state.search;
+  sortSelect.value = state.sort;
+  pageInfo.textContent = state.currentPage;
+  loadProducts();
+});
 
 sortSelect.addEventListener("change", (e) => {
   state.sort = sortSelect.value;
