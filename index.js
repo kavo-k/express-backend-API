@@ -8,8 +8,8 @@ app.use(express.static("public"));
 
 
 mongoose.connect(process.env.MONGODB_URI)
-.then(() => console.log("MongoDB подключена"))
-.catch(err => console.log("Ошибка MongoDB:", err.message));
+  .then(() => console.log("MongoDB подключена"))
+  .catch(err => console.log("Ошибка MongoDB:", err.message));
 
 
 const usersRoutes = require("./routes/users.routes");
@@ -21,14 +21,15 @@ app.use("/products", productRoutes)
 
 app.use((err, req, res, next) => {
   console.log("ERROR:", err.message);
-  
+
   res.status(500).json({
-    error:"Внутренняя ошибка сервера"
+    error: "Внутренняя ошибка сервера"
   })
 })
 
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
   console.log(`Сервер запущен на порту ${PORT}`);
 })
