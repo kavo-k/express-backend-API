@@ -1,4 +1,4 @@
-# My Server Mark2
+# market-catalog-api
 Express + MongoDB pet project with a products catalog page on vanilla JS.
 
 ## Stack

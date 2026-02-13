@@ -8,14 +8,14 @@ app.use(express.static("public"));
 
 
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB подключена"))
-  .catch(err => console.log("Ошибка MongoDB:", err.message));
-
+  .then(() => console.log("Подключение к MongoDB успешно"))
+  .catch((err) => console.error("Ошибка подключения к MongoDB:", err));
 
 const usersRoutes = require("./routes/users.routes");
 app.use("/users", usersRoutes);
 
 const productRoutes = require("./routes/products.routes");
+const User = require("./models/User");
 app.use("/products", productRoutes)
 
 

@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const User = require("../models/User");
 
 const getUsers = async ({ search, page, limit, sort }) => {
@@ -6,6 +7,7 @@ const getUsers = async ({ search, page, limit, sort }) => {
     : {};
 
   const users = await User.find(filter)
+    .select("-passwordHash")
     .sort({ createdAt: sort })
     .skip((page - 1) * limit)
     .limit(limit);
@@ -17,19 +19,40 @@ const getUsers = async ({ search, page, limit, sort }) => {
 
 
 const getUserById = async (id) => {
-    return User.findById(id);
+  return User.findById(id).select("-passwordHash");
 };
 
-const createUser = async ({ name, age }) => {
-    return User.create({ name, age });
+const createUser = async ({ name, age, email, password }) => {
+
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    const err = new Error("Пользователь с таким email уже существует");
+    err.status = 409;
+    throw err;
+  };
+
+  const passwordHash = await bcrypt.hash(password, 10);
+  
+
+  return User.create({ name, age, email, passwordHash });
+};
+
+const safeUser = (user) => {
+  const safeUser = user.toObject();
+  delete safeUser.passwordHash;
+  return safeUser;
+}
+
+const getUserByEmail = async (email) => {
+  return User.findOne({ email }).select("+passwordHash");
 };
 
 const updateUser = async (id, data) => {
-    return User.findByIdAndUpdate(id, data, { new: true });
+  return User.findByIdAndUpdate(id, data, { new: true }).select("-passwordHash");
 };
 
 const deleteUser = async (id) => {
-    return User.findByIdAndDelete(id);
+  return User.findByIdAndDelete(id);
 }
 
 module.exports = {
@@ -38,4 +61,6 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
+  getUserByEmail,
+  safeUser,
 };

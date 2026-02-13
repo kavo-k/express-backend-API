@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
@@ -11,96 +12,147 @@ const {
   createUser,
   updateUser,
   deleteUser,
+  getUserByEmail
 } = require("../services/user.service");
 
 
-
 router.get(
-    "/",
-    asyncHandler(async(req,res) => {
+  "/",
+  asyncHandler(async (req, res) => {
 
-        const limit = Number(req.query.limit) || 10;
-        const page = Number(req.query.page) || 1;
-        const sort = req.query.sort === "asc" ? 1 : -1;
-        const search = req.query.search || "";
-        
-        const { users, total } = await getUsers({ search, page, limit, sort });
-      
-        res.json({ page, limit, total, users,});
-        console.log("page:", page, "limit:", limit, "total:", total, "search:", users.length);
-    })
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const search = req.query.search || "";
+    const sort = req.query.sort === "asc" ? 1 : -1;
+
+    const { users, total } = await getUsers({ page, limit, search, sort });
+
+    res.json({ page, limit, total, users, });
+    console.log("page:", page, "limit:", limit, "total:", total, "search:", users.length);
+  })
 );
 
 
 
 router.get(
-    "/:id",
-    asyncHandler(async (req, res) => {
-      const user = await getUserById(req.params.id);
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const user = await getUserById(req.params.id);
 
-      if(!user) {
-        res.status(404).json({error: "Пользователь не найден"});
-        return;
-      }
+    if (!user) {
+      res.status(404).json({ error: "Пользователь не найден" });
+      return;
+    }
 
-      res.json(user);
-    })
+    res.json(user);
+  })
 );
 
 router.get(
-    "/:id/products",
-    asyncHandler(async (req, res) => {
-      const owner = req.params.id;
+  "/:id/products",
+  asyncHandler(async (req, res) => {
+    const owner = req.params.id;
 
-      const products = await Product.find({ owner }).sort({ createdAt: -1 });
+    const products = await Product.find({ owner }).sort({ createdAt: -1 });
 
-
-      res.json(products);
-    })
+    res.json(products);
+  })
 );
 
 
 
 router.post(
-  "/",
-  asyncHandler(async(req,res) => {
-  console.log("headers:", req.headers["content-type"]);
-  console.log("body:", req.body);
-  console.log("age:", req.body.age, "type:", typeof req.body.age);
+  "/register",
+  asyncHandler(async (req, res) => {
+    console.log("headers:", req.headers["content-type"]);
+    console.log("body:", req.body);
+    console.log("age:", req.body.age, "type:", typeof req.body.age);
+    console.log("name:", req.body.name, "type:", typeof req.body.name);
+    console.log("email:", req.body.email, "type:", typeof req.body.email);
 
-  
-    const { name, age } = req.body;
 
-    if(!name) {
-      res.status(400).json({error: "name обязателен"});
+    const { name, age, email, password } = req.body;
+
+    if (!name) {
+      res.status(400).json({ error: "name обязателен" });
       return;
     }
 
-    if(age !== undefined && typeof age !== "number") {
-      res.status(400).json({error: "age должен быть числом"});
+    if (age !== undefined && typeof age !== "number") {
+      res.status(400).json({ error: "age должен быть числом" });
       return;
     }
 
-    const user = await createUser({ name, age });
-    res.status(201).json(user);
+    if (!email) {
+      res.status(400).json({ error: "email обязателен" });
+      return;
+    } if (typeof email !== "string" || !email.includes("@")) {
+      res.status(400).json({ error: "email должен быть строкой и содержать @" });
+      return;
+    }
+    if (!password) {
+      res.status(400).json({ error: "password обязателен" });
+      return;
+    } if (typeof password !== "string" || password.length < 6) {
+      res.status(400).json({ error: "password должен быть строкой не менее 6 символов" });
+      return;
+    }
+    const user = await createUser({ name, age, email, password });
+
+    const safeUser = user.toObject();
+    delete safeUser.passwordHash;
+
+    res.status(201).json({ user: safeUser, message: `Пользователь ${name} успешно зарегистрирован` });
   })
-)
+);
 
+router.post(
+  "/login",
+  asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
 
+    if (!email || !password) {
+      res.status(400).json({ error: "email и password обязательны" });
+      return;
+    } if (typeof email !== "string" || !email.includes("@")) {
+      res.status(400).json({ error: "email должен быть строкой и содержать @" });
+      return;
+    }
+
+    const user = await getUserByEmail(email);
+
+    if (!user) {
+      res.status(400).json({ error: "Неверный email" });
+      return;
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.passwordHash);
+
+    if (!passwordMatch) {
+      res.status(400).json({ error: "Неверный пароль" });
+      return;
+    }
+
+    const safeUser = user.toObject();
+    delete safeUser.passwordHash;
+
+    res.json({ message: "Успешный вход", user: safeUser });
+  })
+);
 
 router.put(
   "/:id",
-  asyncHandler(async (req,res) => {
-   const { name, age } = req.body;
+  asyncHandler(async (req, res) => {
+    const { name, age } = req.body;
 
-   const updated = await updateUser(req.params.id, { name, age });
+    const updated = await updateUser(req.params.id, { name, age });
 
-   if (!updated) {
-    res.status(404).json({error: "Пользователь не найден"});
-    return;
-   }
+    if (!updated) {
+      res.status(404).json({ error: "Пользователь не найден" });
+      return;
+    }
 
-   res.json(updated);
+    res.json(updated);
 
   })
 );
@@ -112,12 +164,19 @@ router.delete(
   asyncHandler(async (req, res) => {
     const deleted = await deleteUser(req.params.id);
 
-    if(!deleted) {
-      res.status(404).json({error: "Пользователь не найден, или уже удалён"});
+    if (!deleted) {
+      res.status(404).json({ error: "Пользователь не найден, или уже удалён" });
       return;
     }
     res.json(deleted);
   })
 );
+
+router.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
+  res.status(err.status || 500).json({ error: err.message || "Внутренняя ошибка сервера" });
+});
 
 module.exports = router;
