@@ -63,7 +63,11 @@ function renderProducts(products) {
       <h3>${product.name}</h3>
       <p>Price: ${product.price}</p>
       <p>Type: ${product.type}</p>
-      <p>Owner: ${product.owner && typeof product.owner === "object" ? product.owner.name : "-"}</p>
+      <a href="/users/${product.owner && typeof product.owner === "object" ? product.owner._id : product.owner}">
+  Owner: ${product.owner && typeof product.owner === "object" ? product.owner.name : "-"}
+</a>
+      <p>owner id: ${product.owner._id}</p>  
+      <p>product id: ${product._id}</p>
     `;
     productsList.appendChild(card);
   }

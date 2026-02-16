@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const Product = require("../models/Product");
-
+const auth = require("../middlewares/auth");
 
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -14,7 +13,7 @@ const {
   updateProduct,
   deleteProduct,
 } = require("../services/product.service");
-
+const { populate } = require("../models/Product");
 
 
 router.get(
@@ -35,6 +34,7 @@ router.get(
 
 router.get(
     "/:id",
+    auth,
     asyncHandler(async (req, res) => {
       const product = await getProductById(req.params.id);
 
@@ -51,6 +51,7 @@ router.get(
 
 router.post(
   "/",
+  auth,
   asyncHandler(async(req,res) => {
   console.log("headers:", req.headers["content-type"]);
   console.log("body:", req.body);
@@ -90,6 +91,7 @@ router.post(
 
 router.put(
   "/:id",
+  auth,
   asyncHandler(async (req,res) => {
    const { name, type, price, owner } = req.body;
    let { valid } = req.body;
@@ -113,6 +115,18 @@ router.put(
       return;
     }
 
+    const product = await getProductById(req.params.id);
+
+    if(!product) {
+      return res.status(404).json({error: "Продукт не найден"});
+    }
+
+    if(product.owner._id.toString() !== req.user.userId) {
+      return res.status(403).json({error: "Вы не можете редактировать этот продукт"});
+    }
+
+    console.log("Product to update:", product);
+
     if (valid) {
      const d = new Date(valid);
      d.setHours(0, 0, 0, 0);
@@ -135,13 +149,29 @@ router.put(
 
 router.delete(
   "/:id",
+  auth,
   asyncHandler(async (req, res) => {
+
+    const product = await getProductById(req.params.id);
+
+    console.log("Product to delete:", product);
+
+    if(!product) {
+      res.status(404).json({error: "Продукт не найден"});
+      return;
+    }
+
+    if (product.owner._id.toString() !== req.user.userId) {
+      return res.status(403).json({error: "Вы не можете удалить этот продукт"});
+    }
+
     const deleted = await deleteProduct(req.params.id);
 
     if(!deleted) {
       res.status(404).json({error: "Продукт не найден, или уже удалён"});
       return;
     }
+
     res.json(deleted);
   })
 );

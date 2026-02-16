@@ -141,3 +141,8 @@
             color: #e6edf3;
             outline: none;
       }
+
+      a {
+            color: #4a90e2;
+            text-decoration: none;
+      }

@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
+const jwt = require("jsonwebtoken");
 
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -65,7 +66,6 @@ router.post(
   "/register",
   asyncHandler(async (req, res) => {
     console.log("headers:", req.headers["content-type"]);
-    console.log("body:", req.body);
     console.log("age:", req.body.age, "type:", typeof req.body.age);
     console.log("name:", req.body.name, "type:", typeof req.body.name);
     console.log("email:", req.body.email, "type:", typeof req.body.email);
@@ -122,21 +122,29 @@ router.post(
     const user = await getUserByEmail(email);
 
     if (!user) {
-      res.status(400).json({ error: "Неверный email" });
+      res.status(401).json({ error: "Неверный email" });
       return;
     }
 
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 
     if (!passwordMatch) {
-      res.status(400).json({ error: "Неверный пароль" });
+      res.status(401).json({ error: "Неверный пароль" });
       return;
     }
 
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    
+
     const safeUser = user.toObject();
     delete safeUser.passwordHash;
-
-    res.json({ message: "Успешный вход", user: safeUser });
+    
+    res.json({ message: "Успешный вход", token, user: safeUser });
   })
 );
 
