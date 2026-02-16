@@ -133,7 +133,7 @@ router.post(
       return;
     }
 
-    const token = jwt.sign(
+    const accessToken = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
@@ -144,7 +144,7 @@ router.post(
     const safeUser = user.toObject();
     delete safeUser.passwordHash;
     
-    res.json({ message: "Успешный вход", token, user: safeUser });
+    res.json({ message: "Успешный вход", accessToken, user: safeUser });
   })
 );
 

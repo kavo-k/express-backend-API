@@ -58,10 +58,11 @@ router.post(
   console.log("type:", req.body.type, "type:", typeof req.body.type);
   console.log("Date:", req.body.date, "type:", typeof req.body.date);
   console.log("Price:", req.body.price, "type:", typeof req.body.price);
-  console.log("Owner:", req.body.owner, "owner:", typeof req.body.owner);
 
   
-    const { name, type, valid, price, owner } = req.body;
+    const { name, type, valid, price } = req.body;
+    
+    const owner = req.user.userId;
 
     if(!name || !type || !price || !owner) {
       res.status(400).json({error: "name type, price, и owner обязательны"});
@@ -93,16 +94,13 @@ router.put(
   "/:id",
   auth,
   asyncHandler(async (req,res) => {
-   const { name, type, price, owner } = req.body;
+   const { name, type, price, } = req.body;
+   const owner = req.user.userId;
    let { valid } = req.body;
 
-    if(!name || !type || !price || !owner) {
-      res.status(400).json({error: "name type, price, и owner обязательны"});
+    if(!name || !type || !price) {
+      res.status(400).json({error: "name, type, price обязательны"});
       return;
-    }
-
-    if(owner !== undefined && !mongoose.Types.ObjectId.isValid(owner)) {
-      return res.status(400).json({error: "owner должен иметь Id пользователя"});
     }
 
     if(price !== undefined && typeof price !== "number") {
@@ -121,7 +119,7 @@ router.put(
       return res.status(404).json({error: "Продукт не найден"});
     }
 
-    if(product.owner._id.toString() !== req.user.userId) {
+    if(product.owner._id.toString() !== req.user.userId && req.user.role !== "admin") {
       return res.status(403).json({error: "Вы не можете редактировать этот продукт"});
     }
 
@@ -161,7 +159,7 @@ router.delete(
       return;
     }
 
-    if (product.owner._id.toString() !== req.user.userId) {
+    if (product.owner._id.toString() !== req.user.userId && req.user.role !== "admin") {
       return res.status(403).json({error: "Вы не можете удалить этот продукт"});
     }
 
