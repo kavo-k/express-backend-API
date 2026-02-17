@@ -1,15 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Products</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
+
 <body>
   <header>
-    <h1>Products</h1>
-    <input id="inputSearch" class="search-input" type="text" placeholder="Search products...">
+    <div class="header-top">
+    </div>
+    <div class="header-bottom">
+      <h1>Products</h1>
+      <input id="inputSearch" class="search-input" type="text" placeholder="Search products...">
+      <div class="userMenu">
+        <div class="profile">
+          <button id="profileBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="feather feather-user">
+              <path d="M20 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M4 21v-2a4 4 0 0 1 3-3.87"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            profile
+          </button>
+        </div>
+        <p id="TokenIsAvailable"></p>
+      </div>
+    </div>
   </header>
 
   <main>
@@ -21,8 +42,8 @@
 
       <div class="pagination">
         <button id="btnPrev"> <- </button>
-        <span id="pageInfo">1</span>
-        <button id="btnNext"> -> </button>
+            <span id="pageInfo">1</span>
+            <button id="btnNext"> -> </button>
       </div>
     </div>
 
@@ -30,7 +51,8 @@
       <div class="productsList" id="product-card"></div>
     </div>
   </main>
-
+  <script src="./auth.js"></script>
   <script src="./products.js"></script>
 </body>
+
 </html>

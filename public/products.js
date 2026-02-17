@@ -7,6 +7,9 @@ const pageInfo = document.getElementById("pageInfo");
 const search = document.getElementById("inputSearch");
 const btnSearch = document.getElementById("btnSearch");
 const sortSelect = document.getElementById("sortSelect");
+const profileBtn = document.getElementById("profileBtn");
+const tokenInfo = document.getElementById("TokenIsAvailable");
+const user = getCurrentUser();
 
 const LIMIT = 2;
 let state = { currentPage: 1, maxPage: 1, search: "", sort: "desc" };
@@ -64,7 +67,7 @@ function renderProducts(products) {
       <p>Price: ${product.price}</p>
       <p>Type: ${product.type}</p>
       <a href="/users/${product.owner && typeof product.owner === "object" ? product.owner._id : product.owner}">
-  Owner: ${product.owner && typeof product.owner === "object" ? product.owner.name : "-"}
+  Owner: ${product.owner && typeof product.owner === "object" ? product.owner.userName || product.owner.name : "-"}
 </a>
       <p>owner id: ${product.owner._id}</p>  
       <p>product id: ${product._id}</p>
@@ -140,6 +143,28 @@ window.addEventListener("popstate", () => {
   readStateFromUrl();
   loadProducts({ syncUrl: false });
 });
+
+// ---------- AUTH & PROFILE ----------
+
+
+if (tokenInfo) {
+  tokenInfo.textContent = `tokenIsAvailable: ${getToken() ? 'true' : "false"} | user: ${user ? user.userName : "null"}`;
+} else {
+  console.warn("tokenInfo element not found");
+}
+
+
+profileBtn.addEventListener("click", (e) => {
+
+  if (!getToken()) {
+  window.location.href = "/login.html";
+  return;
+}
+
+window.location.href = "/profile.html";
+});
+
+
 
 readStateFromUrl();
 loadProducts({ syncUrl: false });

@@ -13,7 +13,6 @@ const {
   updateProduct,
   deleteProduct,
 } = require("../services/product.service");
-const { populate } = require("../models/Product");
 
 
 router.get(
@@ -95,7 +94,6 @@ router.put(
   auth,
   asyncHandler(async (req,res) => {
    const { name, type, price, } = req.body;
-   const owner = req.user.userId;
    let { valid } = req.body;
 
     if(!name || !type || !price) {
@@ -131,7 +129,7 @@ router.put(
      valid = d;
    }
 
-   const updated = await updateProduct(req.params.id, { name, type, valid, price, owner });
+   const updated = await updateProduct(req.params.id, { name, type, valid, price });
 
    if (!updated) {
     return res.status(404).json({error: "Продукт не найден"});

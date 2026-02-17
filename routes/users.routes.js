@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
 const jwt = require("jsonwebtoken");
+const auth = require("../middlewares/auth");
 
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -67,14 +68,14 @@ router.post(
   asyncHandler(async (req, res) => {
     console.log("headers:", req.headers["content-type"]);
     console.log("age:", req.body.age, "type:", typeof req.body.age);
-    console.log("name:", req.body.name, "type:", typeof req.body.name);
+    console.log("userName:", req.body.userName, "type:", typeof req.body.userName);
     console.log("email:", req.body.email, "type:", typeof req.body.email);
 
 
-    const { name, age, email, password } = req.body;
+    const { userName, age, email, password } = req.body;
 
-    if (!name) {
-      res.status(400).json({ error: "name обязателен" });
+    if (!userName) {
+      res.status(400).json({ error: "userName обязателен" });
       return;
     }
 
@@ -97,12 +98,12 @@ router.post(
       res.status(400).json({ error: "password должен быть строкой не менее 6 символов" });
       return;
     }
-    const user = await createUser({ name, age, email, password });
+    const user = await createUser({ userName, age, email, password });
 
     const safeUser = user.toObject();
     delete safeUser.passwordHash;
 
-    res.status(201).json({ user: safeUser, message: `Пользователь ${name} успешно зарегистрирован` });
+    res.status(201).json({ user: safeUser, message: `Пользователь ${userName} успешно зарегистрирован` });
   })
 );
 
@@ -110,28 +111,34 @@ router.post(
   "/login",
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-
+    
     if (!email || !password) {
       res.status(400).json({ error: "email и password обязательны" });
       return;
     } if (typeof email !== "string" || !email.includes("@")) {
-      res.status(400).json({ error: "email должен быть строкой и содержать @" });
+      res.status(400).json({ error: "email должен содержать @" });
       return;
     }
-
-    const user = await getUserByEmail(email);
-
+    
+    const normalizedEmail = String(email).toLowerCase().trim();
+    const user = await getUserByEmail(normalizedEmail);
     if (!user) {
-      res.status(401).json({ error: "Неверный email" });
-      return;
+      return res.status(401).json({ error: "Неверный email или пароль 1" });
     }
+
+    if (!password) {
+      return res.status(401).json({ error: "Неверный email или пароль 2" });
+    }
+
+    if (!user.passwordHash) {
+      return res.status(401).json({ error: "Неверный email или пароль 3" });
+     }
 
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
-
     if (!passwordMatch) {
-      res.status(401).json({ error: "Неверный пароль" });
-      return;
+      return res.status(401).json({ error: "Неверный email или пароль 4" });
     }
+
 
     const accessToken = jwt.sign(
       { userId: user._id, role: user.role },
@@ -139,11 +146,9 @@ router.post(
       { expiresIn: "7d" }
     );
 
-    
-
     const safeUser = user.toObject();
     delete safeUser.passwordHash;
-    
+
     res.json({ message: "Успешный вход", accessToken, user: safeUser });
   })
 );
@@ -151,9 +156,9 @@ router.post(
 router.put(
   "/:id",
   asyncHandler(async (req, res) => {
-    const { name, age } = req.body;
+    const { userName, age } = req.body;
 
-    const updated = await updateUser(req.params.id, { name, age });
+    const updated = await updateUser(req.params.id, { userName, age });
 
     if (!updated) {
       res.status(404).json({ error: "Пользователь не найден" });

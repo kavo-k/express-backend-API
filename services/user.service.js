@@ -3,7 +3,7 @@ const User = require("../models/User");
 
 const getUsers = async ({ search, page, limit, sort }) => {
   const filter = search
-    ? { name: { $regex: search, $options: "i" } }
+    ? { userName: { $regex: search, $options: "i" } }
     : {};
 
   const users = await User.find(filter)
@@ -14,7 +14,7 @@ const getUsers = async ({ search, page, limit, sort }) => {
 
   const total = await User.countDocuments(filter);
 
-  return { users, total };
+  return { users, total, };
 };
 
 
@@ -22,7 +22,7 @@ const getUserById = async (id) => {
   return User.findById(id).select("-passwordHash");
 };
 
-const createUser = async ({ name, age, email, password }) => {
+const createUser = async ({ userName, age, email, password }) => {
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
@@ -34,7 +34,7 @@ const createUser = async ({ name, age, email, password }) => {
   const passwordHash = await bcrypt.hash(password, 10);
   
 
-  return User.create({ name, age, email, passwordHash });
+  return User.create({ userName, age, email, passwordHash });
 };
 
 const safeUser = (user) => {
