@@ -9,14 +9,30 @@
     <script src="./auth.js"></script>
 </head>
 
-<body>
+<body class="profile_body">
     <div class="profile-container">
-        <h1>User Profile</h1>
-        <p><strong>Name:</strong> <span id="name">Loading...</span></p>
-        <p><strong>Email:</strong> <span id="email">Loading...</span></p>
-        <p><strong>Age:</strong> <span id="age">Loading...</span></p>
-        <p><strong>Details:</strong>  <span id="details"></span> </p>
-        <button id="logoutBtn">Logout</button>
+
+        <div class="profile-top">
+            <h1>User Profile</h1>
+        </div>
+
+        <div class="profile-main">
+
+            <p><strong>Name:</strong> <span id="name">Loading...</span></p>
+            <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+            <p><strong>Age:</strong> <span id="age">Loading...</span></p>
+            <p><strong>Details:</strong> <span id="details"></span> </p>
+
+        </div>
+
+        <div class="profile-bottom">
+            
+            <button id="addProductBtn">Добавить товар</button>
+            <button id="logoutBtn">Logout</button>
+            <button id="backBtn">Back</button>
+
+        </div>
+
 
     </div>
     <script src="./profile.js"></script>

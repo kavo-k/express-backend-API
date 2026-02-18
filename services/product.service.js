@@ -7,7 +7,7 @@ const getProducts = async ({ search, page, limit, sort }) => {
     : {};
 
   const products = await Product.find(filter)
-    .populate("owner", "name age")
+    .populate("owner", "userName name age")
     .sort({ createdAt: sort })
     .skip((page - 1) * limit)
     .limit(limit);
@@ -19,12 +19,12 @@ const getProducts = async ({ search, page, limit, sort }) => {
 
 
 const getProductById = async (id) => {
-    return Product.findById(id).populate("owner", "name age");
+    return Product.findById(id).populate("owner", "userName name age");
 };
 
 
-const createProduct = async ({ name, type, valid, price, owner }) => {
-    return Product.create({ name, type, valid, price, owner });
+const createProduct = async ({ name, type, valid, price, owner, description  }) => {
+    return Product.create({ name, type, valid, price, owner, description });
 };
 
 

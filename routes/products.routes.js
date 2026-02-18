@@ -16,34 +16,34 @@ const {
 
 
 router.get(
-    "/",
-    asyncHandler(async(req,res) => {
-        const limit = Number(req.query.limit) || 10;
-        const page = Number(req.query.page) || 1;
-        const sort = req.query.sort === "asc" ? 1 : -1;
-        const search = req.query.search || "";
+  "/",
+  asyncHandler(async (req, res) => {
+    const limit = Number(req.query.limit) || 10;
+    const page = Number(req.query.page) || 1;
+    const sort = req.query.sort === "asc" ? 1 : -1;
+    const search = req.query.search || "";
 
-        const { products, total } = await getProducts({ search, page, limit, sort });
+    const { products, total } = await getProducts({ search, page, limit, sort });
 
-        res.json({ page, limit, total, products});
-    })
+    res.json({ page, limit, total, products });
+  })
 );
 
 
 
 router.get(
-    "/:id",
-    auth,
-    asyncHandler(async (req, res) => {
-      const product = await getProductById(req.params.id);
+  "/:id",
+  auth,
+  asyncHandler(async (req, res) => {
+    const product = await getProductById(req.params.id);
 
-      if(!product) {
-        res.status(404).json({error: "Продукт не найден"});
-        return;
-      }
+    if (!product) {
+      res.status(404).json({ error: "Продукт не найден" });
+      return;
+    }
 
-      res.json(product);
-    })
+    res.json(product);
+  })
 );
 
 
@@ -51,38 +51,47 @@ router.get(
 router.post(
   "/",
   auth,
-  asyncHandler(async(req,res) => {
-  console.log("headers:", req.headers["content-type"]);
-  console.log("body:", req.body);
-  console.log("type:", req.body.type, "type:", typeof req.body.type);
-  console.log("Date:", req.body.date, "type:", typeof req.body.date);
-  console.log("Price:", req.body.price, "type:", typeof req.body.price);
+  asyncHandler(async (req, res) => {
+    console.log("headers:", req.headers["content-type"]);
+    console.log("body:", req.body);
+    console.log("type:", req.body.type, "type:", typeof req.body.type);
+    console.log("Date:", req.body.date, "type:", typeof req.body.date);
+    console.log("Price:", req.body.price, "type:", typeof req.body.price);
 
-  
-    const { name, type, valid, price } = req.body;
-    
+
+    const { name, type, valid, price, description } = req.body;
+
     const owner = req.user.userId;
 
-    if(!name || !type || !price || !owner) {
-      res.status(400).json({error: "name type, price, и owner обязательны"});
+    if (!name || !type || !price || !owner) {
+      res.status(400).json({ error: "name type, price, и owner обязательны" });
       return;
     }
 
-    if(owner !== undefined && !mongoose.Types.ObjectId.isValid(owner)) {
-      return res.status(400).json({error: "owner должен иметь Id пользователя"});
+    if (owner !== undefined && !mongoose.Types.ObjectId.isValid(owner)) {
+      return res.status(400).json({ error: "owner должен иметь Id пользователя" });
     }
 
-    if(price !== undefined && typeof price !== "number") {
-      res.status(400).json({error: "Price должен быть числом"});
+    if (price !== undefined && typeof price !== "number") {
+      res.status(400).json({ error: "Price должен быть числом" });
       return;
     }
 
-    if(valid !== undefined && isNaN(Date.parse(valid))) {
-      res.status(400).json({error: "valid должна быть датой"});
+    if (valid !== undefined && isNaN(Date.parse(valid))) {
+      res.status(400).json({ error: "valid должна быть датой" });
       return;
     }
 
-    const product = await createProduct({ name, type, valid, price, owner });
+    if (description !== undefined && typeof description !== "string") {
+      return res.status(400).json({ error: "description должен быть строкой" });
+    }
+
+    if (description !== undefined && description.length > 1000) {
+      return res.status(400).json({ error: "description слишком длинный (max 1000)" });
+    }
+
+
+    const product = await createProduct({ name, type, valid, price, owner, description });
     res.status(201).json(product);
   })
 )
@@ -92,51 +101,59 @@ router.post(
 router.put(
   "/:id",
   auth,
-  asyncHandler(async (req,res) => {
-   const { name, type, price, } = req.body;
-   let { valid } = req.body;
+  asyncHandler(async (req, res) => {
+    const { name, type, price, description } = req.body;
+    let { valid } = req.body;
 
-    if(!name || !type || !price) {
-      res.status(400).json({error: "name, type, price обязательны"});
+    if (!name || !type || !price) {
+      res.status(400).json({ error: "name, type, price обязательны" });
       return;
     }
 
-    if(price !== undefined && typeof price !== "number") {
-      res.status(400).json({error: "Price должен быть числом"});
+    if (price !== undefined && typeof price !== "number") {
+      res.status(400).json({ error: "Price должен быть числом" });
       return;
     }
 
-    if(valid !== undefined && isNaN(Date.parse(valid))) {
-      res.status(400).json({error: "valid должна быть датой"});
+    if (valid !== undefined && isNaN(Date.parse(valid))) {
+      res.status(400).json({ error: "valid должна быть датой" });
       return;
     }
 
     const product = await getProductById(req.params.id);
 
-    if(!product) {
-      return res.status(404).json({error: "Продукт не найден"});
+    if (!product) {
+      return res.status(404).json({ error: "Продукт не найден" });
     }
 
-    if(product.owner._id.toString() !== req.user.userId && req.user.role !== "admin") {
-      return res.status(403).json({error: "Вы не можете редактировать этот продукт"});
+    if (product.owner._id.toString() !== req.user.userId && req.user.role !== "admin") {
+      return res.status(403).json({ error: "я не знаю как вы сюда попали, но вы не можете редактировать этот продукт :)" });
+    }
+
+        if (description !== undefined && typeof description !== "string") {
+      return res.status(400).json({ error: "description должен быть строкой" });
+    }
+
+    if (description !== undefined && description.length > 1000) {
+      return res.status(400).json({ error: "description слишком длинный (max 1000)" });
     }
 
     console.log("Product to update:", product);
 
     if (valid) {
-     const d = new Date(valid);
-     d.setHours(0, 0, 0, 0);
-     valid = d;
-   }
+      const d = new Date(valid);
+      d.setHours(0, 0, 0, 0);
+      valid = d;
+    }
 
-   const updated = await updateProduct(req.params.id, { name, type, valid, price });
+    const updated = await updateProduct(req.params.id, { name, type, valid, price, description });
 
-   if (!updated) {
-    return res.status(404).json({error: "Продукт не найден"});
-   }
+    if (!updated) {
+      return res.status(404).json({ error: "Продукт не найден" });
+    }
 
 
-   res.json(updated);
+    res.json(updated);
 
   })
 );
@@ -152,19 +169,19 @@ router.delete(
 
     console.log("Product to delete:", product);
 
-    if(!product) {
-      res.status(404).json({error: "Продукт не найден"});
+    if (!product) {
+      res.status(404).json({ error: "Продукт не найден" });
       return;
     }
 
     if (product.owner._id.toString() !== req.user.userId && req.user.role !== "admin") {
-      return res.status(403).json({error: "Вы не можете удалить этот продукт"});
+      return res.status(403).json({ error: "я не знаю как вы сюда попали, но вы не можете удалить этот продукт :)" });
     }
 
     const deleted = await deleteProduct(req.params.id);
 
-    if(!deleted) {
-      res.status(404).json({error: "Продукт не найден, или уже удалён"});
+    if (!deleted) {
+      res.status(404).json({ error: "Продукт не найден, или уже удалён" });
       return;
     }
 

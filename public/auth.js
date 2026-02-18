@@ -3,8 +3,6 @@ function getToken() {
     return localStorage.getItem("accessToken");
 }
 
-
-
 async function login(email, password) {
     const res = await fetch("/users/login", {
         method: "POST",

@@ -69,8 +69,10 @@ function renderProducts(products) {
       <a href="/users/${product.owner && typeof product.owner === "object" ? product.owner._id : product.owner}">
   Owner: ${product.owner && typeof product.owner === "object" ? product.owner.userName || product.owner.name : "-"}
 </a>
+      <p>Description: ${product.description || "-"}</p>
       <p>owner id: ${product.owner._id}</p>  
       <p>product id: ${product._id}</p>
+      <p>created at: ${new Date(product.createdAt).toLocaleDateString("ru-RU")}</p>
     `;
     productsList.appendChild(card);
   }
@@ -95,6 +97,7 @@ async function loadProducts({ syncUrl = true, mode = "replace" } = {}) {
     const data = await getJson(
       `/products?search=${state.search}&limit=${LIMIT}&page=${state.currentPage}&sort=${state.sort}`
     );
+    console.log(data.page, data.limit, data.total, data.products);
 
     state.maxPage = Math.max(1, Math.ceil(data.total / LIMIT));
 
@@ -148,7 +151,7 @@ window.addEventListener("popstate", () => {
 
 
 if (tokenInfo) {
-  tokenInfo.textContent = `tokenIsAvailable: ${getToken() ? 'true' : "false"} | user: ${user ? user.userName : "null"}`;
+  tokenInfo.textContent = `user: ${user ? user.userName : "null"}`;
 } else {
   console.warn("tokenInfo element not found");
 }

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./auth.js"></script>
+</head>
+
+<body class="addProduct_body">
+    <form id="productForm">
+        <h2 id="creatorName"></h2>
+        <label for="productName">Product Name:</label>
+        <input type="text" id="productName" name="name" required>
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" step="0.01" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4"></textarea>
+
+        <label for="category">Category:</label>
+        <select id="category" name="type" required>
+            <option value="">Select a category</option>
+            <option value="electronics">Electronics</option>
+            <option value="clothing">Clothing</option>
+            <option value="books">Books</option>
+        </select>
+        <div class="error-container">
+            <p id="errorMessage" class="error-message"></p>
+        </div>
+
+        <button id="submitBtn" type="submit">Add Product</button>
+        <button type="reset">Clear</button>
+        <button id="backBtn">Back</button>
+    </form>
+    <script src="./productForm.js"></script>
+</body>
+
+</html>

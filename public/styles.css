@@ -202,7 +202,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-                  justify-content: center;
+            justify-content: center;
       }
 
       .register-container h1 {
@@ -230,7 +230,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-                  justify-content: center;
+            justify-content: center;
       }
 
       .separator {
@@ -250,7 +250,7 @@
       form {
             display: flex;
             flex-direction: column;
-             align-items: center;
+            align-items: center;
       }
 
       .form-group {
@@ -303,3 +303,45 @@
       }
 
       /* ---- profile page styles ---- */
+
+      .profile_body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+      }
+
+      .profile-container {
+            height: 500px;
+            background-color: #2b3a5e;
+            border: 5px solid #1f2a44;
+            border-radius: 20%;
+            padding: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+      }
+
+      /* product body */
+
+      .addProduct_body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+      }
+
+      #productForm {
+            height: 600px;
+            width: 600px;
+            background-color: #2b3a5e;
+            border: 5px solid #1f2a44;
+            border-radius: 20%;
+            padding: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+      }
