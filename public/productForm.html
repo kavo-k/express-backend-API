@@ -31,11 +31,24 @@
         <div class="error-container">
             <p id="errorMessage" class="error-message"></p>
         </div>
-
-        <button id="submitBtn" type="submit">Submit</button>
-        <button type="reset">Clear</button>
-        <button id="backBtn" type="button">Back</button>
+        <div class="product-buttons">
+            <button id="submitBtn" type="submit" class="submit-btn">Submit</button>
+            <button type="reset">Clear</button>
+            <button id="deleteBtn" type="button" class="delete-btn">Delete</button>
+            <button id="backBtn" type="button">Back</button>
+        </div>
     </form>
+
+    <div id="deleteModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+            <h3 id="deleteModalTitle">Delete Product?</h3>
+            <p id="deleteModalText">This action cannot be undone. Are you sure you want to delete this product?</p>
+            <div class="modal-actions">
+                <button id="cancelDeleteBtn" type="button">Cancel</button>
+                <button id="confirmDeleteBtn" type="button" class="delete-btn">Delete</button>
+            </div>
+        </div>
+    </div>
     <script src="./productForm.js"></script>
 </body>
 

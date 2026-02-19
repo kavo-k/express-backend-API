@@ -9,12 +9,17 @@ const typeSelect = document.getElementById("category");
 const nameInput = document.getElementById("productName");
 const priceInput = document.getElementById("price");
 const descriptionInput = document.getElementById("description");
+const deleteBtn = document.getElementById("deleteBtn");
+const deleteModal = document.getElementById("deleteModal");
+const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+const deleteModalText = document.getElementById("deleteModalText");
 
 
 const user = getCurrentUser();
 
 const id = new URLSearchParams(window.location.search).get("id");
-const isEdit = Boolean(id);
+const isId = Boolean(id);
 
 async function outputInCard(id) {
     try {
@@ -48,7 +53,8 @@ productForm.addEventListener("submit", async (e) => {
 
     console.log("payload", payload);
 
-    if (isEdit) {
+
+    if (isId) {
         try {
             const res = await authFetch(`/products/${id}`, {
                 method: "PUT",
@@ -59,12 +65,14 @@ productForm.addEventListener("submit", async (e) => {
             if (!res.ok) throw new Error(data.error || "Ошибка Редактирования");
 
             window.location.href = "/";
+            return;
         } catch (err) {
             errorMessage.textContent = err.message;
+            return;
         }
     } else {
         try {
-            const res = await authFetch("/products", {
+            const res = await authFetch(`/products`, {
                 method: "POST",
                 body: JSON.stringify(payload),
             });
@@ -73,12 +81,38 @@ productForm.addEventListener("submit", async (e) => {
             if (!res.ok) throw new Error(data.error || "Ошибка создания");
 
             window.location.href = "/";
+            return;
         } catch (err) {
             errorMessage.textContent = err.message;
+            return;
         }
     }
 });
 
+deleteBtn.onclick = () => {
+    deleteModal.classList.add("open");
+};
+
+cancelDeleteBtn.addEventListener("click", () => {
+    deleteModal.classList.remove("open");
+});
+
+confirmDeleteBtn.addEventListener("click", async () => {
+    try {
+        const res = await authFetch(`/products/${id}`, {
+            method: "DELETE",
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Ошибка Удаления");
+        deleteModalText.textContent = `Успешно удалено`;
+        window.location.href = "/";
+        return;
+    } catch (err) {
+        errorMessage.textContent = err.message;
+        return;
+    }
+});
 
 if (user) {
     creatorName.textContent = `Продукт от лица: ${user ? user.userName : "null"}`;

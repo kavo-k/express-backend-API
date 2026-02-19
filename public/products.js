@@ -82,6 +82,7 @@ function renderProducts(products) {
 
 productsList.addEventListener("click", (e) => {
   const editBtn = e.target.closest(".edit-product-btn");
+
   if (editBtn) {
     const id = editBtn.dataset.productId;
     window.location.href = `/productForm.html?id=${id}`;

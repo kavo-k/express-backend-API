@@ -329,6 +329,65 @@ form {
   resize: vertical;
 }
 
+.product-buttons {
+  display: flex;
+  justify-content: space-around;
+}
+
+.submit-btn {
+  width: 35%;
+  background: #22c55e;
+  border-color: #16a34a;
+}
+
+.delete-btn {
+  width: auto;
+  background: #c52222;
+  border-color: #a32616;
+}
+
+/* Delete modal */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(3, 8, 18, 0.72);
+  z-index: 1000;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal-card {
+  width: min(460px, 100%);
+  background: linear-gradient(180deg, #1f2d4f 0%, #182541 100%);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+
+.modal-card h3 {
+  margin: 0 0 8px;
+}
+
+.modal-card p {
+  margin: 0 0 14px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 /* Small screens */
 @media (max-width: 760px) {
   .header-bottom {
