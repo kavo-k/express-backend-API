@@ -23,6 +23,7 @@ npm i
 ```env
 MONGODB_URI=your_connection_string
 PORT=3000
+JWT_SECRET=your_random_jwt_secret_token
 ```
 3. Start:
 ```bash

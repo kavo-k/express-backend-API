@@ -9,9 +9,10 @@ const btnSearch = document.getElementById("btnSearch");
 const sortSelect = document.getElementById("sortSelect");
 const profileBtn = document.getElementById("profileBtn");
 const tokenInfo = document.getElementById("TokenIsAvailable");
+
 const user = getCurrentUser();
 
-const LIMIT = 2;
+const LIMIT = 5;
 let state = { currentPage: 1, maxPage: 1, search: "", sort: "desc" };
 
 function syncUrlWithState(mode = "replace") {
@@ -73,10 +74,20 @@ function renderProducts(products) {
       <p>owner id: ${product.owner._id}</p>  
       <p>product id: ${product._id}</p>
       <p>created at: ${new Date(product.createdAt).toLocaleDateString("ru-RU")}</p>
+      <button class="edit-product-btn" type="button" data-product-id="${product._id}">Edit</button>
     `;
     productsList.appendChild(card);
   }
 }
+
+productsList.addEventListener("click", (e) => {
+  const editBtn = e.target.closest(".edit-product-btn");
+  if (editBtn) {
+    const id = editBtn.dataset.productId;
+    window.location.href = `/productForm.html?id=${id}`;
+    return;
+  }
+})
 
 function print(data) {
   productsList.textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);
