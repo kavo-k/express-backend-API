@@ -103,6 +103,7 @@ header {
 }
 
 .search-input {
+  width: 100%;
   max-width: 560px;
   font-size: 16px;
 }
@@ -401,11 +402,6 @@ form {
   .search-input {
     width: 100%;
     max-width: 100%;
-  }
-
-  .userMenu {
-    width: 100%;
-    justify-content: space-between;
   }
 
   #profileBtn {

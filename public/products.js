@@ -9,6 +9,7 @@ const btnSearch = document.getElementById("btnSearch");
 const sortSelect = document.getElementById("sortSelect");
 const profileBtn = document.getElementById("profileBtn");
 const tokenInfo = document.getElementById("TokenIsAvailable");
+const searchForm = document.getElementById("searchForm");
 
 const user = getCurrentUser();
 
@@ -63,6 +64,23 @@ function renderProducts(products) {
   for (const product of products) {
     const card = document.createElement("div");
     card.className = "product-card";
+
+
+const ownerId = user ? user._id : null;
+
+const productOwnerId =
+  product.owner && typeof product.owner === "object"
+    ? product.owner._id
+    : product.owner;
+
+const canEdit =
+  ownerId && productOwnerId && String(ownerId) === String(productOwnerId);
+
+const editButtonHtml = canEdit
+  ? `<button class="edit-product-btn" type="button" data-product-id="${product._id}">Edit</button>`
+  : "";
+
+
     card.innerHTML = `
       <h3>${product.name}</h3>
       <p>Price: ${product.price}</p>
@@ -74,7 +92,7 @@ function renderProducts(products) {
       <p>owner id: ${product.owner._id}</p>  
       <p>product id: ${product._id}</p>
       <p>created at: ${new Date(product.createdAt).toLocaleDateString("ru-RU")}</p>
-      <button class="edit-product-btn" type="button" data-product-id="${product._id}">Edit</button>
+      ${editButtonHtml}
     `;
     productsList.appendChild(card);
   }
@@ -136,12 +154,11 @@ sortSelect.addEventListener("change", () => {
   loadProducts({ syncUrl: true, mode: "push" });
 });
 
-search.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    state.search = search.value.trim();
-    state.currentPage = 1;
-    loadProducts({ syncUrl: true, mode: "push" });
-  }
+searchForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  state.search = search.value.trim();
+  state.currentPage = 1;
+  loadProducts({ syncUrl: true, mode: "push" });
 });
 
 btnNext.onclick = () => {
@@ -172,11 +189,11 @@ if (tokenInfo) {
 profileBtn.addEventListener("click", (e) => {
 
   if (!getToken()) {
-  window.location.href = "/login.html";
-  return;
-}
+    window.location.href = "/login.html";
+    return;
+  }
 
-window.location.href = "/profile.html";
+  window.location.href = "/profile.html";
 });
 
 
