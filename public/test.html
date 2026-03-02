@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Race Grid</title>
+  <style>
+    :root {
+      --bg-main: #0b1220;
+      --bg-card: #121d33;
+      --line: #2b3a57;
+      --text: #e5ecff;
+      --muted: #9fb0d8;
+      --car-width: 84px;
+      --finish-width: 12px;
+
+      --start-bg: #16a34a;
+      --start-bg-hover: #15803d;
+      --add-bg: #1d4ed8;
+      --add-bg-hover: #1e40af;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      color: var(--text);
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      background: radial-gradient(1200px 600px at 30% -10%, #243a66 0%, var(--bg-main) 60%);
+    }
+
+    .game {
+      width: min(920px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      background: linear-gradient(180deg, #162542, var(--bg-card));
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+    }
+
+    .sub {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      color: #eaf2ff;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .12s ease, filter .12s ease, background-color .12s ease;
+    }
+
+    .btn:hover {
+      filter: brightness(1.03);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-start {
+      background: var(--start-bg);
+      border-color: #2dd4bf;
+    }
+
+    .btn-start:hover {
+      background: var(--start-bg-hover);
+    }
+
+    .btn-add, .btn-delete {
+      background: var(--add-bg);
+      border-color: #60a5fa;
+    }
+
+    .btn-add:hover, .btn-delete:hover {
+      background: var(--add-bg-hover);
+    }
+
+    .track {
+      position: relative;
+      border: 1px dashed #4d638f;
+      border-radius: 14px;
+      overflow: hidden;
+      background: repeating-linear-gradient(90deg,
+          #0a162c 0,
+          #0a162c 24px,
+          #0f1d36 24px,
+          #0f1d36 48px);
+    }
+
+    .finish {
+      position: absolute;
+      top: 0;
+      right: 70px;
+      width: var(--finish-width);
+      height: 100%;
+      background: repeating-linear-gradient(180deg,
+          #ffffff 0,
+          #ffffff 10px,
+          #101827 10px,
+          #101827 20px);
+      z-index: 2;
+    }
+
+    .race-row {
+      position: relative;
+      height: 72px;
+      border-bottom: 1px solid rgba(159, 176, 216, 0.28);
+      display: flex;
+      align-items: center;
+      padding-left: 12px;
+      z-index: 1;
+    }
+
+    .race-row:last-child {
+      border-bottom: none;
+    }
+
+    .car {
+      position: relative;
+      width: var(--car-width);
+      min-width: var(--car-width);
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-weight: 700;
+      color: #051427;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.28);
+      background: #d4658779;
+    }
+
+    .car--blue {
+      background: #60a5fa;
+    }
+
+    .car--orange {
+      background: #fb923c;
+    }
+
+    .hint {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+
+<body>
+  <section class="game">
+    <h1>Race Grid</h1>
+    <p class="sub">Вёрстка: только HTML + CSS для кнопок старта и добавления.</p>
+
+    <div class="controls">
+      <button id="start" class="btn btn-start" type="button">Start</button>
+      <button id="addCarBtn" class="btn btn-add" type="button">+ Добавить машинку</button>
+      <button id="deleteCarBtn" class="btn btn-delete" type="button">- Удалить машинку</button>
+    </div>
+
+    <div id="track" class="track" aria-label="Гоночный трек">
+      <div class="finish" aria-hidden="true"></div>
+
+      <div id="carsContainer">
+        <div class="race-row" >
+         <div class="car"></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="hint"></p>
+    <p id="message"></p>
+  </section>
+  <script src="test.js"></script>
+</body>
+
+</html>
