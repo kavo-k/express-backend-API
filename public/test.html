@@ -132,6 +132,7 @@
       display: flex;
       align-items: center;
       padding-left: 12px;
+      padding-right: 12px;
       z-index: 1;
     }
 
@@ -152,15 +153,11 @@
       font-weight: 700;
       color: #051427;
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.28);
-      background: #d4658779;
+      background: #dadada79;
     }
 
-    .car--blue {
-      background: #60a5fa;
-    }
-
-    .car--orange {
-      background: #fb923c;
+    .numberCar {
+      color: rgba(68, 68, 68, 0.377);
     }
 
     .hint {
@@ -175,7 +172,7 @@
 <body>
   <section class="game">
     <h1>Race Grid</h1>
-    <p class="sub">Вёрстка: только HTML + CSS для кнопок старта и добавления.</p>
+    <p class="sub" id="timer"></p>
 
     <div class="controls">
       <button id="start" class="btn btn-start" type="button">Start</button>
@@ -188,7 +185,9 @@
 
       <div id="carsContainer">
         <div class="race-row" >
-         <div class="car"></div>
+         <div class="car">
+          <div class="numberCar">1</div>
+         </div>
         </div>
       </div>
     </div>
