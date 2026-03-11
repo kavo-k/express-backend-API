@@ -9,11 +9,11 @@ async function login(email, password) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
     });
-    
+
     const data = await res.json();
-    
+
     if (!res.ok) { throw new Error(data.error || "Ошибка при входе"); }
-    
+
     localStorage.setItem("accessToken", data.token || data.accessToken);
     localStorage.setItem("user", JSON.stringify(data.user));
     return data.user;
@@ -25,9 +25,9 @@ async function register(userName, age, email, password) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userName, age, email, password }),
     });
-    
+
     const data = await res.json();
-    
+
     if (!res.ok) { throw new Error(data.error || "Ошибка при регистрации"); }
     return data.user;
 }
@@ -45,12 +45,26 @@ function logout() {
 
 async function authFetch(url, options = {}) {
     const token = getToken();
-    
-    const headers = {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-    
-    return fetch(url, { ...options, headers });
+    let headers = {};
+
+    if (options.body instanceof FormData) {
+        headers = {
+            ...(options.headers || {}),
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        };
+    } else {
+        headers = {
+            "Content-Type": "application/json",
+            ...(options.headers || {}),
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        };
+    }
+
+
+    const response = await fetch(url, { ...options, headers });
+
+    if (response.status === 401) {
+        logout();
+    }
+    return response;
 }

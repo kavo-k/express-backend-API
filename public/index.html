@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -10,49 +10,53 @@
 
 <body>
   <header>
-    <div class="header-top">
-    </div>
     <div class="header-bottom">
-      <h1>Products</h1>
-      <form action="" id="searchForm" class="search-input">
-        <input id="inputSearch" class="search-input" type="text" placeholder="Search products...">
-      </form>
-      <div class="userMenu">
-        <div class="profile">
+      <div class="brand-row">
+        <div class="brand-copy">
+          <h1>Market Products</h1>
+          <p>Catalog with search, sorting and quick edit</p>
+        </div>
+        <a class="top-link" href="test.html">Race mini-game</a>
+        <div class="userMenu">
           <button id="profileBtn" type="button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-              class="feather feather-user">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M20 21v-2a4 4 0 0 0-3-3.87"></path>
               <path d="M4 21v-2a4 4 0 0 1 3-3.87"></path>
               <circle cx="12" cy="7" r="4"></circle>
             </svg>
-            profile
+            Profile
           </button>
+          <p id="TokenIsAvailable"></p>
         </div>
-        <p id="TokenIsAvailable"></p>
       </div>
+
+      <form action="" id="searchForm" class="search-input">
+        <input id="inputSearch" class="search-input" type="text" placeholder="Search products by name...">
+      </form>
     </div>
   </header>
 
   <main>
-    <div class="row">
-      <select name="sort" id="sortSelect">
-        <option value="desc">Newest First</option>
-        <option value="asc">Oldest First</option>
-      </select>
 
-      <div class="pagination">
-        <button id="btnPrev" type="button"> <- </button>
-            <span id="pageInfo">1</span>
-            <button id="btnNext" type="button"> -> </button>
+    <section class="home-toolbar row">
+      <div class="toolbar-left">
+        <select name="sort" id="sortSelect">
+          <option value="desc">Newest First</option>
+          <option value="asc">Oldest First</option>
+        </select>
       </div>
-    </div>
 
-    <div class="product_cards_list">
-      <div class="productsList" id="product-card"></div>
-    </div>
+      <div class="toolbar-right pagination">
+        <button id="btnPrev" type="button">Prev</button>
+        <span id="pageInfo">1</span>
+        <button id="btnNext" type="button">Next</button>
+      </div>
+    </section>
+
+    <section id="productsConteiner"></section>
   </main>
+
   <script src="./auth.js"></script>
   <script src="./products.js"></script>
 </body>

@@ -23,8 +23,8 @@ const getProductById = async (id) => {
 };
 
 
-const createProduct = async ({ name, type, valid, price, owner, description  }) => {
-    return Product.create({ name, type, valid, price, owner, description });
+const createProduct = async ({ name, type, valid, price, owner, description, imageUrl, imagePublicId }) => {
+    return Product.create({ name, type, valid, price, owner, description, imageUrl, imagePublicId });
 };
 
 

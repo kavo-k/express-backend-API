@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
 const jwt = require("jsonwebtoken");
-const auth = require("../middlewares/auth");
 
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);

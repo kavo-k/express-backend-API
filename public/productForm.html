@@ -1,55 +1,62 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product</title>
-    <link rel="stylesheet" href="./styles.css" />
-    <script src="./auth.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Product</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./auth.js"></script>
 </head>
 
 <body class="addProduct_body">
-    <form id="productForm">
-        <h2 id="creatorName"></h2>
-        <label for="productName">Product Name:</label>
-        <input type="text" id="productName" name="name" required>
+  <form id="productForm">
+    <h2 id="creatorName"></h2>
 
-        <label for="price">Price:</label>
-        <input type="number" id="price" name="price" step="0.01" required>
+    <label for="productName">Product Name<span class="zv">*</span></label>
+    <input type="text" id="productName" name="name" required>
 
-        <label for="description">Description:</label>
-        <textarea id="description" name="description" rows="4"></textarea>
+    <label for="productImage">Product Image<span class="zv">*</span></label>
+    <input type="file" id="productImage" name="image">
 
-        <label for="category">Category:</label>
-        <select id="category" name="type" required>
-            <option value="">Select a category</option>
-            <option value="electronics">Electronics</option>
-            <option value="clothing">Clothing</option>
-            <option value="books">Books</option>
-        </select>
-        <div class="error-container">
-            <p id="errorMessage" class="error-message"></p>
-        </div>
-        <div class="product-buttons">
-            <button id="submitBtn" type="submit" class="submit-btn">Submit</button>
-            <button type="reset">Clear</button>
-            <button id="deleteBtn" type="button" class="delete-btn">Delete</button>
-            <button id="backBtn" type="button">Back</button>
-        </div>
-    </form>
+    <label for="price">Price<span class="zv">*</span></label>
+    <input type="number" id="price" name="price" step="0.01" required>
 
-    <div id="deleteModal" class="modal-overlay" aria-hidden="true">
-        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
-            <h3 id="deleteModalTitle">Delete Product?</h3>
-            <p id="deleteModalText">This action cannot be undone. Are you sure you want to delete this product?</p>
-            <div class="modal-actions">
-                <button id="cancelDeleteBtn" type="button">Cancel</button>
-                <button id="confirmDeleteBtn" type="button" class="delete-btn">Delete</button>
-            </div>
-        </div>
+    <label for="description">Description</label>
+    <textarea id="description" name="description" rows="4"></textarea>
+
+    <label for="category">Category<span class="zv">*</span></label>
+    <select id="category" name="type" required>
+      <option value="">Select category</option>
+      <option value="electronics">Electronics</option>
+      <option value="clothing">Clothing</option>
+      <option value="books">Books</option>
+    </select>
+
+    <div class="error-container">
+      <p id="errorMessage" class="error-message"></p>
     </div>
-    <script src="./productForm.js"></script>
+
+    <div class="product-buttons">
+      <button id="submitBtn" type="submit" class="submit-btn">Save</button>
+      <button type="reset">Clear</button>
+      <button id="deleteBtn" type="button" class="delete-btn">Delete</button>
+      <button id="backBtn" type="button">Back</button>
+    </div>
+  </form>
+
+  <div id="deleteModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+      <h3 id="deleteModalTitle">Delete product?</h3>
+      <p id="deleteModalText">This action cannot be undone. Are you sure?</p>
+      <div class="modal-actions">
+        <button id="cancelDeleteBtn" type="button">Cancel</button>
+        <button id="confirmDeleteBtn" type="button" class="delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./productForm.js"></script>
 </body>
 
 </html>

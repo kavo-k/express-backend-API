@@ -1,6 +1,6 @@
 console.log("products.js LOADED");
 
-const productsList = document.getElementById("product-card");
+const productsList = document.getElementById("productsConteiner");
 const btnPrev = document.getElementById("btnPrev");
 const btnNext = document.getElementById("btnNext");
 const pageInfo = document.getElementById("pageInfo");
@@ -66,22 +66,24 @@ function renderProducts(products) {
     card.className = "product-card";
 
 
-const ownerId = user ? user._id : null;
+    const ownerId = user ? user._id : null;
 
-const productOwnerId =
-  product.owner && typeof product.owner === "object"
-    ? product.owner._id
-    : product.owner;
+    const productOwnerId =
+      product.owner && typeof product.owner === "object"
+        ? product.owner._id
+        : product.owner;
 
-const canEdit =
-  ownerId && productOwnerId && String(ownerId) === String(productOwnerId);
+    const canEdit =
+      ownerId && productOwnerId && String(ownerId) === String(productOwnerId);
 
-const editButtonHtml = canEdit
-  ? `<button class="edit-product-btn" type="button" data-product-id="${product._id}">Edit</button>`
-  : "";
+    const editButtonHtml = canEdit
+      ? `<button class="edit-product-btn" type="button" data-product-id="${product._id}">Edit</button>`
+      : "";
+    console.log(product);
 
 
     card.innerHTML = `
+      <img src="${product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
       <h3>${product.name}</h3>
       <p>Price: ${product.price}</p>
       <p>Type: ${product.type}</p>
@@ -180,7 +182,7 @@ window.addEventListener("popstate", () => {
 
 
 if (tokenInfo) {
-  tokenInfo.textContent = `user: ${user ? user.userName : "null"}`;
+  tokenInfo.textContent = ` ${user ? `user:${user.userName}` : ""}`;
 } else {
   console.warn("tokenInfo element not found");
 }

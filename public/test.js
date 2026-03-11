@@ -4,6 +4,8 @@ const addCarBtn = document.getElementById("addCarBtn");
 const deleteCarBtn = document.getElementById("deleteCarBtn");
 const message = document.getElementById("message");
 const timer = document.getElementById("timer");
+const timesContainer = document.getElementById("timesContainer");
+
 let trackLength = 0;
 let drivers = [];
 
@@ -34,7 +36,7 @@ function updateTrackLength() {
 
 function Racer(name, element) {
   this.name = name;
-  this.element = element
+  this.element = element;
   this.position = 0;
 
   this.updateCarPosition = function (position) {
@@ -43,7 +45,7 @@ function Racer(name, element) {
   }
 
   this.move = function () {
-    const randomDistance = Math.floor(Math.random() * 1.2) + 1 + this.position;
+    const randomDistance = Math.floor(Math.random() * 1.1) + 1 + this.position;
     this.updateCarPosition(randomDistance);
   }
 
@@ -68,14 +70,12 @@ btnStart.addEventListener('click', () => {
   console.log(cars);
   if (cars.length > 1) {
 
-    let winner = declareWinner();
-
 
     for (let i = 0; i < cars.length; i++) {
-      const element = cars[i];
-      drivers.push(new Racer(`${i + 1} car`, element));
+      drivers.push(new Racer(`${i + 1} car`, cars[i]));
       drivers[i].updateCarPosition(0);
     }
+    console.log(drivers);
 
     const raceInterval = setInterval(() => {
       winner = declareWinner();
@@ -91,6 +91,16 @@ btnStart.addEventListener('click', () => {
 
         if (winner) {
           message.innerHTML = `${winner.name} победил`;
+
+          const timerElement = document.createElement('div');
+          timerElement.classList.add('time-row');
+
+          const bestTime = `${winner.name} - ${timer.textContent}`;
+
+          timerElement.textContent = bestTime;
+          timesContainer.appendChild(timerElement);
+          console.log(timer);
+
           clearInterval(raceInterval);
           btnStart.disabled = false;
           addCarBtn.disabled = false;
@@ -117,7 +127,7 @@ function CreateCar() {
 
   const car = document.createElement('div');
   car.classList.add('car');
-  
+
   const numberCar = document.createElement('div');
   numberCar.classList.add('numberCar');
 

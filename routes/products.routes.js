@@ -2,9 +2,20 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const auth = require("../middlewares/auth");
+const upload = require("../middlewares/upload");
+const cloudinary = require("../config/cloudinary");
 
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
+
+const uploadToCloudinary = (buffer) =>
+  new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "products" },
+      (error, result) => (error ? reject(error) : resolve(result))
+    );
+    stream.end(buffer);
+  });
 
 const {
   getProducts,
@@ -23,9 +34,20 @@ router.get(
     const sort = req.query.sort === "asc" ? 1 : -1;
     const search = req.query.search || "";
 
-    const { products, total } = await getProducts({ search, page, limit, sort });
+    let { products, total } = await getProducts({ search, page, limit, sort });
 
-    res.json({ page, limit, total, products });
+    products = products.map(p => ({
+      ...p.toObject(),
+      imageOptimizedUrl: p.imagePublicId
+        ? cloudinary.url(p.imagePublicId, {
+          transformation: [
+            { quality: 'auto', fetch_format: 'auto' },
+            { width: 1200, height: 1200, crop: 'fill', gravity: 'auto' },
+          ],
+        }) : null,
+    }));
+
+res.json({ page, limit, total, products });
   })
 );
 
@@ -35,12 +57,24 @@ router.get(
   "/:id",
   auth,
   asyncHandler(async (req, res) => {
-    const product = await getProductById(req.params.id);
+    let product = await getProductById(req.params.id);
 
     if (!product) {
       res.status(404).json({ error: "Продукт не найден" });
       return;
     }
+
+    product = {
+      ...product.toObject(),
+      imageOptimizedUrl: product.imagePublicId
+        ? cloudinary.url(product.imagePublicId, {
+          transformation: [
+            { quality: 'auto', fetch_format: 'auto' },
+            { width: 1200, height: 1200, crop: 'fill', gravity: 'auto' },
+          ],
+        })
+        : null,
+    };
 
     res.json(product);
   })
@@ -51,30 +85,42 @@ router.get(
 router.post(
   "/",
   auth,
+  upload.single("image"),
   asyncHandler(async (req, res) => {
-    console.log("headers:", req.headers["content-type"]);
+    console.log("headers:", req.headers);
     console.log("body:", req.body);
-    console.log("type:", req.body.type, "type:", typeof req.body.type);
-    console.log("Date:", req.body.date, "type:", typeof req.body.date);
-    console.log("Price:", req.body.price, "type:", typeof req.body.price);
+    console.log("file:", req.file);
 
 
-    const { name, type, valid, price, description } = req.body;
+    if (!req.file) return res.status(400).json({ error: "image обязателен" });
 
+    const result = await uploadToCloudinary(req.file.buffer);
+
+    const imageUrl = result.secure_url;
+    const imagePublicId = result.public_id;
+
+    console.log("imageUrl:", imageUrl);
+    console.log("imagePublicId:", imagePublicId);
+
+
+
+    const { name, type, description } = req.body;
     const owner = req.user.userId;
+    let { valid, price } = req.body;
 
-    if (!name || !type || !price || !owner) {
-      res.status(400).json({ error: "name type, price, и owner обязательны" });
+    if (!name || !type || price === undefined || !price.trim()) {
+      res.status(400).json({ error: "name, type, price обязательны" });
       return;
+    }
+
+    price = Number(price);
+
+    if (Number.isNaN(price)) {
+      return res.status(400).json({ error: "Price должен быть числом" });
     }
 
     if (owner !== undefined && !mongoose.Types.ObjectId.isValid(owner)) {
       return res.status(400).json({ error: "owner должен иметь Id пользователя" });
-    }
-
-    if (price !== undefined && typeof price !== "number") {
-      res.status(400).json({ error: "Price должен быть числом" });
-      return;
     }
 
     if (valid !== undefined && isNaN(Date.parse(valid))) {
@@ -91,29 +137,31 @@ router.post(
     }
 
 
-    const product = await createProduct({ name, type, valid, price, owner, description });
+    const product = await createProduct({ name, type, valid, price, owner, description, imageUrl, imagePublicId });
     res.status(201).json(product);
-  })
-)
+  }));
 
 
 
 router.put(
   "/:id",
   auth,
+  upload.single("image"),
   asyncHandler(async (req, res) => {
-    const { name, type, price, description } = req.body;
-    let { valid } = req.body;
+    const { name, type, description } = req.body;
+    let { valid, price } = req.body;
 
-    if (!name || !type || !price) {
+    if (!name || !type || price === undefined || !price.trim()) {
       res.status(400).json({ error: "name, type, price обязательны" });
       return;
     }
 
-    if (price !== undefined && typeof price !== "number") {
-      res.status(400).json({ error: "Price должен быть числом" });
-      return;
+    price = Number(price);
+
+    if (Number.isNaN(price)) {
+      return res.status(400).json({ error: "Price должен быть числом" });
     }
+
 
     if (valid !== undefined && isNaN(Date.parse(valid))) {
       res.status(400).json({ error: "valid должна быть датой" });
@@ -130,7 +178,7 @@ router.put(
       return res.status(403).json({ error: "я не знаю как вы сюда попали, но вы не можете редактировать этот продукт :)" });
     }
 
-        if (description !== undefined && typeof description !== "string") {
+    if (description !== undefined && typeof description !== "string") {
       return res.status(400).json({ error: "description должен быть строкой" });
     }
 

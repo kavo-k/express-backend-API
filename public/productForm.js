@@ -15,6 +15,13 @@ const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
 const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
 const deleteModalText = document.getElementById("deleteModalText");
 
+const accessToken = localStorage.getItem("accessToken");
+const isToken = Boolean(accessToken);
+
+if (!isToken) {
+    window.location.href = "/login.html";
+}
+
 
 const user = getCurrentUser();
 
@@ -36,29 +43,25 @@ async function outputInCard(id) {
     }
 }
 
-outputInCard(id);
+if (isId) {
+    outputInCard(id);
+}
+
+
 
 productForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const formData = new FormData(productForm);
 
-    const payload = {
-        name: formData.get("name")?.trim(),
-        type: formData.get("type")?.trim(),
-        description: formData.get("description")?.trim(),
-        price: Number(formData.get("price")),
-        valid: formData.get("valid") || undefined
-    };
-
-    console.log("payload", payload);
+    console.log("formData:", formData);
 
 
     if (isId) {
         try {
             const res = await authFetch(`/products/${id}`, {
                 method: "PUT",
-                body: JSON.stringify(payload),
+                body: formData,
             });
 
             const data = await res.json();
@@ -74,7 +77,7 @@ productForm.addEventListener("submit", async (e) => {
         try {
             const res = await authFetch(`/products`, {
                 method: "POST",
-                body: JSON.stringify(payload),
+                body: formData,
             });
 
             const data = await res.json();

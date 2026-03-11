@@ -6,7 +6,9 @@ const ProductSchema = new mongoose.Schema( {
   price: { type: Number, required: true },
   description: { type: String, default: "", trim: true, maxlength: 1000 },
   valid: { type: Date },
-  owner: {type: mongoose.Schema.Types.ObjectId, ref:"User", required: true }
+  owner: { type: mongoose.Schema.Types.ObjectId, ref:"User", required: true },
+  imageUrl: { type: String },
+  imagePublicId: { type: String }
 },
 { timestamps: true, versionKey: false}
 );

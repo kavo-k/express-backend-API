@@ -28,21 +28,41 @@
     body {
       margin: 0;
       min-height: 100vh;
-      display: grid;
-      place-items: center;
       padding: 24px;
       color: var(--text);
       font-family: "Trebuchet MS", "Segoe UI", sans-serif;
       background: radial-gradient(1200px 600px at 30% -10%, #243a66 0%, var(--bg-main) 60%);
     }
 
-    .game {
-      width: min(920px, 100%);
+    .layout {
+      width: min(1200px, 100%);
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .game,
+    .list {
+      display: flex;
+      flex-direction: column;
       border: 1px solid var(--line);
       border-radius: 16px;
       padding: 20px;
       background: linear-gradient(180deg, #162542, var(--bg-card));
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .list {
+      flex: 0 0 280px;
+      position: sticky;
+      top: 24px;
+      min-height: 220px;
+    }
+
+    .game {
+      flex: 1 1 auto;
+      min-width: 0;
     }
 
     h1 {
@@ -90,12 +110,14 @@
       background: var(--start-bg-hover);
     }
 
-    .btn-add, .btn-delete {
+    .btn-add,
+    .btn-delete {
       background: var(--add-bg);
       border-color: #60a5fa;
     }
 
-    .btn-add:hover, .btn-delete:hover {
+    .btn-add:hover,
+    .btn-delete:hover {
       background: var(--add-bg-hover);
     }
 
@@ -125,6 +147,14 @@
       z-index: 2;
     }
 
+    .leader-board {
+      background-color: #051427;
+      min-height: 30vh;
+      width: auto;
+      border: 1px dashed #4d638f;
+      border-radius: 14px;
+    }
+
     .race-row {
       position: relative;
       height: 72px;
@@ -138,6 +168,13 @@
 
     .race-row:last-child {
       border-bottom: none;
+    }
+
+    .time-row {
+      height: 20px;
+      border-bottom: 1px solid rgba(159, 176, 216, 0.28);
+      display: flex;
+      align-items: center;
     }
 
     .car {
@@ -166,35 +203,60 @@
       font-size: 13px;
       line-height: 1.45;
     }
+
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      .list {
+        flex: none;
+        width: 100%;
+        position: static;
+        min-height: auto;
+      }
+
+      .game {
+        width: 100%;
+      }
+
+    }
   </style>
 </head>
 
 <body>
-  <section class="game">
-    <h1>Race Grid</h1>
-    <p class="sub" id="timer"></p>
+  <div class="layout">
+    <section class="list">
+      <h1>Best times</h1>
+      <div id="timesContainer" class="leader-board">
+      </div>
+    </section>
+    <section class="game">
+      <h1>Race Grid</h1>
+      <p class="sub" id="timer"></p>
 
-    <div class="controls">
-      <button id="start" class="btn btn-start" type="button">Start</button>
-      <button id="addCarBtn" class="btn btn-add" type="button">+ Добавить машинку</button>
-      <button id="deleteCarBtn" class="btn btn-delete" type="button">- Удалить машинку</button>
-    </div>
+      <div class="controls">
+        <button id="start" class="btn btn-start" type="button">Start</button>
+        <button id="addCarBtn" class="btn btn-add" type="button">+ Добавить машинку</button>
+        <button id="deleteCarBtn" class="btn btn-delete" type="button">- Удалить машинку</button>
+      </div>
 
-    <div id="track" class="track" aria-label="Гоночный трек">
-      <div class="finish" aria-hidden="true"></div>
+      <div id="track" class="track" aria-label="Гоночный трек">
+        <div class="finish" aria-hidden="true"></div>
 
-      <div id="carsContainer">
-        <div class="race-row" >
-         <div class="car">
-          <div class="numberCar">1</div>
-         </div>
+        <div id="carsContainer">
+          <div class="race-row">
+            <div class="car">
+              <div class="numberCar">1</div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <p class="hint"></p>
-    <p id="message"></p>
-  </section>
+      <p class="hint"></p>
+      <p id="message"></p>
+    </section>
+  </div>
   <script src="test.js"></script>
 </body>
 

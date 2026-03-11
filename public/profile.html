@@ -1,41 +1,35 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
-    <link rel="stylesheet" href="./styles.css" />
-    <script src="./auth.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./auth.js"></script>
 </head>
 
 <body class="profile_body">
-    <div class="profile-container">
-
-        <div class="profile-top">
-            <h1>User Profile</h1>
-        </div>
-
-        <div class="profile-main">
-
-            <p><strong>Name:</strong> <span id="name">Loading...</span></p>
-            <p><strong>Email:</strong> <span id="email">Loading...</span></p>
-            <p><strong>Age:</strong> <span id="age">Loading...</span></p>
-            <p><strong>Details:</strong> <span id="details"></span> </p>
-
-        </div>
-
-        <div class="profile-bottom">
-            
-            <button id="addProductBtn" type="button">Добавить товар</button>
-            <button id="logoutBtn" type="button">Logout</button>
-            <button id="backBtn" type="button">Back</button>
-
-        </div>
-
-
+  <div class="profile-container">
+    <div class="profile-top">
+      <h1>User Profile</h1>
     </div>
-    <script src="./profile.js"></script>
+
+    <div class="profile-main">
+      <p><strong>Name:</strong> <span id="name">Loading...</span></p>
+      <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+      <p><strong>Age:</strong> <span id="age">Loading...</span></p>
+      <p><strong>Details:</strong> <span id="details"></span></p>
+    </div>
+
+    <div class="profile-bottom">
+      <button id="addProductBtn" type="button">Add product</button>
+      <button id="logoutBtn" type="button">Logout</button>
+      <button id="backBtn" type="button">Back</button>
+    </div>
+  </div>
+
+  <script src="./profile.js"></script>
 </body>
 
 </html>
