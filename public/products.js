@@ -10,6 +10,7 @@ const sortSelect = document.getElementById("sortSelect");
 const profileBtn = document.getElementById("profileBtn");
 const tokenInfo = document.getElementById("TokenIsAvailable");
 const searchForm = document.getElementById("searchForm");
+const modalImage = document.getElementById("modalImage");
 
 const user = getCurrentUser();
 
@@ -83,7 +84,7 @@ function renderProducts(products) {
 
 
     card.innerHTML = `
-      <img src="${product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
+      <img class="product-image" data-full-image="${product.imageOptimizedUrl || product.imageUrl}" src="${product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
       <h3>${product.name}</h3>
       <p>Price: ${product.price}</p>
       <p>Type: ${product.type}</p>
@@ -102,13 +103,27 @@ function renderProducts(products) {
 
 productsList.addEventListener("click", (e) => {
   const editBtn = e.target.closest(".edit-product-btn");
+  const img = e.target.closest(".product-image");
 
+  if(img) {
+    modalImage.ariaHidden = false;
+    modalImage.innerHTML = `
+    <img class="product-image" data-full-image="${img.imageOptimizedUrl || img.imageUrl}" src="${img.dataset.fullImage || img.src}" alt="${img.alt}" onerror="this.onerror=null;this.src='/img/placeholder.png';">`
+    console.log("modalImage: ", modalImage);
+    console.log(img);
+  }
+
+  modalImage.addEventListener("click", () => {
+      modalImage.ariaHidden = true;
+  })
+  
   if (editBtn) {
     const id = editBtn.dataset.productId;
     window.location.href = `/productForm.html?id=${id}`;
     return;
   }
 })
+
 
 function print(data) {
   productsList.textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);

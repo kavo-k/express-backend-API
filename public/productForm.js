@@ -14,6 +14,8 @@ const deleteModal = document.getElementById("deleteModal");
 const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
 const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
 const deleteModalText = document.getElementById("deleteModalText");
+const productImagePut = document.getElementById("productImagePut");
+const modalImage = document.getElementById("modalImage");
 
 const accessToken = localStorage.getItem("accessToken");
 const isToken = Boolean(accessToken);
@@ -33,6 +35,10 @@ async function outputInCard(id) {
         const res = await authFetch(`/products/${id}`);
         const product = await res.json();
 
+        console.log(productImagePut.src);
+        productImagePut.src = product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png';
+        console.log(productImagePut.src);
+        productImagePut.hidden = false;
 
         nameInput.value = product.name || ""
         priceInput.value = product.price ?? ""
@@ -45,6 +51,8 @@ async function outputInCard(id) {
 
 if (isId) {
     outputInCard(id);
+} else {
+    deleteBtn.hidden = true;
 }
 
 
@@ -91,6 +99,28 @@ productForm.addEventListener("submit", async (e) => {
         }
     }
 });
+
+productForm.addEventListener("click", (e) => {
+    const editBtn = e.target.closest(".edit-product-btn");
+    const img = e.target.closest(".product-image");
+
+    if (img) {
+        modalImage.ariaHidden = false;
+        modalImage.innerHTML = `
+    <img class="product-image" data-full-image="${img.imageOptimizedUrl || img.imageUrl}" src="${img.dataset.fullImage || img.src}" alt="${img.alt}" onerror="this.onerror=null;this.src='/img/placeholder.png';">`
+        console.log("modalImage: ", modalImage);
+    }
+
+    modalImage.addEventListener("click", () => {
+        modalImage.ariaHidden = true;
+    })
+
+    if (editBtn) {
+        const id = editBtn.dataset.productId;
+        window.location.href = `/productForm.html?id=${id}`;
+        return;
+    }
+})
 
 deleteBtn.onclick = () => {
     deleteModal.classList.add("open");

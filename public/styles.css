@@ -296,6 +296,63 @@ main {
   color: #d4e2fa;
 }
 
+.product-card img,
+.product-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  margin: 8px auto 4px;
+  border-radius: 14px;
+  border: 3px solid #374e6b;
+  background:
+    radial-gradient(120% 120% at 20% 0%, rgba(114, 173, 255, .2), transparent 45%),
+    linear-gradient(180deg, #0d1730, #0a1226);
+  box-shadow:
+    0 0 0 1px rgba(188, 220, 255, .2) inset,
+    0 10px 22px rgba(0, 0, 0, .34),
+    0 0 18px rgba(90, 145, 222, .18);
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+
+#modalImage.open,
+#modalImage[aria-hidden="false"] {
+  cursor: zoom-out;
+}
+
+.product-card img:hover,
+.product-image:hover {
+  transform: scale(1.025);
+  border-color: #8fb6e9;
+  box-shadow:
+    0 0 0 1px rgba(201, 228, 255, .28) inset,
+    0 14px 28px rgba(0, 0, 0, .38),
+    0 0 22px rgba(104, 166, 248, .28);
+}
+
+.product-card img:active,
+.product-image:active {
+  transform: scale(1.08);
+}
+
+#productImagePut {
+  width: min(100%, 340px);
+  margin: 8px auto 4px;
+  border-radius: 14px;
+  border: 1px solid #4b74ab;
+  background:
+    radial-gradient(120% 120% at 20% 0%, rgba(86, 134, 196, .22), transparent 45%),
+    linear-gradient(180deg, #0d1730, #0a1226);
+  box-shadow:
+    0 0 0 1px rgba(166, 205, 255, .12) inset,
+    0 10px 22px rgba(0, 0, 0, .34);
+}
+
+img[hidden],
+.product-image[hidden] {
+  display: none !important;
+}
+
 .edit-product-btn {
   width: 100%;
   margin-top: 10px;
@@ -500,6 +557,54 @@ form {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+}
+
+/* Product image fullscreen modal */
+#modalImage {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgba(4, 10, 24, .86);
+  backdrop-filter: blur(4px);
+  z-index: 1200;
+  cursor: zoom-out;
+}
+
+#modalImage.open,
+#modalImage[aria-hidden="false"] {
+  display: flex;
+}
+
+#modalImage img,
+#modalImage .modal-image {
+  width: min(96vw, 1260px);
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 16px;
+  border: 1px solid #6f97cc;
+  background: #0a1226;
+  box-shadow:
+    0 0 0 1px rgba(196, 225, 255, .22) inset,
+    0 18px 44px rgba(0, 0, 0, .52),
+    0 0 34px rgba(96, 159, 242, .24);
+}
+
+#modalImage::after {
+  content: "Click to close";
+  position: fixed;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  letter-spacing: .04em;
+  color: #c8dbf7;
+  background: rgba(16, 30, 57, .72);
+  border: 1px solid #365a8a;
+  border-radius: 999px;
+  padding: 6px 10px;
 }
 
 @media (max-width: 780px) {
