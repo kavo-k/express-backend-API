@@ -24,6 +24,7 @@ const {
   updateProduct,
   deleteProduct,
 } = require("../services/product.service");
+const { listeners } = require("../models/Product");
 
 
 router.get(
@@ -47,7 +48,7 @@ router.get(
         }) : null,
     }));
 
-res.json({ page, limit, total, products });
+    res.json({ page, limit, total, products });
   })
 );
 
@@ -148,59 +149,71 @@ router.put(
   auth,
   upload.single("image"),
   asyncHandler(async (req, res) => {
+
+    
     const { name, type, description } = req.body;
     let { valid, price } = req.body;
-
+    
     if (!name || !type || price === undefined || !price.trim()) {
       res.status(400).json({ error: "name, type, price обязательны" });
       return;
     }
-
+    
     price = Number(price);
-
+    
     if (Number.isNaN(price)) {
       return res.status(400).json({ error: "Price должен быть числом" });
     }
-
-
+    
+    
     if (valid !== undefined && isNaN(Date.parse(valid))) {
       res.status(400).json({ error: "valid должна быть датой" });
       return;
     }
-
+    
     const product = await getProductById(req.params.id);
-
+    
     if (!product) {
       return res.status(404).json({ error: "Продукт не найден" });
     }
-
+    
     if (product.owner._id.toString() !== req.user.userId && req.user.role !== "admin") {
       return res.status(403).json({ error: "я не знаю как вы сюда попали, но вы не можете редактировать этот продукт :)" });
     }
-
+    
     if (description !== undefined && typeof description !== "string") {
       return res.status(400).json({ error: "description должен быть строкой" });
     }
-
+    
     if (description !== undefined && description.length > 1000) {
       return res.status(400).json({ error: "description слишком длинный (max 1000)" });
     }
 
+    
     console.log("Product to update:", product);
-
+    
     if (valid) {
       const d = new Date(valid);
       d.setHours(0, 0, 0, 0);
       valid = d;
     }
+    
+    let updateData = { name, type, valid, price, description };
 
-    const updated = await updateProduct(req.params.id, { name, type, valid, price, description });
+    if (req.file) {
+      const result = await uploadToCloudinary(req.file.buffer);
+      updateData.imageUrl = result.secure_url;
+      updateData.imagePublicId = result.public_id;
+    }
+    
+    const updated = await updateProduct(req.params.id, updateData);
+    
 
     if (!updated) {
       return res.status(404).json({ error: "Продукт не найден" });
     }
-
-
+    
+    
     res.json(updated);
 
   })
@@ -224,6 +237,11 @@ router.delete(
 
     if (product.owner._id.toString() !== req.user.userId && req.user.role !== "admin") {
       return res.status(403).json({ error: "я не знаю как вы сюда попали, но вы не можете удалить этот продукт :)" });
+    }
+
+    if (product.imagePublicId) {
+      await cloudinary.uploader.destroy(product.imagePublicId);
+      console.log(product.imagePublicId);
     }
 
     const deleted = await deleteProduct(req.params.id);
