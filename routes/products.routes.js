@@ -24,7 +24,6 @@ const {
   updateProduct,
   deleteProduct,
 } = require("../services/product.service");
-const { listeners } = require("../models/Product");
 
 
 router.get(

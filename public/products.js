@@ -14,7 +14,7 @@ const modalImage = document.getElementById("modalImage");
 
 const user = getCurrentUser();
 
-const LIMIT = 5;
+const LIMIT = 6;
 let state = { currentPage: 1, maxPage: 1, search: "", sort: "desc" };
 
 function syncUrlWithState(mode = "replace") {
@@ -77,15 +77,16 @@ function renderProducts(products) {
     const canEdit =
       ownerId && productOwnerId && String(ownerId) === String(productOwnerId);
 
-    const editButtonHtml = canEdit
-      ? `<button class="edit-product-btn" type="button" data-product-id="${product._id}">Edit</button>`
-      : "";
+    if (canEdit) {
+      card.classList.add("owner-product");
+    }
+
     console.log(product);
 
 
     card.innerHTML = `
       <img class="product-image" data-full-image="${product.imageOptimizedUrl || product.imageUrl}" src="${product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
-      <h3>${product.name}</h3>
+      <h3 href="/public/product.html" >${product.name}</h3>
       <p>Price: ${product.price}</p>
       <p>Type: ${product.type}</p>
       <a href="/users/${product.owner && typeof product.owner === "object" ? product.owner._id : product.owner}">
@@ -95,35 +96,33 @@ function renderProducts(products) {
       <p>owner id: ${product.owner._id}</p>  
       <p>product id: ${product._id}</p>
       <p>created at: ${new Date(product.createdAt).toLocaleDateString("ru-RU")}</p>
-      ${editButtonHtml}
     `;
+
+    card.dataset.productId = product._id;
+
     productsList.appendChild(card);
   }
 }
 
 productsList.addEventListener("click", (e) => {
   const editBtn = e.target.closest(".edit-product-btn");
-  const img = e.target.closest(".product-image");
+  const productCard = e.target.closest(".product-card");
 
-  if(img) {
-    modalImage.ariaHidden = false;
-    modalImage.innerHTML = `
-    <img class="product-image" data-full-image="${img.imageOptimizedUrl || img.imageUrl}" src="${img.dataset.fullImage || img.src}" alt="${img.alt}" onerror="this.onerror=null;this.src='/img/placeholder.png';">`
-    console.log("modalImage: ", modalImage);
-    console.log(img);
-  }
 
-  modalImage.addEventListener("click", () => {
-      modalImage.ariaHidden = true;
-  })
-  
   if (editBtn) {
     const id = editBtn.dataset.productId;
     window.location.href = `/productForm.html?id=${id}`;
     return;
   }
-})
 
+  if (productCard) {
+    const id = productCard.dataset.productId;
+    window.location.href = `/product.html?id=${id}`;
+    return;
+  }
+
+
+})
 
 function print(data) {
   productsList.textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);
@@ -201,18 +200,6 @@ if (tokenInfo) {
 } else {
   console.warn("tokenInfo element not found");
 }
-
-
-profileBtn.addEventListener("click", (e) => {
-
-  if (!getToken()) {
-    window.location.href = "/login.html";
-    return;
-  }
-
-  window.location.href = "/profile.html";
-});
-
 
 
 readStateFromUrl();

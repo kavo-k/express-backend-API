@@ -35,9 +35,7 @@ async function outputInCard(id) {
         const res = await authFetch(`/products/${id}`);
         const product = await res.json();
 
-        console.log(productImagePut.src);
         productImagePut.src = product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png';
-        console.log(productImagePut.src);
         productImagePut.hidden = false;
 
         nameInput.value = product.name || ""

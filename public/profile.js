@@ -10,6 +10,10 @@ const addProductBtn = document.getElementById("addProductBtn");
 
 const user = getCurrentUser();
 
+if (!getToken()) {
+    window.location.href = "/login.html";
+}
+
 
 if (user) {
     name.textContent = user.userName || "";
