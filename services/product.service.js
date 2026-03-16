@@ -19,12 +19,28 @@ const getProducts = async ({ search, page, limit, sort }) => {
 
 
 const getProductById = async (id) => {
-    return Product.findById(id).populate("owner", "userName name age");
+  return Product.findById(id).populate("owner", "userName name age");
 };
 
 
+const getOwnerProducts = async ({ search, page, limit, sort, userId }) => {
+  const filter = search
+    ? { owner: userId, name: { $regex: search, $options: "i" } }
+    : { owner: userId };
+
+  const products = await Product.find(filter)
+    .sort({ createdAt: sort })
+    .skip((page - 1) * limit)
+    .limit(limit);
+
+  const total = await Product.countDocuments(filter);
+
+  return { products, total };
+}
+
+
 const createProduct = async ({ name, type, valid, price, owner, description, imageUrl, imagePublicId }) => {
-    return Product.create({ name, type, valid, price, owner, description, imageUrl, imagePublicId });
+  return Product.create({ name, type, valid, price, owner, description, imageUrl, imagePublicId });
 };
 
 
@@ -34,7 +50,7 @@ const updateProduct = async (id, data) => {
 
 
 const deleteProduct = async (id) => {
-    return Product.findByIdAndDelete(id);
+  return Product.findByIdAndDelete(id);
 }
 
 
@@ -44,4 +60,5 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  getOwnerProducts,
 };

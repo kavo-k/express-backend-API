@@ -11,22 +11,62 @@
 
 <body class="profile_body">
   <div class="profile-container">
-    <div class="profile-top">
-      <h1>User Profile</h1>
-    </div>
+    <section class="profile-hero">
+      <div class="profile-top">
+        <p class="home-hero-kicker">Account</p>
+        <h1>User Profile</h1>
+        <p class="profile-top-note">Manage your account and review your own products.</p>
+      </div>
 
-    <div class="profile-main">
-      <p><strong>Name:</strong> <span id="name">Loading...</span></p>
-      <p><strong>Email:</strong> <span id="email">Loading...</span></p>
-      <p><strong>Age:</strong> <span id="age">Loading...</span></p>
-      <p><strong>Details:</strong> <span id="details"></span></p>
-    </div>
+      <div class="profile-bottom">
+        <button id="addProductBtn" type="button">Add product</button>
+        <button id="logoutBtn" type="button">Logout</button>
+        <button id="backBtn" type="button">Back</button>
+      </div>
+    </section>
 
-    <div class="profile-bottom">
-      <button id="addProductBtn" type="button">Add product</button>
-      <button id="logoutBtn" type="button">Logout</button>
-      <button id="backBtn" type="button">Back</button>
-    </div>
+    <section class="profile-main">
+      <div class="profile-facts">
+        <p><strong>Name:</strong> <span id="name">Loading...</span></p>
+        <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+        <p><strong>Age:</strong> <span id="age">Loading...</span></p>
+      </div>
+
+      <div class="profile-details-card">
+        <p><strong>Details</strong></p>
+        <div id="details"></div>
+      </div>
+    </section>
+
+    <section class="profile-products-toolbar row">
+      <form action="" id="searchForm" class="search-input profile-search">
+        <input id="inputSearch" class="search-input" type="text" placeholder="Search your products by name...">
+      </form>
+
+      <div class="toolbar-left">
+        <select name="sort" id="sortSelect">
+          <option value="desc">Newest First</option>
+          <option value="asc">Oldest First</option>
+        </select>
+      </div>
+
+      <div class="toolbar-right pagination">
+        <button id="btnPrev" type="button">Prev</button>
+        <span id="pageInfo">1</span>
+        <button id="btnNext" type="button">Next</button>
+      </div>
+    </section>
+
+    <section class="profile-products">
+      <div class="profile-products-head">
+        <h2>My Products</h2>
+        <p>Your personal catalog and quick access to edits.</p>
+      </div>
+
+      <div id="myProductsList" class="profile-products-grid">
+        <p class="profile-products-empty">Your products will appear here.</p>
+      </div>
+    </section>
   </div>
 
   <script src="./profile.js"></script>
