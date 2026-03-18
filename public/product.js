@@ -1,5 +1,6 @@
 const productPageCard = document.getElementById("productPageCard");
 const productPageImage = document.getElementById('productPageImage');
+const productPageFullImage = document.getElementById(`productPageFullImage`);
 
 const productName = document.getElementById("productName");
 const productPrice = document.getElementById("productPrice");
@@ -21,13 +22,11 @@ let state = { search: "" };
 
 productPageCard.addEventListener("click", (e) => {
     const img = e.target.closest(".product-image");
+    console.log(img);
 
     if (img) {
         modalImage.ariaHidden = false;
-        modalImage.innerHTML = `
-    <img class="product-image" data-full-image="${img.imageOptimizedUrl || img.imageUrl}" src="${img.dataset.fullImage || img.src}" alt="${img.alt}" onerror="this.onerror=null;this.src='/img/placeholder.png';">`
-        console.log("modalImage: ", modalImage);
-        console.log(img);
+        img.src = img.dataset.fullImage || img.src;
         return;
     }
 })
@@ -39,8 +38,6 @@ modalImage.addEventListener("click", () => {
 
 
 const user = getCurrentUser();
-
-console.log('user:', user);
 
 async function loadProduct(id) {
     try {
@@ -62,10 +59,14 @@ async function loadProduct(id) {
         }
 
 
-        productPageImage.src = product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png';
+        productPageImage.src = product.imageOptimizedUrl || '/img/placeholder.png';
+        productPageFullImage.src = product.imageUrl || '/img/placeholder.png';
+        productPageFullImage.hidden = false;
         productPageImage.hidden = false;
 
-        console.log(product);
+        console.log("product", product);
+        console.log("productPageImage", productPageImage);
+        console.log("productPageFullImage", productPageFullImage);
 
         productName.innerHTML = product.name || "";
         productPrice.innerHTML = `Price: ${product.price ?? ""} ₽`;
