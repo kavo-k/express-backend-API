@@ -13,7 +13,7 @@ const {
   createUser,
   updateUser,
   deleteUser,
-  getUserByEmail
+  getUserByEmail,
 } = require("../services/user.service");
 
 
@@ -26,7 +26,7 @@ router.get(
     const search = req.query.search || "";
     const sort = req.query.sort === "asc" ? 1 : -1;
 
-    
+
     const { users, total } = await getUsers({ page, limit, search, sort });
 
     res.json({ page, limit, total, users, });
@@ -66,13 +66,12 @@ router.get(
 router.post(
   "/register",
   asyncHandler(async (req, res) => {
-    console.log("headers:", req.headers["content-type"]);
-    console.log("age:", req.body.age, "type:", typeof req.body.age);
-    console.log("userName:", req.body.userName, "type:", typeof req.body.userName);
-    console.log("email:", req.body.email, "type:", typeof req.body.email);
 
+    console.log("headers:", req.headers["content-type"]);
+    console.log(req.body);
 
     const { userName, age, email, password } = req.body;
+
 
     if (!email) {
       res.status(400).json({ error: "email обязателен" });
@@ -84,11 +83,12 @@ router.post(
 
     const normalizedEmail = String(email).toLowerCase().trim();
 
-    const user = await createUser({ 
-      userName, 
-      age, 
-      email: normalizedEmail, 
-      password });
+    const user = await createUser({
+      userName,
+      age,
+      email: normalizedEmail,
+      password,
+    });
 
     if (!userName) {
       res.status(400).json({ error: "userName обязателен" });
@@ -119,8 +119,8 @@ router.post(
   "/login",
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    
-    
+
+
     if (!email || !password) {
       res.status(400).json({ error: "email и password обязательны" });
       return;
@@ -128,7 +128,7 @@ router.post(
       res.status(400).json({ error: "email должен содержать @" });
       return;
     }
-    
+
     const normalizedEmail = String(email).toLowerCase().trim();
     const user = await getUserByEmail(normalizedEmail);
 
@@ -142,7 +142,7 @@ router.post(
 
     if (!user.passwordHash) {
       return res.status(401).json({ error: "Неверный email или пароль 3" });
-     }
+    }
 
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
     if (!passwordMatch) {
@@ -162,6 +162,74 @@ router.post(
     res.json({ message: "Успешный вход", accessToken, user: safeUser });
   })
 );
+
+
+router.post(
+  "/forgot-password",
+  asyncHandler(async (req, res) => {
+
+    console.log(req.body);
+    const { email } = req.body;
+
+    if (!email) {
+      res.status(400).json({ error: "Введите email" });
+      return;
+    } if (typeof email !== "string" || !email.includes("@")) {
+      res.status(400).json({ error: "email должен содержать @" });
+      return;
+    }
+
+    const normalizedEmail = String(email).toLowerCase().trim();
+    const user = await getUserByEmail(normalizedEmail);
+
+    if (!user) {
+      return res.json({ message: `письмо для сброса пароля отправлено` });
+    }
+
+    console.log(user);
+
+    const resetToken = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+
+    res.json({ message: `письмо для сброса пароля отправлено`, resetToken });
+
+  })
+);
+
+
+router.put(
+  "/reset-password",
+  asyncHandler(async (req, res) => {
+
+    const { token, password } = req.body;
+
+    if (!token) {
+      res.status(400).json({ error: "необходим токен пользователя" });
+      return;
+    }
+
+    if (!password) {
+      res.status(400).json({ error: "password обязателен" });
+      return;
+    } if (typeof password !== "string" || password.length < 6) {
+      res.status(400).json({ error: "password должен быть строкой не менее 6 символов" });
+      return;
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+    const updated = await updateUser(payload.userId, { passwordHash });
+
+    res.json({ message: `пароль успешно изменён! не забывайте его`, updated });
+
+  })
+);
+
 
 router.put(
   "/:id",
@@ -203,3 +271,4 @@ router.use((err, req, res, next) => {
 });
 
 module.exports = router;
+

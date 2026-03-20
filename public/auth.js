@@ -3,21 +3,6 @@ function getToken() {
     return localStorage.getItem("accessToken");
 }
 
-async function login(email, password) {
-    const res = await fetch("/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) { throw new Error(data.error || "Ошибка при входе"); }
-
-    localStorage.setItem("accessToken", data.token || data.accessToken);
-    localStorage.setItem("user", JSON.stringify(data.user));
-    return data.user;
-}
 
 async function register(userName, age, email, password) {
     const res = await fetch("/users/register", {
@@ -32,16 +17,54 @@ async function register(userName, age, email, password) {
     return data.user;
 }
 
+
+async function login(email, password) {
+    const res = await fetch("/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+     
+    const user = data.user;
+    const message = data.message;
+    const result = { user, message };
+
+    if (!res.ok) { throw new Error(data.error || "Ошибка при входе"); }
+
+    localStorage.setItem("accessToken", data.token || data.accessToken);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    return result;
+}
+
+
+async function forgotPassword(email) {
+    const res = await fetch("/users/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) { throw new Error(data.error || "Ошибка при сбросе пароля"); }
+    return data;
+}
+
+
 function getCurrentUser() {
     const userJson = localStorage.getItem("user");
     return userJson ? JSON.parse(userJson) : null;
 }
+
 
 function logout() {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("user");
     window.location.href = "/login.html";
 }
+
 
 async function authFetch(url, options = {}) {
     const token = getToken();
