@@ -77,8 +77,6 @@ router.get(
         }) : null,
     }));
 
-    console.log(req.user);
-
     res.json({ page, limit, total, products });
 
   })

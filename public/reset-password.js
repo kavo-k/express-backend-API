@@ -22,11 +22,11 @@ resetSubmitBtn.addEventListener("click", async (e) => {
         if (result) {
             console.log(result);
             errorMessage.textContent = "";
-            successMessage.textContent = result.message || "Пароль успешно изменен";
+            successMessage.textContent = result.message || "РџР°СЂРѕР»СЊ СѓСЃРїРµС€РЅРѕ РёР·РјРµРЅРµРЅ";
             window.location.href = "/login.html";
         }
     } else {
-        errorMessage.textContent = "Пароли не совпадают";
+        errorMessage.textContent = "РџР°СЂРѕР»Рё РЅРµ СЃРѕРІРїР°РґР°СЋС‚";
     }
 });
 

@@ -27,7 +27,7 @@ if (!getToken()) {
 
 
 if (user) {
-    name.textContent = user.userName || "";
+    name.textContent = user.userName || user.name || "";
     email.textContent = user.email || "";
     age.textContent = user.age || "не указано";
 }
@@ -37,9 +37,9 @@ if (!user) {
     window.location.href = "/login.html";
 } else {
     details.innerHTML = `
-    <p>Пользователь: ${user.userName} (id: ${user._id})</p>
-    Открыть API: <a href="/users/${user._id}" target="_blank" rel="noopener noreferrer"> 
-    /users/${user._id} </a>`;
+    <p>Пользователь: ${user.userName || user.name} (id: ${user._id})</p>
+    Открыть API: <a href="/users/${user._id}" target="_blank" rel="noopener noreferrer" > 
+    /users/${user._id} (потом убрать)</a>`;
 };
 
 
@@ -123,7 +123,7 @@ function renderProducts(products) {
   myProductsList.innerHTML = "";
 
   if (products.length === 0) {
-    myProductsList.innerHTML = '<p class="profile-products-empty">Your products will appear here.</p>';
+    myProductsList.innerHTML = '<p class="profile-products-empty">You have no products yet.</p>';
     return;
   }
 
@@ -170,6 +170,17 @@ function renderProducts(products) {
 function print(data) {
   myProductsList.textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);
 }
+
+myProductsList.addEventListener("click", (e) => {
+  const productCard = e.target.closest(".product-card");
+
+  if (productCard) {
+    const id = productCard.dataset.productId;
+    window.location.href = `/product.html?id=${id}`;
+    return;
+  }
+
+})
 
 addProductBtn.addEventListener("click", () => {
     window.location.href = "/productForm.html"

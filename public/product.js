@@ -49,9 +49,9 @@ async function loadProduct(id) {
         user && user.role === "admin" ? isAdmin = true : null;
 
         const ownerId = user ? user._id : null;
-        let productOwner = product.owner._id;
+        let owner = product.owner._id;
 
-        if (String(productOwner) === String(ownerId) || isAdmin === true) {
+        if (String(owner) === String(ownerId) || isAdmin === true) {
             canEdit = true;
             editProduct.hidden = false;
             editProduct.innerHTML = `Edit`;
@@ -67,6 +67,7 @@ async function loadProduct(id) {
         console.log("product", product);
         console.log("productPageImage", productPageImage);
         console.log("productPageFullImage", productPageFullImage);
+        console.log(product.owner.name);
 
         productName.innerHTML = product.name || "";
         productPrice.innerHTML = `Price: ${product.price ?? ""} ₽`;
@@ -81,7 +82,7 @@ async function loadProduct(id) {
 };
 
 if (tokenInfo) {
-    tokenInfo.textContent = ` ${user ? `user:${user.userName}` : ""}`;
+    tokenInfo.textContent = ` ${user ? `user:${user.userName || user.name}` : ""}`;
 } else {
     console.warn("tokenInfo element not found");
 }

@@ -12,7 +12,7 @@ submitBtn.addEventListener("click", async (e) => {
         const email = emailInput.value.trim();
         const result = await forgotPassword(email);
         console.log("forgot password result:", result);
-        successMessage.textContent = result.message || "Письмо для сброса пароля отправлено";
+        successMessage.textContent = result.message || "РџРёСЃСЊРјРѕ РґР»СЏ СЃР±СЂРѕСЃР° РїР°СЂРѕР»СЏ РѕС‚РїСЂР°РІР»РµРЅРѕ";
 
         if (result.resetToken) {
             window.location.href = `/reset-password.html?token=${result.resetToken}`;

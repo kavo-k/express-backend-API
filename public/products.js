@@ -93,8 +93,8 @@ function renderProducts(products) {
   Owner: ${product.owner && typeof product.owner === "object" ? product.owner.userName || product.owner.name : "-"}
 </a>
       <p>Description: ${product.description || "-"}</p>
-      <p>owner id: ${product.owner._id}</p>  
-      <p>product id: ${product._id}</p>
+      <p>owner id: ${product.owner._id} (потом убрать)</p>  
+      <p>product id: ${product._id} (потом убрать)</p>
       <p>created at: ${new Date(product.createdAt).toLocaleDateString("ru-RU")}</p>
     `;
 

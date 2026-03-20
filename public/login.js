@@ -11,8 +11,10 @@ submitBtn.addEventListener("click", async (e) => {
     errorMessage.textContent = "";
 
     try {
-        const user = await login(emailInput.value, passwordInput.value);
-        console.log("Logged in user:", user);
+        const result = await login(emailInput.value, passwordInput.value);
+        console.log(result);
+        console.log("Logged in user:", result.user);
+        errorMessage.textContent = result.message;
         window.location.href = "/";
     } catch (e) {
         console.error("Login error:", e);
