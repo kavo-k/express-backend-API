@@ -181,19 +181,24 @@ router.post(
 
     const normalizedEmail = String(email).toLowerCase().trim();
     const user = await getUserByEmail(normalizedEmail);
-
+    
     if (!user) {
       return res.json({ message: `письмо для сброса пароля отправлено` });
     }
-
-    console.log(user);
-
+    
     const resetToken = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "15m" }
     );
 
+
+    const resetPasswordToken = await bcrypt.hash(resetToken, 10);
+    const resetPasswordExpires = new Date(new Date().getTime() + 15 * 60 * 1000);
+
+    const updated = await updateUser(user._id, { resetPasswordToken, resetPasswordExpires });
+
+    console.log("updated: ", updated);
 
     res.json({ message: `письмо для сброса пароля отправлено`, resetToken });
 
@@ -205,9 +210,9 @@ router.put(
   "/reset-password",
   asyncHandler(async (req, res) => {
 
-    const { token, password } = req.body;
+    const { resetToken, password } = req.body;
 
-    if (!token) {
+    if (!resetToken) {
       res.status(400).json({ error: "необходим токен пользователя" });
       return;
     }
@@ -219,13 +224,26 @@ router.put(
       res.status(400).json({ error: "password должен быть строкой не менее 6 символов" });
       return;
     }
-
     const passwordHash = await bcrypt.hash(password, 10);
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
 
-    const updated = await updateUser(payload.userId, { passwordHash });
+    const payload = jwt.verify(resetToken, process.env.JWT_SECRET);
 
-    res.json({ message: `пароль успешно изменён! не забывайте его`, updated });
+    const user = await getUserById(payload.userId);
+    const currentTime = new Date();
+
+    if (currentTime > user.resetPasswordExpires) {
+      return res.status(400).json({ error: "время для смены пороля прошло" });
+    }
+
+    const tokenMatch = await bcrypt.compare(resetToken, user.resetPasswordToken);
+
+    if (!tokenMatch) {
+      return res.status(400).json({ error: "ошибка смены пароля" });
+    }
+
+    await updateUser(payload.userId, { passwordHash, resetPasswordToken: null, resetPasswordExpires: null });
+
+    res.json({ message: `пароль успешно изменён! не забывайте его` });
 
   })
 );

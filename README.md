@@ -24,6 +24,9 @@ npm i
 MONGODB_URI=your_connection_string
 PORT=3000
 JWT_SECRET=your_random_jwt_secret_token
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
 ```
 3. Start:
 ```bash

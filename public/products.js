@@ -196,7 +196,7 @@ window.addEventListener("popstate", () => {
 
 
 if (tokenInfo) {
-  tokenInfo.textContent = ` ${user ? `user:${user.userName}` : ""}`;
+  tokenInfo.textContent = ` ${user ? `user:${user.userName || user.name}` : ""}`;
 } else {
   console.warn("tokenInfo element not found");
 }

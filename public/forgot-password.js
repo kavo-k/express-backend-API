@@ -3,19 +3,20 @@ const emailInput = document.getElementById("emailInput");
 const errorMessage = document.getElementById("errorMessage");
 const successMessage = document.getElementById("successMessage");
 
+
+const user = getCurrentUser();
+
+
 submitBtn.addEventListener("click", async (e) => {
     e.preventDefault();
     errorMessage.textContent = "";
-    successMessage.textContent = "";
-
     try {
         const email = emailInput.value.trim();
-        const result = await forgotPassword(email);
-        console.log("forgot password result:", result);
-        successMessage.textContent = result.message || "Письмо для сброса пароля отправлено";
-
-        if (result.resetToken) {
-            window.location.href = `/reset-password.html?token=${result.resetToken}`;
+        const user = await forgotPassword(email);
+        console.log("forgot password user:", user);
+        successMessage.textContent = `Письмо для сброса пароля отправлено`;
+        if (user.resetToken) {
+            window.location.href = `/reset-password.html?token=${user.resetToken}`;
         }
     } catch (e) {
         console.error("forgot password error:", e);
