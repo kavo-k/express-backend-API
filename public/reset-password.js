@@ -4,7 +4,7 @@ const resetSubmitBtn = document.getElementById("resetSubmitBtn");
 const errorMessage = document.getElementById("errorMessage");
 const successMessage = document.getElementById("successMessage");
 
-const resetToken = new URLSearchParams(window.location.search).get("token");
+const token = new URLSearchParams(window.location.search).get("token");
 
 resetSubmitBtn.addEventListener("click", async (e) => {
     e.preventDefault();
@@ -17,7 +17,7 @@ resetSubmitBtn.addEventListener("click", async (e) => {
     if (password1 === password2) {
         password = password2;
 
-        const result = await newPassword(resetToken, password);
+        const result = await newPassword(token, password);
 
         if (result) {
             console.log(result);
@@ -30,12 +30,12 @@ resetSubmitBtn.addEventListener("click", async (e) => {
     }
 });
 
-async function newPassword(resetToken, password) {
+async function newPassword(token, password) {
     try {
         const res = await fetch(`/users/reset-password`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ resetToken, password }),
+            body: JSON.stringify({ token, password }),
         });
         const data = await res.json();
 

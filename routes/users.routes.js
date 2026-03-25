@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const express = require("express");
+const crypto = require("crypto");
 const router = express.Router();
 const Product = require("../models/Product");
 const jwt = require("jsonwebtoken");
@@ -14,6 +15,7 @@ const {
   updateUser,
   deleteUser,
   getUserByEmail,
+  getUserByToken,
 } = require("../services/user.service");
 
 
@@ -83,23 +85,17 @@ router.post(
 
     const normalizedEmail = String(email).toLowerCase().trim();
 
-    const user = await createUser({
-      userName,
-      age,
-      email: normalizedEmail,
-      password,
-    });
-
+    
     if (!userName) {
       res.status(400).json({ error: "userName обязателен" });
       return;
     }
-
+    
     if (age !== undefined && typeof age !== "number") {
       res.status(400).json({ error: "age должен быть числом" });
       return;
     }
-
+    
     if (!password) {
       res.status(400).json({ error: "password обязателен" });
       return;
@@ -107,10 +103,17 @@ router.post(
       res.status(400).json({ error: "password должен быть строкой не менее 6 символов" });
       return;
     }
+    
+    const user = await createUser({
+      userName,
+      age,
+      email: normalizedEmail,
+      password,
+    });
 
     const safeUser = user.toObject();
     delete safeUser.passwordHash;
-
+    
     res.status(201).json({ user: safeUser, message: `Пользователь ${userName} успешно зарегистрирован` });
   })
 );
@@ -181,26 +184,19 @@ router.post(
 
     const normalizedEmail = String(email).toLowerCase().trim();
     const user = await getUserByEmail(normalizedEmail);
-    
+
     if (!user) {
       return res.json({ message: `письмо для сброса пароля отправлено` });
     }
-    
-    const resetToken = jwt.sign(
-      { userId: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "15m" }
-    );
 
+    const token = crypto.randomBytes(32).toString("hex");
 
-    const resetPasswordToken = await bcrypt.hash(resetToken, 10);
+    const resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
     const resetPasswordExpires = new Date(new Date().getTime() + 15 * 60 * 1000);
 
     const updated = await updateUser(user._id, { resetPasswordToken, resetPasswordExpires });
 
-    console.log("updated: ", updated);
-
-    res.json({ message: `письмо для сброса пароля отправлено`, resetToken });
+    res.json({ message: `письмо для сброса пароля отправлено`, token });
 
   })
 );
@@ -210,9 +206,9 @@ router.put(
   "/reset-password",
   asyncHandler(async (req, res) => {
 
-    const { resetToken, password } = req.body;
+    const { token, password } = req.body;
 
-    if (!resetToken) {
+    if (!token) {
       res.status(400).json({ error: "необходим токен пользователя" });
       return;
     }
@@ -226,22 +222,25 @@ router.put(
     }
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const payload = jwt.verify(resetToken, process.env.JWT_SECRET);
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+    
+    const user = await getUserByToken(tokenHash);
 
-    const user = await getUserById(payload.userId);
+    if (!user) {
+      return res.status(400).json({ error: "ошибка смены пароля" });
+    }
+
     const currentTime = new Date();
 
     if (currentTime > user.resetPasswordExpires) {
       return res.status(400).json({ error: "время для смены пороля прошло" });
     }
 
-    const tokenMatch = await bcrypt.compare(resetToken, user.resetPasswordToken);
-
-    if (!tokenMatch) {
-      return res.status(400).json({ error: "ошибка смены пароля" });
+    if (await bcrypt.compare(password, user.passwordHash)) {
+      return res.status(400).json({ error: "необходимо ввести новый пароль" });
     }
 
-    await updateUser(payload.userId, { passwordHash, resetPasswordToken: null, resetPasswordExpires: null });
+    await updateUser(user._id, { passwordHash, resetPasswordToken: null, resetPasswordExpires: null });
 
     res.json({ message: `пароль успешно изменён! не забывайте его` });
 

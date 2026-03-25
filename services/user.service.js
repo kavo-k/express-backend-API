@@ -22,6 +22,10 @@ const getUserById = async (id) => {
   return User.findById(id).select("-passwordHash");
 };
 
+const getUserByToken = async (resetPasswordToken) => {
+  return User.findOne({ resetPasswordToken }).select("+passwordHash");
+}
+
 const createUser = async ({ userName, age, email, password }) => {
 
   const existingUser = await User.findOne({ email });
@@ -63,4 +67,5 @@ module.exports = {
   deleteUser,
   getUserByEmail,
   safeUser,
+  getUserByToken,
 };
