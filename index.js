@@ -15,8 +15,10 @@ const usersRoutes = require("./routes/users.routes");
 app.use("/users", usersRoutes);
 
 const productRoutes = require("./routes/products.routes");
-const User = require("./models/User");
-app.use("/products", productRoutes)
+app.use("/products", productRoutes);
+
+const cartRoutes = require("./routes/cart.routes");
+app.use("/cart", cartRoutes);
 
 
 app.use((err, req, res, next) => {
