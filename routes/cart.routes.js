@@ -9,7 +9,8 @@ const asyncHandler = (fn) => (req, res, next) =>
 const {
   getItems,
   addProduct,
-  deleteProduct,
+  removeCartItem,
+  decreaseCartItem,
 } = require("../services/cart.service");
 
 
@@ -19,17 +20,13 @@ router.get(
   asyncHandler(async (req, res) => {
     const userId = req.user.userId;
 
-    if (!userId) {
-      return res.status(404).json({ error: "пользователь не найден" });
+    const {cart, totalItems, totalPrice} = await getItems({ userId });
+
+    if (!cart) {
+      return res.json({ cart: [] });
     }
 
-    const items = await getItems({ userId });
-
-    if (!items) {
-      return res.json({ items: [] });
-    }
-
-    res.json({ items });
+    res.json({ cart, totalItems, totalPrice });
   })
 );
 
@@ -45,16 +42,37 @@ router.post(
     }
 
     const userId = req.user.userId;
+    const item = await addProduct({ productId, userId });
 
-    if (!userId) {
-      return res.status(404).json({ error: "пользователь не найден" });
+    if (!item) {
+      return res.status(404).json({ error: "товар не найден" });
     }
 
-    const item = await addProduct({ productId, userId })
     res.json(item);
   })
 )
 
+
+router.patch(
+  "/items/:productId/decrease",
+  auth,
+  asyncHandler(async (req, res) => {
+    const productId = req.params.productId;
+
+    if (!productId) {
+      return res.status(400).json({ error: "Товар не найден" });
+    }
+
+    const userId = req.user.userId;
+    const item = await decreaseCartItem({ productId, userId })
+
+    if (!item) {
+      return res.status(404).json({ error: "товар не найден" });
+    }
+
+    res.json(item);
+  })
+)
 
 router.delete(
   "/items/:productId",
@@ -63,16 +81,15 @@ router.delete(
     const productId = req.params.productId;
 
     if (!productId) {
-      return res.status(404).json({ error: "Товар не найден" });
+      return res.status(400).json({ error: "Товар не найден" });
     }
 
     const userId = req.user.userId;
+    const item = await removeCartItem({ productId, userId })
 
-    if (!userId) {
-      return res.status(404).json({ error: "пользователь не найден" });
+    if (!item) {
+      return res.status(404).json({ error: "товар не найден" });
     }
-
-    const item = await deleteProduct({ productId, userId })
 
     res.json(item);
   })

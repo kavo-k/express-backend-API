@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart</title>
+  <link rel="stylesheet" href="/shared/styles.css" />
+</head>
+
+<body class="cart_body">
+  <header>
+    <div class="header-bottom">
+      <div class="brand-row">
+        <div class="brand-copy">
+          <h1>Market Products</h1>
+          <p>Your cart and order preview</p>
+        </div>
+        <a class="top-link" href="/">Back to catalog</a>
+        <div class="userMenu">
+          <a href="/profile.html" id="profileBtn" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M4 21v-2a4 4 0 0 1 3-3.87"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Profile
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+
+  <main>
+    <section class="cart-shell">
+      <div class="cart-main">
+        <div class="cart-head">
+          <div>
+            <p class="home-hero-kicker">Checkout</p>
+            <h2>My Cart</h2>
+            <p class="cart-note">Review selected products, adjust quantities and prepare the final order.</p>
+          </div>
+          <button id="clearCartBtn" type="button">Clear cart</button>
+        </div>
+
+        <div id="cartItemsList" class="cart-items-list">
+          <article class="cart-item-card cart-item-card-loading" aria-hidden="true">
+            <div class="cart-item-image cart-skeleton-block"></div>
+            <div class="cart-item-content">
+              <div class="cart-item-copy cart-loading-copy">
+                <span class="cart-skeleton-line cart-skeleton-title"></span>
+                <span class="cart-skeleton-line cart-skeleton-text"></span>
+                <span class="cart-skeleton-line cart-skeleton-text short"></span>
+              </div>
+              <div class="cart-item-controls cart-loading-controls">
+                <div class="cart-quantity cart-quantity-loading">
+                  <span class="cart-skeleton-dot"></span>
+                  <span class="cart-skeleton-line cart-skeleton-qty"></span>
+                  <span class="cart-skeleton-dot"></span>
+                </div>
+                <span class="cart-skeleton-line cart-skeleton-price"></span>
+                <span class="cart-skeleton-line cart-skeleton-button"></span>
+              </div>
+            </div>
+          </article>
+
+          <article class="cart-item-card cart-item-card-loading" aria-hidden="true">
+            <div class="cart-item-image cart-skeleton-block"></div>
+            <div class="cart-item-content">
+              <div class="cart-item-copy cart-loading-copy">
+                <span class="cart-skeleton-line cart-skeleton-title"></span>
+                <span class="cart-skeleton-line cart-skeleton-text"></span>
+                <span class="cart-skeleton-line cart-skeleton-text short"></span>
+              </div>
+              <div class="cart-item-controls cart-loading-controls">
+                <div class="cart-quantity cart-quantity-loading">
+                  <span class="cart-skeleton-dot"></span>
+                  <span class="cart-skeleton-line cart-skeleton-qty"></span>
+                  <span class="cart-skeleton-dot"></span>
+                </div>
+                <span class="cart-skeleton-line cart-skeleton-price"></span>
+                <span class="cart-skeleton-line cart-skeleton-button"></span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <aside class="cart-summary">
+        <p class="home-hero-kicker">Summary</p>
+        <h3>Order overview</h3>
+
+        <div class="cart-summary-grid">
+          <p><span>Products</span><strong id="cartTotalItems">0</strong></p>
+          <p><span>Subtotal</span><strong id="cartSubtotal">$</strong></p>
+          <p><span>Delivery</span><strong id="cartDelivery">Free</strong></p>
+        </div>
+
+        <div class="cart-summary-total">
+          <span>Total</span>
+          <strong id="cartTotalPrice">$</strong>
+        </div>
+
+        <button id="checkoutBtn" class="submit-btn" type="button">Proceed to checkout</button>
+        <p class="cart-summary-note">You can wire this block to your checkout or order flow later.</p>
+      </aside>
+    </section>
+  </main>
+  <script src="/shared/auth.js"></script>
+  <script src="/cart/cart.js"></script>
+</body>
+
+</html>

@@ -14,22 +14,34 @@ const searchForm = document.getElementById("searchForm");
 const search = document.getElementById("inputSearch");
 const modalImage = document.getElementById("modalImage");
 
+const addToCartBtn = document.getElementById("addToCartBtn");
+
 let editProduct = document.getElementById("editProduct");
 
 const id = new URLSearchParams(window.location.search).get("id");
 
 let state = { search: "" };
 
-productPageCard.addEventListener("click", (e) => {
+productPageImage.addEventListener("click", (e) => {
     const img = e.target.closest(".product-image");
-    console.log(img);
 
     if (img) {
-        modalImage.ariaHidden = false;
-        img.src = img.dataset.fullImage || img.src;
-        return;
+        return modalImage.ariaHidden = false;
     }
 })
+
+
+addToCartBtn.addEventListener("click", async (e) => {
+    const addToCartBtn = e.target.closest(".cart-action-btn");
+    console.log(addToCartBtn);
+
+    if (addToCartBtn) {
+        const id = addToCartBtn.dataset.productId;
+        const result = await addToCart(id);
+        console.log(result);
+        return result;
+    }
+});
 
 modalImage.addEventListener("click", () => {
     modalImage.ariaHidden = true;
@@ -64,11 +76,6 @@ async function loadProduct(id) {
         productPageFullImage.hidden = false;
         productPageImage.hidden = false;
 
-        console.log("product", product);
-        console.log("productPageImage", productPageImage);
-        console.log("productPageFullImage", productPageFullImage);
-        console.log(product.owner.name);
-
         productName.innerHTML = product.name || "";
         productPrice.innerHTML = `Price: ${product.price ?? ""} ₽`;
         productDescription.innerHTML = `description: ${product.description || ""}`;
@@ -76,10 +83,14 @@ async function loadProduct(id) {
         productOwner.innerHTML = `owner: ${product.owner.userName || product.owner.name || ""}`;
         productCreatedAt.innerHTML = `Created: ${new Date(product.createdAt).toLocaleDateString("ru-RU") || ""}`;
 
+        addToCartBtn.dataset.productId = product._id;
+
     } catch (err) {
         errorMessage.textContent = err.message;
     }
 };
+
+
 
 if (tokenInfo) {
     tokenInfo.textContent = ` ${user ? `user:${user.userName || user.name}` : ""}`;

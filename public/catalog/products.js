@@ -86,16 +86,17 @@ function renderProducts(products) {
 
     card.innerHTML = `
       <img class="product-image" data-full-image="${product.imageOptimizedUrl || product.imageUrl}" src="${product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
-      <h3 href="/public/product.html" >${product.name}</h3>
+      <h3>${product.name}</h3>
       <p>Price: ${product.price}</p>
       <p>Type: ${product.type}</p>
       <a href="/users/${product.owner && typeof product.owner === "object" ? product.owner._id : product.owner}">
   Owner: ${product.owner && typeof product.owner === "object" ? product.owner.userName || product.owner.name : "-"}
 </a>
       <p>Description: ${product.description || "-"}</p>
-      <p>owner id: ${product.owner._id} (потом убрать)</p>  
-      <p>product id: ${product._id} (потом убрать)</p>
       <p>created at: ${new Date(product.createdAt).toLocaleDateString("ru-RU")}</p>
+      <div class="product-card-actions">
+        <button class="cart-action-btn add-to-cart-btn" type="button" data-product-id="${product._id}">Add to cart</button>
+      </div>
     `;
 
     card.dataset.productId = product._id;
@@ -105,22 +106,13 @@ function renderProducts(products) {
 }
 
 productsList.addEventListener("click", (e) => {
-  const editBtn = e.target.closest(".edit-product-btn");
   const productCard = e.target.closest(".product-card");
-
-
-  if (editBtn) {
-    const id = editBtn.dataset.productId;
-    window.location.href = `/productForm.html?id=${id}`;
-    return;
-  }
 
   if (productCard) {
     const id = productCard.dataset.productId;
     window.location.href = `/product.html?id=${id}`;
     return;
   }
-
 
 })
 
