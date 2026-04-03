@@ -12,16 +12,15 @@ const getItems = async ({ userId }) => {
     let totalItems = 0;
     const cart = await Cart.findOne({ user: userId }).populate("items.product")
     if (cart) {
-        let itemFound = false;
         for (let i = 0; i < cart.items.length; i++) {
             totalPrice += cart.items[i].product.price * cart.items[i].quantity;
             totalItems += cart.items[i].quantity;
             itemFound = true;
         }
-        if (!itemFound) {
-            return null;
-        }
         return { cart, totalItems, totalPrice };
+    }
+    else {
+        return { cart: null, totalItems, totalPrice };
     }
 };
 
