@@ -13,9 +13,10 @@ const getItems = async ({ userId }) => {
     const cart = await Cart.findOne({ user: userId }).populate("items.product")
     if (cart) {
         for (let i = 0; i < cart.items.length; i++) {
+            if (!cart.items[i].product) continue;
+            console.log(cart.items[i]);
             totalPrice += cart.items[i].product.price * cart.items[i].quantity;
             totalItems += cart.items[i].quantity;
-            itemFound = true;
         }
         return { cart, totalItems, totalPrice };
     }

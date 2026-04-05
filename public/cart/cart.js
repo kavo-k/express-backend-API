@@ -22,6 +22,7 @@ async function renderProducts(products) {
   }
 
   for (const item of products) {
+    if (!item.product) continue;
     const card = document.createElement("div");
     card.className = "cart-item-card";
     console.log(item);

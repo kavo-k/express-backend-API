@@ -86,16 +86,18 @@ function renderProducts(products) {
 
     card.innerHTML = `
       <img class="product-image" data-full-image="${product.imageOptimizedUrl || product.imageUrl}" src="${product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
-      <h3>${product.name}</h3>
-      <p>Price: ${product.price}</p>
-      <p>Type: ${product.type}</p>
-      <a href="/users/${product.owner && typeof product.owner === "object" ? product.owner._id : product.owner}">
-  Owner: ${product.owner && typeof product.owner === "object" ? product.owner.userName || product.owner.name : "-"}
-</a>
-      <p>Description: ${product.description || "-"}</p>
-      <p>created at: ${new Date(product.createdAt).toLocaleDateString("ru-RU")}</p>
-      <div class="product-card-actions">
-        <button class="cart-action-btn add-to-cart-btn" type="button" data-product-id="${product._id}">Add to cart</button>
+      <div class="product-card-copy">
+        <div class="product-card-topline">
+          <h3>${product.name}</h3>
+          <p class="product-card-price">$${product.price}</p>
+        </div>
+        <div class="product-card-meta">
+          <span class="product-card-type">${product.type || "-"}</span>
+          <a class="product-card-owner" href="/users/${product.owner && typeof product.owner === "object" ? product.owner._id : product.owner}">
+            ${product.owner && typeof product.owner === "object" ? product.owner.userName || product.owner.name : "-"}
+          </a>
+        </div>
+        <p class="product-card-description">${product.description || "-"}</p>
       </div>
     `;
 
@@ -135,7 +137,6 @@ async function loadProducts({ syncUrl = true, mode = "replace" } = {}) {
     const data = await getJson(
       `/products?search=${state.search}&limit=${LIMIT}&page=${state.currentPage}&sort=${state.sort}`
     );
-    console.log(data.page, data.limit, data.total, data.products);
 
     state.maxPage = Math.max(1, Math.ceil(data.total / LIMIT));
 

@@ -14,33 +14,75 @@ const searchForm = document.getElementById("searchForm");
 const search = document.getElementById("inputSearch");
 const modalImage = document.getElementById("modalImage");
 
+const productPageActions = document.getElementById("productPageActions");
 const addToCartBtn = document.getElementById("addToCartBtn");
+const productPlusBtn = document.getElementById("productPlusBtn");
+const productMinusBtn = document.getElementById("productMinusBtn");
+const productCartQuantity = document.getElementById("productCartQuantity");
+const productQuantityControls = document.getElementById("productQuantityControls");
+productQuantityControls.hidden = true;
 
 let editProduct = document.getElementById("editProduct");
 
 const id = new URLSearchParams(window.location.search).get("id");
 
+
+async function syncCartControls(id) {
+    const data = await loadCart()
+    let itemFound = false;
+    
+    console.log(data);
+    
+    for (let i = 0; i < data.cart.items.length; i++) {
+        if (data.cart.items[i].product._id === id) {
+            itemFound = true;
+            addToCartBtn.hidden = true;
+            productQuantityControls.hidden = false;
+            productCartQuantity.innerHTML = data.cart.items[i].quantity;
+            console.log(data.cart.items[i].product);
+            productPlusBtn.disabled = data.cart.items[i].quantity >= 99;
+        }
+    }
+
+    if (!itemFound) {
+        addToCartBtn.hidden = false;
+        productQuantityControls.hidden = true;
+    }
+}
+
+
 let state = { search: "" };
 
 productPageImage.addEventListener("click", (e) => {
     const img = e.target.closest(".product-image");
-
+    
     if (img) {
         return modalImage.ariaHidden = false;
     }
 })
 
-
-addToCartBtn.addEventListener("click", async (e) => {
-    const addToCartBtn = e.target.closest(".cart-action-btn");
-    console.log(addToCartBtn);
-
-    if (addToCartBtn) {
-        const id = addToCartBtn.dataset.productId;
-        const result = await addToCart(id);
-        console.log(result);
-        return result;
+productPageActions.addEventListener("click", async (e) => {
+    const addToCartBtnTg = e.target.closest(".cart-action-btn");
+    const productMinusBtnTg = e.target.closest("#productMinusBtn");
+    const productPlusBtnTg = e.target.closest("#productPlusBtn");
+    let result = null;
+    
+    if (productPlusBtnTg) {
+        result = await addToCart(id);
     }
+    
+    if (productMinusBtnTg) {
+        result = await decreaseCartItem(id);
+    }
+    
+    if (addToCartBtnTg) {
+        addToCartBtn.hidden = true;
+        productQuantityControls.hidden = false;
+        result = await addToCart(id);
+    }
+    
+    await syncCartControls(id);
+    return result
 });
 
 modalImage.addEventListener("click", () => {
@@ -57,34 +99,32 @@ async function loadProduct(id) {
         const product = await res.json();
         let canEdit = false;
         let isAdmin = false;
-
+        
         user && user.role === "admin" ? isAdmin = true : null;
-
+        
         const ownerId = user ? user._id : null;
         let owner = product.owner._id;
-
+        
         if (String(owner) === String(ownerId) || isAdmin === true) {
             canEdit = true;
             editProduct.hidden = false;
             editProduct.innerHTML = `Edit`;
             editProduct.href = `productForm.html?id=${product._id}`;
         }
-
-
+        
+        
         productPageImage.src = product.imageOptimizedUrl || '/img/placeholder.png';
         productPageFullImage.src = product.imageUrl || '/img/placeholder.png';
         productPageFullImage.hidden = false;
         productPageImage.hidden = false;
-
+        
         productName.innerHTML = product.name || "";
         productPrice.innerHTML = `Price: ${product.price ?? ""} ₽`;
         productDescription.innerHTML = `description: ${product.description || ""}`;
         productType.innerHTML = `type: ${product.type || ""}`;
         productOwner.innerHTML = `owner: ${product.owner.userName || product.owner.name || ""}`;
         productCreatedAt.innerHTML = `Created: ${new Date(product.createdAt).toLocaleDateString("ru-RU") || ""}`;
-
-        addToCartBtn.dataset.productId = product._id;
-
+        
     } catch (err) {
         errorMessage.textContent = err.message;
     }
@@ -107,3 +147,4 @@ searchForm.addEventListener("submit", (e) => {
 
 
 loadProduct(id);
+syncCartControls(id);

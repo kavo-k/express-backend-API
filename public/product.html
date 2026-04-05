@@ -65,8 +65,15 @@
                 <p id="productDescription">Description:</p>
                 <p id="productOwner">Owner:</p>
                 <p id="productCreatedAt">Created:</p>
-                <div class="product-page-actions">
-                    <button id="addToCartBtn" class="cart-action-btn" type="button">Add to cart</button>
+                <div class="product-page-actions" id="productPageActions">
+                    <div class="product-purchase-panel">
+                        <button id="addToCartBtn" class="cart-action-btn product-add-btn" type="button">Add to Cart</button>
+                        <div id="productQuantityControls" class="product-quantity-card" hidden>
+                            <button id="productMinusBtn" class="product-qty-btn" type="button" aria-label="Decrease quantity">-</button>
+                            <span id="productCartQuantity" class="product-qty-value"></span>
+                            <button id="productPlusBtn" class="product-qty-btn" type="button" aria-label="Increase quantity">+</button>
+                        </div>
+                    </div>
                 </div>
                 <a id="editProduct" href="" hidden="true"></a>
             </div>

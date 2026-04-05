@@ -19,6 +19,7 @@ router.get(
   auth,
   asyncHandler(async (req, res) => {
     const userId = req.user.userId;
+    console.log(req.user.userId);
 
     const {cart, totalItems, totalPrice} = await getItems({ userId });
 
