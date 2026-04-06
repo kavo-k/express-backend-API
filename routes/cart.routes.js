@@ -10,6 +10,7 @@ const {
   getItems,
   addProduct,
   removeCartItem,
+  removeCartAllItems,
   decreaseCartItem,
 } = require("../services/cart.service");
 
@@ -19,7 +20,6 @@ router.get(
   auth,
   asyncHandler(async (req, res) => {
     const userId = req.user.userId;
-    console.log(req.user.userId);
 
     const {cart, totalItems, totalPrice} = await getItems({ userId });
 
@@ -93,6 +93,22 @@ router.delete(
     }
 
     res.json(item);
+  })
+)
+
+
+router.delete(
+  "/items",
+  auth,
+  asyncHandler(async (req, res) => {
+    const userId = req.user.userId;
+    const items = await removeCartAllItems({ userId })
+
+    if (!items) {
+      return res.status(404).json({ error: "Корзина не найдена." });
+    }
+
+    res.json(items);
   })
 )
 

@@ -108,6 +108,21 @@ async function removeCartItem(productId) {
 }
 
 
+async function removeCartAllItems() {
+    const res = await authFetch(`/cart/items`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) { throw new Error(data.error || "Ошибка при удалении товара"); }
+    return data;
+}
+
+
+
 function getCurrentUser() {
     const userJson = localStorage.getItem("user");
     return userJson ? JSON.parse(userJson) : null;

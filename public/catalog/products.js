@@ -89,7 +89,7 @@ function renderProducts(products) {
       <div class="product-card-copy">
         <div class="product-card-topline">
           <h3>${product.name}</h3>
-          <p class="product-card-price">$${product.price}</p>
+          <p class="product-card-price">${product.price}₽</p>
         </div>
         <div class="product-card-meta">
           <span class="product-card-type">${product.type || "-"}</span>

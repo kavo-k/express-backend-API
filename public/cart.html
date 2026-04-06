@@ -31,7 +31,7 @@
       </div>
     </div>
   </header>
-  
+
 
   <main>
     <section class="cart-shell">
@@ -94,19 +94,31 @@
 
         <div class="cart-summary-grid">
           <p><span>Products</span><strong id="cartTotalItems">0</strong></p>
-          <p><span>Subtotal</span><strong id="cartSubtotal">$</strong></p>
+          <p><span>Subtotal</span><strong id="cartSubtotal">₽</strong></p>
           <p><span>Delivery</span><strong id="cartDelivery">Free</strong></p>
         </div>
 
         <div class="cart-summary-total">
           <span>Total</span>
-          <strong id="cartTotalPrice">$</strong>
+          <strong id="cartTotalPrice">₽</strong>
         </div>
 
         <button id="checkoutBtn" class="submit-btn" type="button">Proceed to checkout</button>
         <p class="cart-summary-note">You can wire this block to your checkout or order flow later.</p>
       </aside>
     </section>
+
+    <div id="deleteModal" class="modal-overlay" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+        <h3 id="deleteModalTitle">Очистить корзину?</h3>
+        <p id="deleteModalText">Вы действительно хотите очистить корзину?</p>
+        <div class="modal-actions">
+          <button id="cancelDeleteBtn" type="button">Cancel</button>
+          <button id="confirmClearCartBtn" type="button" class="delete-btn">Delete</button>
+        </div>
+      </div>
+    </div>
+
   </main>
   <script src="/shared/auth.js"></script>
   <script src="/cart/cart.js"></script>

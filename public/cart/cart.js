@@ -3,13 +3,17 @@ const cartItemsList = document.getElementById("cartItemsList");
 const cartTotalItems = document.getElementById("cartTotalItems");
 const cartSubtotal = document.getElementById("cartSubtotal");
 const cartTotalPrice = document.getElementById("cartTotalPrice");
+const clearCartBtn = document.getElementById("clearCartBtn");
+const deleteModal = document.getElementById("deleteModal");
+const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+const confirmClearCartBtn = document.getElementById("confirmClearCartBtn");
 
 async function initCart() {
   const data = await loadCart();
   console.log(data);
   cartTotalItems.innerHTML = data.totalItems;
-  cartSubtotal.innerHTML = `$${data.totalPrice}`;
-  cartTotalPrice.innerHTML = `$${data.totalPrice}`;
+  cartSubtotal.innerHTML = `${data.totalPrice}₽`;
+  cartTotalPrice.innerHTML = `${data.totalPrice}₽`;
   renderProducts(data.cart.items);
 }
 
@@ -42,7 +46,7 @@ async function renderProducts(products) {
     <span>${item.quantity}</span>
     <button class="plusBtn" type="button">+</button>
     </div>
-    <p class="cart-item-price">${item.product.price}$</p>
+    <p class="cart-item-price">${item.product.price}₽</p>
     <button class="delete-btn" type="button">Remove</button>
     </div>
     </div>
@@ -58,7 +62,6 @@ async function renderProducts(products) {
     card.dataset.productId = item.product._id;
 
     plusBtn.disabled = item.quantity >= 99;
-    minusBtn.disabled = item.quantity === 0;
     cartItemsList.appendChild(card);
   }
 }
@@ -100,5 +103,23 @@ cartItemsList.addEventListener("click", async (e) => {
     return;
   }
 })
+
+
+clearCartBtn.onclick = () => {
+    deleteModal.classList.add("open");
+};
+
+cancelDeleteBtn.addEventListener("click", () => {
+    deleteModal.classList.remove("open");
+});
+
+
+confirmClearCartBtn.addEventListener("click", async () => {
+  const result = await removeCartAllItems();
+  initCart();
+  deleteModal.classList.remove("open");
+  return result;
+})
+
 
 initCart();
