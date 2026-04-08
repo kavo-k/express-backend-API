@@ -25,20 +25,16 @@ const getItems = async ({ userId }) => {
 };
 
 
+
 const addProduct = async ({ productId, userId }) => {
     const cart = await Cart.findOne({ user: userId });
     const product = await getProductById(productId);
     if (product) {
-
         if (cart) {
-            let itemFound = false;
-            for (let i = 0; i < cart.items.length; i++) {
-                if (productId === cart.items[i].product.toString()) {
-                    cart.items[i].quantity++;
-                    itemFound = true;
-                }
-            }
-            if (!itemFound) {
+            const item = cart.items.find((item) => item.product.toString() === productId);
+            if (item) {
+                item.quantity++;
+            } else {
                 cart.items.push({
                     product: productId,
                     quantity: 1
@@ -109,7 +105,7 @@ const removeCartItem = async ({ productId, userId }) => {
 const removeCartAllItems = async ({ userId }) => {
     const cart = await Cart.findOne({ user: userId });
     if (cart) {
-            cart.items.splice(0, cart.items.length)
+        cart.items.splice(0, cart.items.length)
     } else {
         return null;
     }

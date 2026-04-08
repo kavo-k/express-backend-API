@@ -43,13 +43,13 @@ router.post(
     }
 
     const userId = req.user.userId;
-    const item = await addProduct({ productId, userId });
+    const items = await addProduct({ productId, userId });
 
-    if (!item) {
+    if (!items) {
       return res.status(404).json({ error: "товар не найден" });
     }
 
-    res.json(item);
+    res.json(items);
   })
 )
 
@@ -65,13 +65,13 @@ router.patch(
     }
 
     const userId = req.user.userId;
-    const item = await decreaseCartItem({ productId, userId })
+    const items = await decreaseCartItem({ productId, userId })
 
-    if (!item) {
+    if (!items) {
       return res.status(404).json({ error: "товар не найден" });
     }
 
-    res.json(item);
+    res.json(items);
   })
 )
 
@@ -86,13 +86,13 @@ router.delete(
     }
 
     const userId = req.user.userId;
-    const item = await removeCartItem({ productId, userId })
+    const items = await removeCartItem({ productId, userId })
 
-    if (!item) {
+    if (!items) {
       return res.status(404).json({ error: "товар не найден" });
     }
 
-    res.json(item);
+    res.json(items);
   })
 )
 
