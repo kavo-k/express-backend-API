@@ -145,8 +145,10 @@ confirmDeleteBtn.addEventListener("click", async () => {
     }
 });
 
+console.log(user);
+
 if (user) {
-    creatorName.textContent = `Продукт от лица: ${user ? user.userName : "null"}`;
+    creatorName.textContent = `Продукт от лица: ${user ? user.userName || user.name : "null"}`;
 } else {
     console.warn("tokenInfo element not found");
 }

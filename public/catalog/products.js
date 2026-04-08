@@ -1,15 +1,23 @@
 console.log("products.js LOADED");
 
+renderSharedHeader(document.getElementById("siteHeader"), {
+  searchPlaceholder: "Поиск товаров...",
+  showSearch: true,
+  showBack: false,
+  showFavorites: true,
+  showCart: true,
+  showProfile: true,
+  cartCount: "0"
+});
+
+
 const productsList = document.getElementById("productsConteiner");
 const btnPrev = document.getElementById("btnPrev");
 const btnNext = document.getElementById("btnNext");
 const pageInfo = document.getElementById("pageInfo");
 const search = document.getElementById("inputSearch");
-const btnSearch = document.getElementById("btnSearch");
 const sortSelect = document.getElementById("sortSelect");
 const profileBtn = document.getElementById("profileBtn");
-const tokenInfo = document.getElementById("TokenIsAvailable");
-const searchForm = document.getElementById("searchForm");
 const modalImage = document.getElementById("modalImage");
 
 const user = getCurrentUser();
@@ -17,20 +25,6 @@ const user = getCurrentUser();
 const LIMIT = 6;
 let state = { currentPage: 1, maxPage: 1, search: "", sort: "desc" };
 
-function syncUrlWithState(mode = "replace") {
-  const params = new URLSearchParams();
-  params.set("page", String(state.currentPage));
-
-  if (state.sort !== "desc") params.set("sort", state.sort);
-  if (state.search) params.set("search", state.search);
-
-  const newUrl = `${window.location.pathname}?${params.toString()}`;
-  if (mode === "push") {
-    history.pushState(null, "", newUrl);
-  } else {
-    history.replaceState(null, "", newUrl);
-  }
-}
 
 function readStateFromUrl() {
   const params = new URLSearchParams(window.location.search);
@@ -132,23 +126,16 @@ async function getJson(url) {
   return data;
 }
 
-async function loadProducts({ syncUrl = true, mode = "replace" } = {}) {
+async function loadProducts() {
   try {
     const data = await getJson(
       `/products?search=${state.search}&limit=${LIMIT}&page=${state.currentPage}&sort=${state.sort}`
     );
 
     state.maxPage = Math.max(1, Math.ceil(data.total / LIMIT));
-
-    const prevPage = state.currentPage;
     clampPage();
-    if (state.currentPage !== prevPage) {
-      if (syncUrl) syncUrlWithState("replace");
-      return loadProducts({ syncUrl: false, mode });
-    }
 
     pageInfo.textContent = state.currentPage;
-    if (syncUrl) syncUrlWithState(mode);
 
     renderProducts(data.products);
     updatePageButtons();
@@ -163,13 +150,6 @@ sortSelect.addEventListener("change", () => {
   loadProducts({ syncUrl: true, mode: "push" });
 });
 
-searchForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  state.search = search.value.trim();
-  state.currentPage = 1;
-  loadProducts({ syncUrl: true, mode: "push" });
-});
-
 btnNext.onclick = () => {
   state.currentPage = Math.min(state.currentPage + 1, state.maxPage);
   loadProducts({ syncUrl: true, mode: "push" });
@@ -179,21 +159,6 @@ btnPrev.onclick = () => {
   state.currentPage = Math.max(state.currentPage - 1, 1);
   loadProducts({ syncUrl: true, mode: "push" });
 };
-
-window.addEventListener("popstate", () => {
-  readStateFromUrl();
-  loadProducts({ syncUrl: false });
-});
-
-// ---------- AUTH & PROFILE ----------
-
-
-if (tokenInfo) {
-  tokenInfo.textContent = ` ${user ? `user:${user.userName || user.name}` : ""}`;
-} else {
-  console.warn("tokenInfo element not found");
-}
-
 
 readStateFromUrl();
 loadProducts({ syncUrl: false });

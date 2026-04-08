@@ -6,20 +6,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile</title>
   <link rel="stylesheet" href="/shared/styles.css" />
+  <script src="/shared/header.js"></script>
   <script src="/shared/auth.js"></script>
 </head>
 
-<body class="profile_body">
+<body class="profile_body profile-page-body">
+  <header id="siteHeader"></header>
+  <script>
+    renderSharedHeader(document.getElementById("siteHeader"), {
+      searchPlaceholder: "Поиск по моим товарам...",
+      showSearch: true,
+      showBack: true,
+      backHref: "/",
+      showFavorites: false,
+      showCart: true,
+      showProfile: false,
+      cartCount: "0"
+    });
+  </script>
+
+  <main class="profile-page-shell">
   <div class="profile-container">
     <section class="profile-hero">
       <div class="profile-top">
-        <p class="home-hero-kicker">Account</p>
-        <h1>User Profile</h1>
-        <p class="profile-top-note">Manage your account and review your own products.</p>
+        <p class="home-hero-badge">Личный кабинет</p>
+        <h1>Профиль</h1>
+        <p class="profile-top-note">Управляй аккаунтом, публикуй объявления и следи за своими товарами.</p>
       </div>
 
       <div class="profile-bottom">
-        <button id="addProductBtn" type="button">Add product</button>
+        <button id="addProductBtn" type="button">Добавить товар</button>
         <a class="cart-link profile-cart-link" href="/cart.html" aria-label="Cart">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -27,49 +43,45 @@
             <circle cx="20" cy="21" r="1"></circle>
             <path d="M1 1h4l2.68 13.39A2 2 0 0 0 9.64 16H19a2 2 0 0 0 1.95-1.57L23 6H6"></path>
           </svg>
-          <span>Cart</span>
+          <span>Корзина</span>
         </a>
-        <button id="logoutBtn" type="button">Logout</button>
-        <button id="backBtn" type="button">Back</button>
+        <button id="logoutBtn" type="button">Выйти</button>
+        <button id="backBtn" type="button">Назад</button>
       </div>
     </section>
 
     <section class="profile-main">
       <div class="profile-facts">
-        <p><strong>Name:</strong> <span id="name">Loading...</span></p>
-        <p><strong>Email:</strong> <span id="email">Loading...</span></p>
-        <p><strong>Age:</strong> <span id="age">Loading...</span></p>
+        <p><strong>Имя</strong><span id="name">Loading...</span></p>
+        <p><strong>Email</strong><span id="email">Loading...</span></p>
+        <p><strong>Возраст</strong><span id="age">Loading...</span></p>
       </div>
 
       <div class="profile-details-card">
-        <p><strong>Details</strong></p>
+        <p><strong>Детали аккаунта</strong></p>
         <div id="details"></div>
       </div>
     </section>
 
     <section class="profile-products-toolbar row">
-      <form action="" id="searchForm" class="search-input profile-search">
-        <input id="inputSearch" class="search-input" type="text" placeholder="Search your products by name...">
-      </form>
-
       <div class="toolbar-left">
         <select name="sort" id="sortSelect">
-          <option value="desc">Newest First</option>
-          <option value="asc">Oldest First</option>
+          <option value="desc">Сначала новые</option>
+          <option value="asc">Сначала старые</option>
         </select>
       </div>
 
       <div class="toolbar-right pagination">
-        <button id="btnPrev" type="button">Prev</button>
+        <button id="btnPrev" type="button">Назад</button>
         <span id="pageInfo">1</span>
-        <button id="btnNext" type="button">Next</button>
+        <button id="btnNext" type="button">Далее</button>
       </div>
     </section>
 
     <section class="profile-products">
       <div class="profile-products-head">
-        <h2>My Products</h2>
-        <p>Your personal catalog and quick access to edits.</p>
+        <h2>Мои объявления</h2>
+        <p>Твои карточки товаров и быстрый доступ к редактированию.</p>
       </div>
 
       <div id="myProductsList" class="profile-products-grid">
@@ -77,6 +89,7 @@
       </div>
     </section>
   </div>
+  </main>
 
   <script src="/profile/profile.js"></script>
 </body>

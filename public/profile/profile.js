@@ -1,5 +1,15 @@
 console.log("Profile page loaded");
 
+renderSharedHeader(document.getElementById("siteHeader"), {
+  searchPlaceholder: "Поиск товаров...",
+  showSearch: true,
+  showBack: true,
+  showFavorites: true,
+  showCart: true,
+  showProfile: true,
+  cartCount: "0"
+});
+
 const name = document.getElementById("name");
 const email = document.getElementById("email");
 const age = document.getElementById("age");
@@ -12,7 +22,6 @@ const sortSelect = document.getElementById("sortSelect");
 const pageInfo = document.getElementById("pageInfo");
 const btnPrev = document.getElementById("btnPrev");
 const btnNext = document.getElementById("btnNext");
-const searchForm = document.getElementById("searchForm");
 const search = document.getElementById("inputSearch");
 
 const LIMIT = 5;
@@ -22,46 +31,31 @@ let state = { currentPage: 1, maxPage: 1, search: "", sort: "desc" };
 const user = getCurrentUser();
 
 if (!getToken()) {
-    window.location.href = "/login.html";
+  window.location.href = "/login.html";
 }
 
 
 if (user) {
-    name.textContent = user.userName || user.name || "";
-    email.textContent = user.email || "";
-    age.textContent = user.age || "не указано";
+  name.textContent = user.userName || user.name || "";
+  email.textContent = user.email || "";
+  age.textContent = user.age || "не указано";
 }
 
 if (!user) {
-    console.warn("No user data found, redirecting to login");
-    window.location.href = "/login.html";
+  console.warn("No user data found, redirecting to login");
+  window.location.href = "/login.html";
 } else {
-    details.innerHTML = `
+  details.innerHTML = `
     <p>Пользователь: ${user.userName || user.name} (id: ${user._id})</p>
     Открыть API: <a href="/users/${user._id}" target="_blank" rel="noopener noreferrer" > 
     /users/${user._id} (потом убрать)</a>`;
 };
 
 
-function syncUrlWithState(mode = "replace") {
-  const params = new URLSearchParams();
-  params.set("page", String(state.currentPage));
-
-  if (state.sort !== "desc") params.set("sort", state.sort);
-  if (state.search) params.set("search", state.search);
-
-  const newUrl = `${window.location.pathname}?${params.toString()}`;
-  if (mode === "push") {
-    history.pushState(null, "", newUrl);
-  } else {
-    history.replaceState(null, "", newUrl);
-  }
-}
-
-
 function readStateFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const page = parseInt(params.get("page"), 10);
+  console.log(params);
 
   state.search = (params.get("search") || "").trim();
   state.sort = params.get("sort") || "desc";
@@ -72,13 +66,13 @@ function readStateFromUrl() {
 }
 
 async function getJson(url) {
-    const res = await authFetch(url);
-    const data = await res.json().catch(() => null);
-    
-    if (!res.ok) {
-        throw new Error(data?.message || `HTTP ${res.status}`);
-    }
-    return data;
+  const res = await authFetch(url);
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.message || `HTTP ${res.status}`);
+  }
+  return data;
 }
 
 function clampPage() {
@@ -92,8 +86,9 @@ function updatePageButtons() {
 }
 
 
-async function loadProducts({ syncUrl = true, mode = "replace" } = {}) {
+async function loadProducts() {
   try {
+    console.log(state);
     const data = await getJson(
       `/products/my?search=${state.search}&limit=${LIMIT}&page=${state.currentPage}&sort=${state.sort}`
     );
@@ -103,13 +98,8 @@ async function loadProducts({ syncUrl = true, mode = "replace" } = {}) {
 
     const prevPage = state.currentPage;
     clampPage();
-    if (state.currentPage !== prevPage) {
-      if (syncUrl) syncUrlWithState("replace");
-      return loadProducts({ syncUrl: false, mode });
-    }
 
     pageInfo.textContent = state.currentPage;
-    if (syncUrl) syncUrlWithState(mode);
 
     renderProducts(data.products);
     updatePageButtons();
@@ -183,27 +173,20 @@ myProductsList.addEventListener("click", (e) => {
 })
 
 addProductBtn.addEventListener("click", () => {
-    window.location.href = "/productForm.html"
+  window.location.href = "/productForm.html"
 });
 
 
 logoutBtn.addEventListener("click", () => {
-    logout();
+  logout();
 });
 
 backBtn.addEventListener("click", () => {
-    window.location.href = "/";
+  window.location.href = "/";
 });
 
 sortSelect.addEventListener("change", () => {
   state.sort = sortSelect.value;
-  state.currentPage = 1;
-  loadProducts({ syncUrl: true, mode: "push" });
-});
-
-searchForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  state.search = search.value.trim();
   state.currentPage = 1;
   loadProducts({ syncUrl: true, mode: "push" });
 });
@@ -219,9 +202,5 @@ btnPrev.onclick = () => {
 };
 
 
-window.addEventListener("popstate", () => {
-  readStateFromUrl();
-  loadProducts({ syncUrl: false });
-});
-
+readStateFromUrl();
 loadProducts({ syncUrl: false });

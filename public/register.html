@@ -9,44 +9,62 @@
 </head>
 
 <body class="register_body">
-  <div class="register-container">
-    <p class="home-hero-kicker">Register</p>
-    <h1>Create Account</h1>
-    <form id="registerForm">
-      <div class="form-group">
-        <label for="userNameInput">Username</label>
-        <input type="text" id="userNameInput" name="userName" required placeholder="Your name">
+  <div class="auth-shell">
+    <section class="auth-showcase">
+      <a class="brand-copy brand-mark" href="/">
+        <span class="brand-mark-white">Market</span><span class="brand-mark-accent">Place</span>
+      </a>
+      <p class="home-hero-badge">Регистрация</p>
+      <h1>Создай аккаунт</h1>
+      <p class="auth-showcase-note">Аккаунт открывает доступ к профилю, корзине и публикации своих товаров.</p>
+      <div class="auth-showcase-points">
+        <p>Публикуй свои объявления</p>
+        <p>Сохраняй товары в корзину</p>
+        <p>Восстановление доступа по email</p>
+      </div>
+    </section>
+
+    <div class="register-container auth-card">
+      <p class="home-hero-kicker">Register</p>
+      <h1>Регистрация</h1>
+      <p class="auth-card-note">Заполни основные поля. Всё остальное потом можно развить в профиле.</p>
+
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="userNameInput">Никнейм<a class="zv">*</a></label>
+          <input type="text" id="userNameInput" name="userName" required placeholder="Твоё имя">
+        </div>
+
+        <div class="form-group">
+          <label for="emailInput">Email<a class="zv">*</a></label>
+          <input type="email" id="emailInput" name="email" required placeholder="you@example.com">
+        </div>
+
+        <div class="form-group">
+          <label for="ageInput">Возраст (не обязательно)</label>
+          <input type="number" id="ageInput" name="age" required placeholder="18">
+        </div>
+
+        <div class="form-group">
+          <label for="passwordInput">Пароль<a class="zv">*</a></label>
+          <input type="password" id="passwordInput" name="password" required>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPasswordInput">Повтор пароля<a class="zv">*</a></label>
+          <input type="password" id="confirmPasswordInput" name="confirm-password" required>
+        </div>
+
+        <button id="submitBtn" type="submit">Создать аккаунт</button>
+      </form>
+
+      <div class="error-container">
+        <p id="errorMessage" class="error-message"></p>
       </div>
 
-      <div class="form-group">
-        <label for="emailInput">Email</label>
-        <input type="email" id="emailInput" name="email" required placeholder="you@example.com">
+      <div class="login-link">
+        Уже есть аккаунт? <a href="login.html">Войти</a>
       </div>
-
-      <div class="form-group">
-        <label for="ageInput">Age</label>
-        <input type="number" id="ageInput" name="age" required placeholder="18">
-      </div>
-
-      <div class="form-group">
-        <label for="passwordInput">Password</label>
-        <input type="password" id="passwordInput" name="password" required>
-      </div>
-
-      <div class="form-group">
-        <label for="confirmPasswordInput">Confirm Password</label>
-        <input type="password" id="confirmPasswordInput" name="confirm-password" required>
-      </div>
-
-      <button id="submitBtn" type="submit">Register</button>
-    </form>
-
-    <div class="error-container">
-      <p id="errorMessage" class="error-message"></p>
-    </div>
-
-    <div class="login-link">
-      Already have an account? <a href="login.html">Sign in</a>
     </div>
   </div>
 
