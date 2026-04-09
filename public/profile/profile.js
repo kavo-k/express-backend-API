@@ -140,15 +140,26 @@ function renderProducts(products) {
 
 
     card.innerHTML = `
-      <img class="product-owner-image" data-full-image="${product.imageOptimizedUrl || product.imageUrl}" src="${product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
-      <h3 href="/public/product.html" >${product.name}</h3>
-      <p>Price: ${product.price}</p>
-      <p>Type: ${product.type}</p>
-      <a href="/users/${product.owner && typeof product.owner === "object" ? product.owner._id : product.owner}">
-  Owner: ${product.owner && typeof product.owner === "object" ? product.owner.userName || product.owner.name : "-"}
-</a>
-      <p>Description: ${product.description || "-"}</p>
-      <p>created at: ${new Date(product.createdAt).toLocaleDateString("ru-RU")}</p>
+      <div class="product-card-media">
+        <span class="product-card-badge">${product.type ? product.type : "лот"}</span>
+        <img class="product-owner-image" data-full-image="${product.imageOptimizedUrl || product.imageUrl}" src="${product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
+      </div>
+      <div class="product-card-copy">
+        <div class="product-card-topline">
+          <h3>${product.name}</h3>
+        </div>
+        <div class="product-card-rating">
+          <span class="product-card-star">★</span>
+          <span class="product-card-rating-value">4.8</span>
+          <span class="product-card-rating-count">(156)</span>
+        </div>
+        <div class="product-card-meta">
+          <a class="product-card-owner" href="/users/${product.owner && typeof product.owner === "object" ? product.owner._id : product.owner}">
+            ${product.owner && typeof product.owner === "object" ? product.owner.userName || product.owner.name : "-"}
+          </a>
+        </div>
+        <p class="product-card-price">${product.price}₽</p>
+      </div>
     `;
 
     card.dataset.productId = product._id;

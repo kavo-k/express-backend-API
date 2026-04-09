@@ -7,7 +7,6 @@ renderSharedHeader(document.getElementById("siteHeader"), {
   showFavorites: true,
   showCart: true,
   showProfile: true,
-  cartCount: "0"
 });
 
 
@@ -22,7 +21,7 @@ const modalImage = document.getElementById("modalImage");
 
 const user = getCurrentUser();
 
-const LIMIT = 6;
+const LIMIT = 8;
 let state = { currentPage: 1, maxPage: 1, search: "", sort: "desc" };
 
 
@@ -79,19 +78,20 @@ function renderProducts(products) {
 
 
     card.innerHTML = `
-      <img class="product-image" data-full-image="${product.imageOptimizedUrl || product.imageUrl}" src="${product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
+      <div class="product-card-media">
+        <span class="product-card-badge">${product.type ? product.type : "лот"}</span>
+        <img class="product-image" data-full-image="${product.imageOptimizedUrl || product.imageUrl}" src="${product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
+      </div>
       <div class="product-card-copy">
         <div class="product-card-topline">
           <h3>${product.name}</h3>
-          <p class="product-card-price">${product.price}₽</p>
         </div>
-        <div class="product-card-meta">
-          <span class="product-card-type">${product.type || "-"}</span>
-          <a class="product-card-owner" href="/users/${product.owner && typeof product.owner === "object" ? product.owner._id : product.owner}">
-            ${product.owner && typeof product.owner === "object" ? product.owner.userName || product.owner.name : "-"}
-          </a>
+        <div class="product-card-rating">
+          <span class="product-card-star">★★★★★</span>
+          <span class="product-card-rating-value">4.2</span>
+          <span class="product-card-rating-count">(67)</span>
         </div>
-        <p class="product-card-description">${product.description || "-"}</p>
+        <p class="product-card-price">${product.price}₽</p>
       </div>
     `;
 

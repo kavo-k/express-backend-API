@@ -1,4 +1,14 @@
 console.log("cart.js loaded");
+
+renderSharedHeader(document.getElementById("siteHeader"), {
+  showSearch: false,
+  showBack: true,
+  backHref: "/",
+  showFavorites: false,
+  showCart: false,
+  showProfile: true
+});
+
 const cartItemsList = document.getElementById("cartItemsList");
 const cartTotalItems = document.getElementById("cartTotalItems");
 const cartSubtotal = document.getElementById("cartSubtotal");
@@ -46,7 +56,7 @@ async function renderProducts(products) {
     <span>${item.quantity}</span>
     <button class="plusBtn" type="button">+</button>
     </div>
-    <p class="cart-item-price">${item.product.price}₽</p>
+    <p class="cart-item-price">${item.product.price} ₽</p>
     <button class="delete-btn" type="button">Remove</button>
     </div>
     </div>
@@ -106,11 +116,11 @@ cartItemsList.addEventListener("click", async (e) => {
 
 
 clearCartBtn.onclick = () => {
-    deleteModal.classList.add("open");
+  deleteModal.classList.add("open");
 };
 
 cancelDeleteBtn.addEventListener("click", () => {
-    deleteModal.classList.remove("open");
+  deleteModal.classList.remove("open");
 });
 
 

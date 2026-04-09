@@ -1,3 +1,12 @@
+renderSharedHeader(document.getElementById("siteHeader"), {
+  searchPlaceholder: "Поиск товаров...",
+  showSearch: true,
+  showBack: false,
+  showFavorites: true,
+  showCart: true,
+  showProfile: true,
+});
+
 const productPageCard = document.getElementById("productPageCard");
 const productPageImage = document.getElementById('productPageImage');
 const productPageFullImage = document.getElementById(`productPageFullImage`);
@@ -10,7 +19,6 @@ const productOwner = document.getElementById("productOwner");
 const productCreatedAt = document.getElementById("productCreatedAt");
 const errorMessage = document.getElementById("errorMessage");
 const tokenInfo = document.getElementById("TokenIsAvailable");
-const searchForm = document.getElementById("searchForm");
 const search = document.getElementById("inputSearch");
 const modalImage = document.getElementById("modalImage");
 
@@ -49,9 +57,6 @@ async function syncCartControls(id) {
         productQuantityControls.hidden = true;
     }
 }
-
-
-let state = { search: "" };
 
 productPageImage.addEventListener("click", (e) => {
     const img = e.target.closest(".product-image");
@@ -129,21 +134,6 @@ async function loadProduct(id) {
         errorMessage.textContent = err.message;
     }
 };
-
-
-
-if (tokenInfo) {
-    tokenInfo.textContent = ` ${user ? `user:${user.userName || user.name}` : ""}`;
-} else {
-    console.warn("tokenInfo element not found");
-}
-
-
-searchForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    state.search = search.value.trim();
-    window.location.href = `/` + `?search=${state.search}`;
-});
 
 
 loadProduct(id);
