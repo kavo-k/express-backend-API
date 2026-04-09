@@ -271,19 +271,20 @@ header {
 }
 
 .cart-count {
+  display: none;
   position: absolute;
   top: -5px;
   right: -2px;
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
-  display: grid;
-  place-items: center;
   border-radius: 999px;
   background: #ffa31a;
   color: #101216;
   font-size: 11px;
   font-weight: 800;
+  line-height: 18px;
+  text-align: center;
 }
 
 .top-link {
@@ -308,7 +309,31 @@ header {
   justify-content: center;
   gap: 8px;
   min-height: 42px;
-  padding: 9px 14px;
+  border-radius: 999px;
+  transition: transform .14s ease, box-shadow .14s ease, background-color .14s ease, border-color .14s ease, color .14s ease;
+}
+
+.cart-link-empty {
+  border: 1px solid rgba(77, 83, 95, .75);
+  background: rgba(31, 34, 43, .94);
+  color: #b5bfd3;
+  box-shadow: none;
+}
+
+.cart-link-empty:hover {
+  text-decoration: none;
+  color: #fff;
+  border-color: rgba(126, 135, 150, .95);
+  background: rgba(42, 46, 58, .98);
+  box-shadow: none;
+}
+
+.cart-link-active {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
   border-radius: 999px;
   border: 1px solid #1f9b67;
   background: linear-gradient(135deg, #18b96f, #0f8e5c);
@@ -317,7 +342,7 @@ header {
   box-shadow: 0 12px 24px rgba(12, 86, 54, .24);
 }
 
-.cart-link:hover {
+.cart-link-active:hover {
   text-decoration: none;
   background: linear-gradient(135deg, #20c77a, #119462);
   box-shadow: 0 14px 28px rgba(12, 86, 54, .3);
@@ -772,7 +797,7 @@ main {
   background: #f3f3f1;
   box-shadow: none;
   cursor: pointer;
-  transition: transform .28s ease, box-shadow .22s ease, border-color .22s ease;
+  transition: transform .50s ease, box-shadow .22s ease, border-color .22s ease;
 }
 
 .product-card:hover .product-image,

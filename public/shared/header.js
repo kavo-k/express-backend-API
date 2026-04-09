@@ -51,7 +51,7 @@ function renderSharedHeader(container, options = {}) {
 
   const cartLink = showCart
     ? `
-  <a class="header-icon-link cart-link" href="/cart.html" aria-label="Cart">
+  <a class="header-icon-link cart-link " href="/cart.html" aria-label="Cart">
   <span class="cart-count"></span>
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -98,7 +98,8 @@ function renderSharedHeader(container, options = {}) {
   `;
 
   const searchForm = document.getElementById("searchForm");
-  const cartCount = document.querySelector(".cart-count");
+  const cartCount = container.querySelector(".cart-count");
+  const cartLinkElement = container.querySelector(".cart-link");
 
   if (searchForm) {
     searchForm.addEventListener("submit", (e) => {
@@ -110,16 +111,30 @@ function renderSharedHeader(container, options = {}) {
   }
 
   if (showCart) {
-    if (typeof loadCart === "function") {
-      async function initCart() {
-        const data = await loadCart();
-        cartCount.innerHTML = data.totalItems.toString();
-      }
-      initCart();
-    }
+    updateCartCount(cartCount, cartLinkElement);
   }
 
 
+}
+
+async function updateCartCount(cartCount, cartLink) {
+  if (cartCount && cartLink) {
+    if (typeof loadCart === "function") {
+      const data = await loadCart();
+      console.log(data.totalItems)
+      if (data.totalItems <= 0) {
+        cartCount.textContent = "";
+        cartLink.classList.remove("cart-link-active")
+        cartLink.classList.add("cart-link-empty");
+        cartCount.style.display = "none";
+      } else {
+        cartCount.textContent = data.totalItems.toString();
+        cartLink.classList.remove("cart-link-empty");
+        cartLink.classList.add("cart-link-active")
+        cartCount.style.display = "grid";
+      }
+    }
+  }
 }
 
 function syncUrlWithSearch(searchValue) {
