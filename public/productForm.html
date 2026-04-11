@@ -10,42 +10,61 @@
 </head>
 
 <body class="addProduct_body">
-  <form id="productForm">
-    <h2 id="creatorName"></h2>
+  <div class="product-form-shell">
+    <form id="productForm">
+      <h2 id="creatorName"></h2>
 
-    <label for="productName">Product Name<span class="zv">*</span></label>
-    <input type="text" id="productName" name="name" required>
+      <label for="productName">Product Name<span class="zv">*</span></label>
+      <input type="text" id="productName" name="name" required>
 
-    <label for="productImage">Product Image<span class="zv">*</span></label>
-    <input type="file" id="productImage" name="image">
+      <label for="productImage">Product Image<span class="zv">*</span></label>
+      <input type="file" id="productImage" name="image">
 
-    <img class="product-image" id="productImagePut" hidden="true">
+      <img class="product-image" id="productImagePut" hidden="true">
 
-    <label for="price">Price<span class="zv">*</span></label>
-    <input type="number" id="price" name="price" step="0.01" required>
+      <label for="price">Price<span class="zv">*</span></label>
+      <input type="number" id="price" name="price" step="0.01" required>
 
-    <label for="description">Description</label>
-    <textarea id="description" name="description" rows="4"></textarea>
+      <label for="description">Description</label>
+      <textarea id="description" name="description" rows="4"></textarea>
 
-    <label for="category">Category<span class="zv">*</span></label>
-    <select id="category" name="type" required>
-      <option value="">Select category</option>
-      <option value="electronics">Electronics</option>
-      <option value="clothing">Clothing</option>
-      <option value="books">Books</option>
-    </select>
+      <div class="product-form-section">
+        <label for="category">Category<span class="zv">*</span></label>
+        <select id="category" name="type" required>
+          <option value="">Выбрать категорию</option>
+          <option value="electronics">Электроника</option>
+          <option value="clothing">Одежда</option>
+          <option value="books">Книги</option>
+          <option value="home">Для дома</option>
+          <option value="sport">Спорт</option>
+          <option value="accessories">Аксессуары</option>
+          <option value="beauty">Красота и уход</option>
+          <option value="kids">Детские товары</option>
+          <option value="pets">Товары для животных</option>
+          <option value="gaming">Игры и консоли</option>
+          <option value="auto">Автотовары</option>
+          <option value="customCategory">Своя категория</option>
+        </select>
+        <p class="product-form-hint">Если нужной категории нет в списке, выбери пункт «Своя категория».</p>
+      </div>
 
-    <div class="error-container">
-      <p id="errorMessage" class="error-message"></p>
-    </div>
+      <div id="otherCategoryContainer" class="product-form-section" aria-hidden="true" hidden="true">
+        <label for="customCategory">Custom Category<span class="zv">*</span></label>
+        <input type="text" id="customCategory" name="otherCategory" placeholder="Например: винил, коллекции, ручная работа">
+      </div>
 
-    <div class="product-buttons">
-      <button id="submitBtn" type="submit" class="submit-btn">Save</button>
-      <button type="reset">Clear</button>
-      <button id="deleteBtn" type="button" class="delete-btn">Delete</button>
-      <button id="backBtn" type="button">Back</button>
-    </div>
-  </form>
+      <div class="error-container">
+        <p id="errorMessage" class="error-message"></p>
+      </div>
+
+      <div class="product-buttons">
+        <button id="submitBtn" type="submit" class="submit-btn">Save</button>
+        <button type="reset">Clear</button>
+        <button id="deleteBtn" type="button" class="delete-btn">Delete</button>
+        <button id="backBtn" type="button">Back</button>
+      </div>
+    </form>
+  </div>
 
   <div id="deleteModal" class="modal-overlay" aria-hidden="true">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">

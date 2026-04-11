@@ -6,6 +6,9 @@ const errorMessage = document.getElementById("errorMessage");
 const submitBtn = document.getElementById("submitBtn");
 const productForm = document.getElementById("productForm");
 const typeSelect = document.getElementById("category");
+const otherCategoryContainer = document.getElementById("otherCategoryContainer");
+
+const categoryInput = document.getElementById("customCategory");
 const nameInput = document.getElementById("productName");
 const priceInput = document.getElementById("price");
 const descriptionInput = document.getElementById("description");
@@ -42,6 +45,7 @@ async function outputInCard(id) {
         priceInput.value = product.price ?? ""
         descriptionInput.value = product.description || ""
         typeSelect.value = product.type || ""
+        categoryInput.value = product.type || ""
     } catch (err) {
         errorMessage.textContent = err.message;
     }
@@ -57,10 +61,21 @@ if (isId) {
 
 productForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    errorMessage.textContent = "";
+    const categoryInputFix = categoryInput.value.trim()
 
     const formData = new FormData(productForm);
 
-    console.log("formData:", formData);
+    if (typeSelect.value === "customCategory") {
+        if (categoryInputFix) {
+            formData.set("type", categoryInputFix);
+            formData.delete("otherCategory");
+        } else {
+            errorMessage.textContent = "необходимо ввести свою категорию";
+            return;
+        }
+    }
+    console.log("formData:", Array.from(formData.entries()));
 
 
     if (isId) {
@@ -97,6 +112,16 @@ productForm.addEventListener("submit", async (e) => {
         }
     }
 });
+
+
+typeSelect.addEventListener("change", (e) => {
+    if (typeSelect.value === "customCategory") {
+        otherCategoryContainer.hidden = false;
+    } else {
+        otherCategoryContainer.hidden = true;
+    }
+});
+
 
 productForm.addEventListener("click", (e) => {
     const editBtn = e.target.closest(".edit-product-btn");
