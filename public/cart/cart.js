@@ -22,8 +22,8 @@ async function initCart() {
   const data = await loadCart();
   console.log(data);
   cartTotalItems.innerHTML = data.totalItems;
-  cartSubtotal.innerHTML = `${data.totalPrice}₽`;
-  cartTotalPrice.innerHTML = `${data.totalPrice}₽`;
+  cartSubtotal.innerHTML = `${data.totalPrice} ₽`;
+  cartTotalPrice.innerHTML = `${data.totalPrice} ₽`;
   renderProducts(data.cart.items);
 }
 
@@ -31,7 +31,7 @@ async function renderProducts(products) {
   cartItemsList.innerHTML = "";
 
   if (products.length === 0) {
-    cartItemsList.innerHTML = '<p class="cart-items-list">You have no products yet.</p>';
+    cartItemsList.innerHTML = '<p class="cart-items-list">Похоже, у вас еще нет товаров.</p>';
     return;
   }
 

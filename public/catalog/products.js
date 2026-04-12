@@ -16,13 +16,14 @@ const btnNext = document.getElementById("btnNext");
 const pageInfo = document.getElementById("pageInfo");
 const search = document.getElementById("inputSearch");
 const sortSelect = document.getElementById("sortSelect");
-const profileBtn = document.getElementById("profileBtn");
-const modalImage = document.getElementById("modalImage");
+const catalogCategories = document.querySelector(".catalog-categories");
 
 const user = getCurrentUser();
 
 const LIMIT = 8;
-let state = { currentPage: 1, maxPage: 1, search: "", sort: "desc" };
+
+
+let state = { currentPage: 1, maxPage: 1, search: "", type: "", sort: "desc" };
 
 
 function readStateFromUrl() {
@@ -30,6 +31,7 @@ function readStateFromUrl() {
   const page = parseInt(params.get("page"), 10);
 
   state.search = (params.get("search") || "").trim();
+  state.type = (params.get("type") || "").trim();
   state.sort = params.get("sort") || "desc";
   state.currentPage = Number.isFinite(page) && page > 0 ? page : 1;
 
@@ -78,21 +80,21 @@ function renderProducts(products) {
 
 
     card.innerHTML = `
-      <div class="product-card-media">
-        <span class="product-card-badge">${product.type ? product.type : "лот"}</span>
-        <img class="product-image" data-full-image="${product.imageOptimizedUrl || product.imageUrl}" src="${product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
-      </div>
-      <div class="product-card-copy">
-        <div class="product-card-topline">
-          <h3>${product.name}</h3>
-        </div>
-        <div class="product-card-rating">
-          <span class="product-card-star">★★★★★</span>
-          <span class="product-card-rating-value">4.2</span>
-          <span class="product-card-rating-count">(67)</span>
-        </div>
-        <p class="product-card-price">${product.price}₽</p>
-      </div>
+    <div class="product-card-media">
+    <span class="product-card-badge">${product.type ? product.type : "лот"}</span>
+    <img class="product-image" data-full-image="${product.imageOptimizedUrl || product.imageUrl}" src="${product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
+    </div>
+    <div class="product-card-copy">
+    <div class="product-card-topline">
+    <h3>${product.name}</h3>
+    </div>
+    <div class="product-card-rating">
+    <span class="product-card-star">★★★★★</span>
+    <span class="product-card-rating-value">4.2</span>
+    <span class="product-card-rating-count">(67)</span>
+    </div>
+    <p class="product-card-price">${product.price}₽</p>
+    </div>
     `;
 
     card.dataset.productId = product._id;
@@ -100,6 +102,21 @@ function renderProducts(products) {
     productsList.appendChild(card);
   }
 }
+
+
+catalogCategories.addEventListener("click", (e) => {
+  const categoryActive = catalogCategories.querySelectorAll(".category-chip-active");
+  for (const category of categoryActive) {
+    category.classList.remove("category-chip-active");
+  }
+  const selectCategory = e.target.value;
+  e.target.classList.add("category-chip-active");
+  state.type = selectCategory;
+  console.log(state);
+  loadProducts();
+});
+
+
 
 productsList.addEventListener("click", (e) => {
   const productCard = e.target.closest(".product-card");
@@ -129,7 +146,7 @@ async function getJson(url) {
 async function loadProducts() {
   try {
     const data = await getJson(
-      `/products?search=${state.search}&limit=${LIMIT}&page=${state.currentPage}&sort=${state.sort}`
+      `/products?search=${state.search}&type=${state.type}&limit=${LIMIT}&page=${state.currentPage}&sort=${state.sort}`
     );
 
     state.maxPage = Math.max(1, Math.ceil(data.total / LIMIT));
@@ -161,4 +178,4 @@ btnPrev.onclick = () => {
 };
 
 readStateFromUrl();
-loadProducts({ syncUrl: false });
+loadProducts();

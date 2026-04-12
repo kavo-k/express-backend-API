@@ -20,7 +20,7 @@ const getItems = async ({ userId }) => {
         return { cart, totalItems, totalPrice };
     }
     else {
-        return { cart: null, totalItems, totalPrice };
+        return { cart: null, totalItems: null, totalPrice: null };
     }
 };
 

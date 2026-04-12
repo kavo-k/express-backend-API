@@ -34,8 +34,9 @@ router.get(
     const page = Number(req.query.page) || 1;
     const sort = req.query.sort === "asc" ? 1 : -1;
     const search = req.query.search || "";
+    const type = req.query.type || "";
 
-    let { products, total } = await getProducts({ search, page, limit, sort });
+    let { products, total } = await getProducts({ search, page, limit, sort, type });
 
     products = products.map(p => ({
       ...p.toObject(),
