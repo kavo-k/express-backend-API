@@ -1,5 +1,7 @@
 console.log("products.js LOADED");
 
+let state = { currentPage: 1, maxPage: 1, search: "", type: "", sort: "desc" };
+
 renderSharedHeader(document.getElementById("siteHeader"), {
   searchPlaceholder: "Поиск товаров...",
   showSearch: true,
@@ -7,6 +9,12 @@ renderSharedHeader(document.getElementById("siteHeader"), {
   showFavorites: true,
   showCart: true,
   showProfile: true,
+  onSearchSubmit: function (searchValue) {
+    state.search = searchValue;
+    state.currentPage = 1;
+    console.log(state);
+    loadProducts();
+  }
 });
 
 
@@ -17,13 +25,13 @@ const pageInfo = document.getElementById("pageInfo");
 const search = document.getElementById("inputSearch");
 const sortSelect = document.getElementById("sortSelect");
 const catalogCategories = document.querySelector(".catalog-categories");
+const categoryChip = document.querySelectorAll(".category-chip");
 
 const user = getCurrentUser();
 
-const LIMIT = 8;
+const LIMIT = 3;
 
 
-let state = { currentPage: 1, maxPage: 1, search: "", type: "", sort: "desc" };
 
 
 function readStateFromUrl() {
@@ -36,7 +44,25 @@ function readStateFromUrl() {
   state.currentPage = Number.isFinite(page) && page > 0 ? page : 1;
 
   search.value = state.search;
+  for (const category of categoryChip) {
+    category.classList.remove("category-chip-active");
+    if (category.value === state.type) {
+      category.classList.add("category-chip-active");
+    }
+  }
   sortSelect.value = state.sort;
+}
+
+function syncUrlWithState() {
+  const params = new URLSearchParams(window.location.search);
+
+  params.set("type", state.type);
+  params.set("page", state.currentPage);
+  params.set("sort", state.sort);
+  params.set("search", state.search);
+
+  const newUrl = `${window.location.pathname}?${params.toString()}`;
+  history.replaceState(state.type, "", newUrl);
 }
 
 function clampPage() {
@@ -76,8 +102,6 @@ function renderProducts(products) {
       card.classList.add("owner-product");
     }
 
-    console.log(product);
-
 
     card.innerHTML = `
     <div class="product-card-media">
@@ -106,13 +130,15 @@ function renderProducts(products) {
 
 catalogCategories.addEventListener("click", (e) => {
   const categoryActive = catalogCategories.querySelectorAll(".category-chip-active");
+  let selectCategory = e.target.closest(".category-chip");
+  if (!selectCategory) return;
+
   for (const category of categoryActive) {
     category.classList.remove("category-chip-active");
   }
-  const selectCategory = e.target.value;
-  e.target.classList.add("category-chip-active");
-  state.type = selectCategory;
-  console.log(state);
+  state.currentPage = 1;
+  selectCategory.classList.add("category-chip-active");
+  state.type = selectCategory.value;
   loadProducts();
 });
 
@@ -144,6 +170,8 @@ async function getJson(url) {
 }
 
 async function loadProducts() {
+  console.log(state);
+  syncUrlWithState();
   try {
     const data = await getJson(
       `/products?search=${state.search}&type=${state.type}&limit=${LIMIT}&page=${state.currentPage}&sort=${state.sort}`
@@ -164,17 +192,17 @@ async function loadProducts() {
 sortSelect.addEventListener("change", () => {
   state.sort = sortSelect.value;
   state.currentPage = 1;
-  loadProducts({ syncUrl: true, mode: "push" });
+  loadProducts();
 });
 
 btnNext.onclick = () => {
   state.currentPage = Math.min(state.currentPage + 1, state.maxPage);
-  loadProducts({ syncUrl: true, mode: "push" });
+  loadProducts();
 };
 
 btnPrev.onclick = () => {
   state.currentPage = Math.max(state.currentPage - 1, 1);
-  loadProducts({ syncUrl: true, mode: "push" });
+  loadProducts();
 };
 
 readStateFromUrl();

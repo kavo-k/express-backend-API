@@ -1,5 +1,7 @@
 console.log("Profile page loaded");
 
+let state = { currentPage: 1, maxPage: 1, search: "", sort: "desc" };
+
 renderSharedHeader(document.getElementById("siteHeader"), {
   searchPlaceholder: "Поиск товаров...",
   showSearch: true,
@@ -7,7 +9,13 @@ renderSharedHeader(document.getElementById("siteHeader"), {
   showFavorites: true,
   showCart: true,
   showProfile: true,
-  cartCount: "0"
+  cartCount: "0",
+    onSearchSubmit: function (searchValue) {
+    state.search = searchValue;
+    state.currentPage = 1;
+    console.log(state);
+    loadProducts();
+  }
 });
 
 const name = document.getElementById("name");
@@ -26,7 +34,6 @@ const search = document.getElementById("inputSearch");
 
 const LIMIT = 5;
 
-let state = { currentPage: 1, maxPage: 1, search: "", sort: "desc" };
 
 const user = getCurrentUser();
 

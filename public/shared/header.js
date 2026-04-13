@@ -9,6 +9,7 @@ function renderSharedHeader(container, options = {}) {
     showFavorites = true,
     showCart = true,
     showProfile = true,
+    onSearchSubmit,
   } = options;
 
 
@@ -97,16 +98,19 @@ function renderSharedHeader(container, options = {}) {
   </div>
   `;
 
+
   const searchForm = document.getElementById("searchForm");
   const cartCount = container.querySelector(".cart-count");
   const cartLinkElement = container.querySelector(".cart-link");
 
   if (searchForm) {
     searchForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const inputSearch = document.getElementById("inputSearch").value.trim();
-      syncUrlWithSearch(inputSearch);
-      console.log("submit works")
+      if (typeof onSearchSubmit === "function") {
+        e.preventDefault();
+        const inputSearch = document.getElementById("inputSearch").value.trim();
+        onSearchSubmit(inputSearch);
+        console.log("submit works")
+      }
     });
   }
 
@@ -136,16 +140,6 @@ async function updateCartCount(cartCount, cartLink) {
     }
   }
 }
-
-function syncUrlWithSearch(searchValue) {
-  const params = new URLSearchParams(window.location.search);
-  params.set("search", searchValue);
-
-  const newUrl = `${window.location.pathname}?${params.toString()}`;
-  console.log(newUrl);
-  window.location.href = newUrl;
-}
-
 
 
 window.renderSharedHeader = renderSharedHeader;
