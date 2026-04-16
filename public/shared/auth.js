@@ -122,6 +122,60 @@ async function removeCartAllItems() {
 }
 
 
+async function loadFavorites() {
+    const res = await authFetch("/favorites", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) { throw new Error(data.error || "Ошибка при загрузке корзины"); }
+    return data;
+}
+
+
+async function addToFavorite(productId) {
+    const res = await authFetch("/favorites/items", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) { throw new Error(data.error || "Ошибка при добавлении товара"); }
+    return data;
+}
+
+
+async function removeFavoriteItem(productId) {
+    const res = await authFetch(`/favorites/items/${productId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) { throw new Error(data.error || "Ошибка при удалении товара"); }
+    return data;
+}
+
+
+async function removeFavoriteAllItems() {
+    const res = await authFetch(`/favorites/items`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) { throw new Error(data.error || "Ошибка при удалении товара"); }
+    return data;
+}
+
 
 function getCurrentUser() {
     const userJson = localStorage.getItem("user");

@@ -4,7 +4,7 @@ renderSharedHeader(document.getElementById("siteHeader"), {
   showSearch: false,
   showBack: true,
   backHref: "/",
-  showFavorites: false,
+  showFavorites: true,
   showCart: false,
   showProfile: true
 });

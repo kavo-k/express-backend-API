@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Favorites</title>
+  <link rel="stylesheet" href="/shared/styles.css" />
+  <script src="/shared/header.js"></script>
+</head>
+
+<body class="cart_body cart-page-body">
+  <header id="siteHeader"></header>
+
+  <main>
+    <section class="cart-page-intro">
+      <p class="home-hero-badge">Сохранённые товары</p>
+      <h1>Избранное</h1>
+      <p>Здесь хранятся товары, которые ты хочешь посмотреть позже или не потерять.</p>
+    </section>
+
+    <section class="cart-shell">
+      <div class="cart-main">
+        <div class="cart-head">
+          <div>
+            <p class="home-hero-kicker">Favorites</p>
+            <h2>Моё избранное</h2>
+            <p class="cart-note">Сохраняй интересные товары и возвращайся к ним позже.</p>
+          </div>
+          <button id="clearFavoritesBtn" type="button">Очистить</button>
+        </div>
+
+        <div id="favoritesItemsList" class="cart-items-list">
+          <article class="cart-item-card cart-item-card-loading" aria-hidden="true">
+            <div class="cart-item-image cart-skeleton-block"></div>
+            <div class="cart-item-content">
+              <div class="cart-item-copy cart-loading-copy">
+                <span class="cart-skeleton-line cart-skeleton-title"></span>
+                <span class="cart-skeleton-line cart-skeleton-text"></span>
+                <span class="cart-skeleton-line cart-skeleton-text short"></span>
+              </div>
+              <div class="cart-item-controls cart-loading-controls">
+                <span class="cart-skeleton-line cart-skeleton-price"></span>
+                <span class="cart-skeleton-line cart-skeleton-button"></span>
+              </div>
+            </div>
+          </article>
+
+          <article class="cart-item-card cart-item-card-loading" aria-hidden="true">
+            <div class="cart-item-image cart-skeleton-block"></div>
+            <div class="cart-item-content">
+              <div class="cart-item-copy cart-loading-copy">
+                <span class="cart-skeleton-line cart-skeleton-title"></span>
+                <span class="cart-skeleton-line cart-skeleton-text"></span>
+                <span class="cart-skeleton-line cart-skeleton-text short"></span>
+              </div>
+              <div class="cart-item-controls cart-loading-controls">
+                <span class="cart-skeleton-line cart-skeleton-price"></span>
+                <span class="cart-skeleton-line cart-skeleton-button"></span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <aside class="cart-summary">
+        <p class="home-hero-kicker">Сводка</p>
+        <h3>Избранное</h3>
+
+        <div class="cart-summary-grid">
+          <p><span>Товары</span><strong id="favoritesTotalItems">0</strong></p>
+        </div>
+
+        <div class="cart-summary-total">
+          <span>Статус</span>
+          <strong>Готово</strong>
+        </div>
+
+        <button id="openCatalogBtn" class="submit-btn" type="button">Открыть каталог</button>
+        <p class="cart-summary-note">Позже сюда можно добавить быстрый перенос товара в корзину.</p>
+      </aside>
+    </section>
+
+    <div id="deleteModal" class="modal-overlay" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+        <h3 id="deleteModalTitle">Очистить избранное?</h3>
+        <p id="deleteModalText">Вы действительно хотите удалить все товары из избранного?</p>
+        <div class="modal-actions">
+          <button id="cancelDeleteBtn" type="button">Отмена</button>
+          <button id="confirmClearFavoritesBtn" type="button" class="delete-btn">Удалить</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/shared/auth.js"></script>
+  <script src="/favorites/favorites.js"></script>
+</body>
+
+</html>

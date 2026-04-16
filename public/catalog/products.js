@@ -29,7 +29,7 @@ const categoryChip = document.querySelectorAll(".category-chip");
 
 const user = getCurrentUser();
 
-const LIMIT = 3;
+const LIMIT = 8;
 
 
 
@@ -106,6 +106,11 @@ function renderProducts(products) {
     card.innerHTML = `
     <div class="product-card-media">
     <span class="product-card-badge">${product.type ? product.type : "лот"}</span>
+    <button class="favorite-toggle-btn" type="button" aria-label="Добавить в избранное">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="m12 21-1.45-1.32C5.4 15.02 2 11.9 2 8.09 2 5 4.42 2.5 7.5 2.5c1.74 0 3.41.81 4.5 2.09A6 6 0 0 1 16.5 2.5C19.58 2.5 22 5 22 8.09c0 3.81-3.4 6.93-8.55 11.6z"></path>
+    </svg>
+    </button>
     <img class="product-image" data-full-image="${product.imageOptimizedUrl || product.imageUrl}" src="${product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
     </div>
     <div class="product-card-copy">
@@ -145,7 +150,14 @@ catalogCategories.addEventListener("click", (e) => {
 
 
 productsList.addEventListener("click", (e) => {
+  const favoriteBtn = e.target.closest(".favorite-toggle-btn");
   const productCard = e.target.closest(".product-card");
+
+  if (favoriteBtn) {
+    const id = productCard.dataset.productId;
+    addToFavorite(id)
+    return;
+  }
 
   if (productCard) {
     const id = productCard.dataset.productId;
