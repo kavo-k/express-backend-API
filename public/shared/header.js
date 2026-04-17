@@ -42,6 +42,7 @@ function renderSharedHeader(container, options = {}) {
   const favoritesLink = showFavorites
     ? `
   <a class="header-icon-link favorites-link" href="/favorites.html" aria-label="Favorites">
+  <span class="favorites-count"></span>
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <path d="m12 21-1.45-1.32C5.4 15.02 2 11.9 2 8.09 2 5 4.42 2.5 7.5 2.5c1.74 0 3.41.81 4.5 2.09A6 6 0 0 1 16.5 2.5C19.58 2.5 22 5 22 8.09c0 3.81-3.4 6.93-8.55 11.6z"></path>
@@ -52,7 +53,7 @@ function renderSharedHeader(container, options = {}) {
 
   const cartLink = showCart
     ? `
-  <a class="header-icon-link cart-link " href="/cart.html" aria-label="Cart">
+  <a class="header-icon-link cart-link" href="/cart.html" aria-label="Cart">
   <span class="cart-count"></span>
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -98,10 +99,15 @@ function renderSharedHeader(container, options = {}) {
   </div>
   `;
 
+  const dataFavorites = loadFavorites();
 
   const searchForm = document.getElementById("searchForm");
+
   const cartCount = container.querySelector(".cart-count");
   const cartLinkElement = container.querySelector(".cart-link");
+
+  const favoritesCount = container.querySelector(".favorites-count");
+  const favoritesLinkElement = container.querySelector(".favorites-link");
 
   if (searchForm) {
     searchForm.addEventListener("submit", (e) => {
@@ -116,6 +122,10 @@ function renderSharedHeader(container, options = {}) {
 
   if (showCart) {
     updateCartCount(cartCount, cartLinkElement);
+  }
+
+  if (showFavorites) {
+    updateFavoriteCount(favoritesCount, favoritesLinkElement, dataFavorites)
   }
 
 
@@ -136,6 +146,24 @@ async function updateCartCount(cartCount, cartLink) {
         cartLink.classList.remove("cart-link-empty");
         cartLink.classList.add("cart-link-active")
         cartCount.style.display = "grid";
+      }
+    }
+  }
+}
+
+async function updateFavoriteCount(favoritesCount, favoritesLinkElement, dataFavorites) {
+  if (favoritesCount && favoritesLinkElement) {
+    if (typeof loadFavorites === "function") {
+      if (dataFavorites.favorites.items.length <= 0) {
+        favoritesCount.textContent = "";
+        favoritesLinkElement.classList.remove("favorites-link-active")
+        favoritesLinkElement.classList.add("favorites-link-empty");
+        favoritesCount.style.display = "none";
+      } else {
+        favoritesCount.textContent = dataFavorites.favorites.items.length.toString();
+        favoritesLinkElement.classList.remove("favorites-link-empty");
+        favoritesLinkElement.classList.add("favorites-link-active")
+        favoritesCount.style.display = "grid";
       }
     }
   }

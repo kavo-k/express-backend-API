@@ -75,7 +75,19 @@ function updatePageButtons() {
   btnNext.disabled = state.currentPage === state.maxPage;
 }
 
-function renderProducts(products) {
+function matchFavorites(itemFavorite, productsFavorites) {
+  let foundItem = false;
+  for (const productfavorite of productsFavorites) {
+    if (productfavorite.product._id === itemFavorite._id) {
+      foundItem = true;
+      return productfavorite;
+    }
+  }
+  return "";
+}
+
+
+function renderProducts(products, dataFavorites) {
   productsList.innerHTML = "";
 
   if (products.length === 0) {
@@ -86,6 +98,10 @@ function renderProducts(products) {
   for (const product of products) {
     const card = document.createElement("div");
     card.className = "product-card";
+
+    console.log(product, dataFavorites);
+
+    const foundItem = matchFavorites(product, dataFavorites)
 
 
     const ownerId = user ? user._id : null;
@@ -125,6 +141,13 @@ function renderProducts(products) {
     <p class="product-card-price">${product.price}₽</p>
     </div>
     `;
+    const favoriteToggleBtn = card.querySelector(".favorite-toggle-btn");
+
+    if (foundItem) {
+      favoriteToggleBtn.classList.add("is-active");
+    } else {
+      favoriteToggleBtn.classList.remove("is-active")
+    }
 
     card.dataset.productId = product._id;
 
@@ -149,14 +172,24 @@ catalogCategories.addEventListener("click", (e) => {
 
 
 
-productsList.addEventListener("click", (e) => {
+productsList.addEventListener("click", async (e) => {
   const favoriteBtn = e.target.closest(".favorite-toggle-btn");
   const productCard = e.target.closest(".product-card");
 
   if (favoriteBtn) {
+    const isActive = favoriteBtn.classList.contains("is-active")
+
     const id = productCard.dataset.productId;
-    addToFavorite(id)
-    return;
+
+
+
+    if (isActive) {
+      await removeFavoriteItem(id);
+    } else {
+      await addToFavorite(id);
+    }
+    loadProducts();
+    return
   }
 
   if (productCard) {
@@ -182,7 +215,6 @@ async function getJson(url) {
 }
 
 async function loadProducts() {
-  console.log(state);
   syncUrlWithState();
   try {
     const data = await getJson(
@@ -191,10 +223,21 @@ async function loadProducts() {
 
     state.maxPage = Math.max(1, Math.ceil(data.total / LIMIT));
     clampPage();
-
     pageInfo.textContent = state.currentPage;
 
-    renderProducts(data.products);
+    const favoritesCount = document.querySelector(".favorites-count");
+    const favoritesLinkElement = document.querySelector(".favorites-link");
+
+    const dataFavorites = await loadFavorites();
+    console.log( dataFavorites);
+    
+    await updateFavoriteCount(favoritesCount, favoritesLinkElement, dataFavorites);
+
+    if (dataFavorites && dataFavorites.favorites) {
+      renderProducts(data.products, dataFavorites.favorites.items);
+    } else {
+      renderProducts(data.products, []);
+    }
     updatePageButtons();
   } catch (e) {
     print({ error: e.message });

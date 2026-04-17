@@ -21,7 +21,11 @@ async function initFavorites() {
   const dataFavorites = await loadFavorites();
   const dataCart = await loadCart();
   favoritesTotalItems.innerHTML = dataFavorites.favorites.items.length;
-  renderProducts(dataFavorites.favorites.items, dataCart.cart.items);
+  if (dataCart.cart.items) {
+    renderProducts(dataFavorites.favorites.items, dataCart.cart.items);
+  } else {
+    renderProducts(dataFavorites.favorites.items, []);
+  }
 }
 
 function matchItems(itemFavorite, productsCart) {

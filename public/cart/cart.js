@@ -24,7 +24,11 @@ async function initCart() {
   cartTotalItems.innerHTML = data.totalItems;
   cartSubtotal.innerHTML = `${data.totalPrice} ₽`;
   cartTotalPrice.innerHTML = `${data.totalPrice} ₽`;
-  renderProducts(data.cart.items);
+  if (data.cart.items) {
+    renderProducts(data.cart.items);
+  } else {
+    renderProducts([]);
+  }
 }
 
 async function renderProducts(products) {
