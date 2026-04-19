@@ -18,6 +18,7 @@ const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
 const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
 const deleteModalText = document.getElementById("deleteModalText");
 const productImagePut = document.getElementById("productImagePut");
+const productImage = document.getElementById("productImage");
 const modalImage = document.getElementById("modalImage");
 
 const accessToken = localStorage.getItem("accessToken");
@@ -57,6 +58,15 @@ if (isId) {
     deleteBtn.hidden = true;
 }
 
+
+productImage.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+
+    const fileUrl = URL.createObjectURL(file);
+
+    productImagePut.src = fileUrl || '/img/placeholder.png';
+    productImagePut.hidden = false;
+});
 
 
 productForm.addEventListener("submit", async (e) => {
@@ -112,7 +122,6 @@ productForm.addEventListener("submit", async (e) => {
         }
     }
 });
-
 
 typeSelect.addEventListener("change", (e) => {
     if (typeSelect.value === "customCategory") {

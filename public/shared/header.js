@@ -118,18 +118,12 @@ function renderSharedHeader(container, options = {}) {
     });
   }
 
-  const token = getToken();
+  if (showCart) {
+    updateCartCount(cartCount, cartLinkElement);
+  }
 
-  if (token) {
-
-    if (showCart) {
-      updateCartCount(cartCount, cartLinkElement);
-    }
-
-    if (showFavorites) {
-      updateFavoriteCount(favoritesCount, favoritesLinkElement)
-    }
-
+  if (showFavorites) {
+    updateFavoriteCount(favoritesCount, favoritesLinkElement)
   }
 
 }
