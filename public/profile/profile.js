@@ -10,7 +10,7 @@ renderSharedHeader(document.getElementById("siteHeader"), {
   showCart: true,
   showProfile: true,
   cartCount: "0",
-    onSearchSubmit: function (searchValue) {
+  onSearchSubmit: function (searchValue) {
     state.search = searchValue;
     state.currentPage = 1;
     console.log(state);

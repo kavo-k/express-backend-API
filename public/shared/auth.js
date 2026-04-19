@@ -54,6 +54,12 @@ async function forgotPassword(email) {
 
 
 async function loadCart() {
+    const token = getToken();
+
+    if (!token) {
+        return { cart: { items: [] } };
+    }
+
     const res = await authFetch("/cart", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -84,7 +90,7 @@ async function decreaseCartItem(productId) {
     const res = await authFetch(`/cart/items/${productId}/decrease`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ }),
+        body: JSON.stringify({}),
     });
 
     const data = await res.json();
@@ -98,7 +104,7 @@ async function removeCartItem(productId) {
     const res = await authFetch(`/cart/items/${productId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ }),
+        body: JSON.stringify({}),
     });
 
     const data = await res.json();
@@ -112,7 +118,7 @@ async function removeCartAllItems() {
     const res = await authFetch(`/cart/items`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ }),
+        body: JSON.stringify({}),
     });
 
     const data = await res.json();
@@ -123,6 +129,12 @@ async function removeCartAllItems() {
 
 
 async function loadFavorites() {
+    const token = getToken();
+
+    if (!token) {
+        return { favorites: { items: [] } };
+    }
+
     const res = await authFetch("/favorites", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -130,7 +142,7 @@ async function loadFavorites() {
 
     const data = await res.json();
 
-    if (!res.ok) { throw new Error(data.error || "Ошибка при загрузке корзины"); }
+    if (!res.ok) { throw new Error(data.error || "Ошибка при загрузке избранного"); }
     return data;
 }
 
@@ -153,7 +165,7 @@ async function removeFavoriteItem(productId) {
     const res = await authFetch(`/favorites/items/${productId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ }),
+        body: JSON.stringify({}),
     });
 
     const data = await res.json();
@@ -167,7 +179,7 @@ async function removeFavoriteAllItems() {
     const res = await authFetch(`/favorites/items`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ }),
+        body: JSON.stringify({}),
     });
 
     const data = await res.json();
@@ -211,7 +223,7 @@ async function authFetch(url, options = {}) {
     const response = await fetch(url, { ...options, headers });
 
     if (response.status === 401) {
-        logout();
+        // logout();
     }
     return response;
 }

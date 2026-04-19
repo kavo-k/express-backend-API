@@ -2475,6 +2475,32 @@ form {
   background: #0f8e5c;
 }
 
+.favorites-summary-link {
+  width: 100%;
+  min-height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  border: 0;
+  background: linear-gradient(135deg, #ffb22b, #ff9915);
+  color: #15181d;
+  font-size: 16px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 16px 28px rgba(184, 111, 17, .22);
+  transition: transform .16s ease, box-shadow .16s ease, background-color .16s ease;
+}
+
+.favorites-summary-link:hover {
+  text-decoration: none;
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #ffbb43, #ffa521);
+  box-shadow: 0 18px 30px rgba(184, 111, 17, .28);
+}
+
 .delete-btn {
   background: var(--danger);
   border-color: var(--danger-strong);

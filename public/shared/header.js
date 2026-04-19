@@ -99,8 +99,6 @@ function renderSharedHeader(container, options = {}) {
   </div>
   `;
 
-  const dataFavorites = loadFavorites();
-
   const searchForm = document.getElementById("searchForm");
 
   const cartCount = container.querySelector(".cart-count");
@@ -120,14 +118,19 @@ function renderSharedHeader(container, options = {}) {
     });
   }
 
-  if (showCart) {
-    updateCartCount(cartCount, cartLinkElement);
-  }
+  const token = getToken();
 
-  if (showFavorites) {
-    updateFavoriteCount(favoritesCount, favoritesLinkElement, dataFavorites)
-  }
+  if (token) {
 
+    if (showCart) {
+      updateCartCount(cartCount, cartLinkElement);
+    }
+
+    if (showFavorites) {
+      updateFavoriteCount(favoritesCount, favoritesLinkElement)
+    }
+
+  }
 
 }
 
@@ -151,16 +154,18 @@ async function updateCartCount(cartCount, cartLink) {
   }
 }
 
-async function updateFavoriteCount(favoritesCount, favoritesLinkElement, dataFavorites) {
+async function updateFavoriteCount(favoritesCount, favoritesLinkElement) {
   if (favoritesCount && favoritesLinkElement) {
     if (typeof loadFavorites === "function") {
-      if (dataFavorites.favorites.items.length <= 0) {
+      const data = await loadFavorites();
+      console.log(data);
+      if (data.favorites.items.length <= 0) {
         favoritesCount.textContent = "";
         favoritesLinkElement.classList.remove("favorites-link-active")
         favoritesLinkElement.classList.add("favorites-link-empty");
         favoritesCount.style.display = "none";
       } else {
-        favoritesCount.textContent = dataFavorites.favorites.items.length.toString();
+        favoritesCount.textContent = data.favorites.items.length.toString();
         favoritesLinkElement.classList.remove("favorites-link-empty");
         favoritesLinkElement.classList.add("favorites-link-active")
         favoritesCount.style.display = "grid";

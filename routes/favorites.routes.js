@@ -23,7 +23,7 @@ router.get(
     const { favorites } = await getItems({ userId });
 
     if (!favorites) {
-      return res.json({ favorites: [], });
+      return res.json({ favorites: { items: [] } });
     }
 
     res.json({ favorites });

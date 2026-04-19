@@ -228,16 +228,13 @@ async function loadProducts() {
     const favoritesCount = document.querySelector(".favorites-count");
     const favoritesLinkElement = document.querySelector(".favorites-link");
 
-    const dataFavorites = await loadFavorites();
-    console.log( dataFavorites);
+    await updateFavoriteCount(favoritesCount, favoritesLinkElement);
     
-    await updateFavoriteCount(favoritesCount, favoritesLinkElement, dataFavorites);
+    let favoritesItems = []
+    const dataFavorites = await loadFavorites();
+    favoritesItems = dataFavorites.favorites.items;
 
-    if (dataFavorites && dataFavorites.favorites) {
-      renderProducts(data.products, dataFavorites.favorites.items);
-    } else {
-      renderProducts(data.products, []);
-    }
+    renderProducts(data.products, favoritesItems);
     updatePageButtons();
   } catch (e) {
     print({ error: e.message });

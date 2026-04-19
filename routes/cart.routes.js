@@ -24,7 +24,7 @@ router.get(
     const {cart, totalItems, totalPrice} = await getItems({ userId });
 
     if (!cart) {
-      return res.json({ cart: [], totalItems: 0, totalPrice: 0 });
+      return res.json({ cart: { items: [] }, totalItems: 0, totalPrice: 0 });
     }
 
     res.json({ cart, totalItems, totalPrice });

@@ -21,9 +21,9 @@ const confirmClearCartBtn = document.getElementById("confirmClearCartBtn");
 async function initCart() {
   const data = await loadCart();
   console.log(data);
-  cartTotalItems.innerHTML = data.totalItems;
-  cartSubtotal.innerHTML = `${data.totalPrice} ₽`;
-  cartTotalPrice.innerHTML = `${data.totalPrice} ₽`;
+  cartTotalItems.innerHTML = `${data.totalItems || 0}`;
+  cartSubtotal.innerHTML = `${data.totalPrice || 0} ₽`;
+  cartTotalPrice.innerHTML = `${data.totalPrice || 0} ₽`;
   if (data.cart.items) {
     renderProducts(data.cart.items);
   } else {

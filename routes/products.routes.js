@@ -87,7 +87,6 @@ router.get(
 
 router.get(
   "/:id",
-  auth,
   asyncHandler(async (req, res) => {
     let product = await getProductById(req.params.id);
 
