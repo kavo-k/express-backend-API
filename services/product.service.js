@@ -2,18 +2,18 @@ const Product = require("../models/Product");
 
 
 const getProducts = async ({ search, page, limit, sort, type }) => {
-  
+
   const filter = {};
-  
+
   if (search) {
-   filter.name = { $regex: search, $options: "i" };
-  }
-  
-  if (type) {
-   filter.type = { $regex: type, $options: "i" };
+    filter.name = { $regex: search, $options: "i" };
   }
 
-  
+  if (type) {
+    filter.type = { $regex: type, $options: "i" };
+  }
+
+
   const products = await Product.find(filter)
     .populate("owner", "userName name age")
     .sort({ createdAt: sort })
@@ -47,8 +47,8 @@ const getOwnerProducts = async ({ search, page, limit, sort, userId }) => {
 }
 
 
-const createProduct = async ({ name, type, valid, price, owner, description, imageUrl, imagePublicId }) => {
-  return Product.create({ name, type, valid, price, owner, description, imageUrl, imagePublicId });
+const createProduct = async ({ name, type, valid, price, owner, description, images }) => {
+  return Product.create({ name, type, valid, price, owner, description, images });
 };
 
 

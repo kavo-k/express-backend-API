@@ -121,7 +121,7 @@ async function loadProduct(id) {
             editProduct.href = `productForm.html?id=${product._id}`;
         }
 
-
+        console.log(product);
         productPageImage.src = product.imageOptimizedUrl || '/img/placeholder.png';
         productPageFullImage.src = product.imageUrl || '/img/placeholder.png';
         productPageFullImage.hidden = false;

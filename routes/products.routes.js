@@ -38,16 +38,37 @@ router.get(
 
     let { products, total } = await getProducts({ search, page, limit, sort, type });
 
-    products = products.map(p => ({
-      ...p.toObject(),
-      imageOptimizedUrl: p.imagePublicId
-        ? cloudinary.url(p.imagePublicId, {
+    products = products.map((p) => {
+      const productObject = p.toObject();
+
+      let imageOptimizedUrl = null;
+
+      if (p.imagePublicId) {
+        imageOptimizedUrl = cloudinary.url(p.imagePublicId, {
           transformation: [
-            { quality: 'auto', fetch_format: 'auto' },
-            { width: 1200, height: 1200, crop: 'fill', gravity: 'auto' },
+            { quality: "auto", fetch_format: "auto" },
+            { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
           ],
-        }) : null,
-    }));
+        });
+      }
+
+      if (p.images && p.images.length >= 1) {
+        if (p.images[0].imagePublicId) {
+          imageOptimizedUrl = cloudinary.url(p.images[0].imagePublicId,
+            {
+              transformation: [
+                { quality: "auto", fetch_format: "auto" },
+                { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
+              ],
+            });
+        }
+      }
+
+      return {
+        ...productObject,
+        imageOptimizedUrl,
+      };
+    });
 
     res.json({ page, limit, total, products });
   })
@@ -67,16 +88,37 @@ router.get(
 
     let { products, total } = await getOwnerProducts({ search, page, limit, sort, userId });
 
-    products = products.map(p => ({
-      ...p.toObject(),
-      imageOptimizedUrl: p.imagePublicId
-        ? cloudinary.url(p.imagePublicId, {
+    products = products.map((p) => {
+      const productObject = p.toObject();
+
+      let imageOptimizedUrl = null;
+
+      if (p.imagePublicId) {
+        imageOptimizedUrl = cloudinary.url(p.imagePublicId, {
           transformation: [
-            { quality: 'auto', fetch_format: 'auto' },
-            { width: 1200, height: 1200, crop: 'fill', gravity: 'auto' },
+            { quality: "auto", fetch_format: "auto" },
+            { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
           ],
-        }) : null,
-    }));
+        });
+      }
+
+      if (p.images && p.images.length >= 1) {
+        if (p.images[0].imagePublicId) {
+          imageOptimizedUrl = cloudinary.url(p.images[0].imagePublicId,
+            {
+              transformation: [
+                { quality: "auto", fetch_format: "auto" },
+                { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
+              ],
+            });
+        }
+      }
+
+      return {
+        ...productObject,
+        imageOptimizedUrl,
+      };
+    });
 
     res.json({ page, limit, total, products });
 
@@ -95,19 +137,39 @@ router.get(
       return;
     }
 
-    product = {
-      ...product.toObject(),
-      imageOptimizedUrl: product.imagePublicId
-        ? cloudinary.url(product.imagePublicId, {
-          transformation: [
-            { quality: 'auto', fetch_format: 'auto' },
-            { width: 1200, height: 1200, crop: 'fill', gravity: 'auto' },
-          ],
-        })
-        : null,
+    const productObject = product.toObject();
+
+    console.log("after: ", productObject);
+
+    let imageOptimizedUrl = null;
+
+    if (product.imagePublicId) {
+      imageOptimizedUrl = cloudinary.url(product.imagePublicId, {
+        transformation: [
+          { quality: "auto", fetch_format: "auto" },
+          { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
+        ],
+      });
+    }
+
+    if (product.images) {
+      if (product.images.length >= 1) {
+        imageOptimizedUrl = cloudinary.url(product.images[0].imagePublicId,
+          {
+            transformation: [
+              { quality: "auto", fetch_format: "auto" },
+              { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
+            ],
+          });
+      }
+    }
+
+    const result = {
+      ...productObject,
+      imageOptimizedUrl,
     };
 
-    res.json(product);
+    res.json(result);
   })
 );
 
@@ -116,24 +178,21 @@ router.get(
 router.post(
   "/",
   auth,
-  upload.single("image"),
+  upload.array("images"),
   asyncHandler(async (req, res) => {
-    console.log("headers:", req.headers);
-    console.log("body:", req.body);
-    console.log("file:", req.file);
+    const files = req.files;
+    const images = [];
 
+    if (files.length <= 0) return res.status(400).json({ error: "image обязателен" });
 
-    if (!req.file) return res.status(400).json({ error: "image обязателен" });
+    for (const file of files) {
+      const result = await uploadToCloudinary(file.buffer);
 
-    const result = await uploadToCloudinary(req.file.buffer);
+      const imageUrl = result.secure_url;
+      const imagePublicId = result.public_id;
 
-    const imageUrl = result.secure_url;
-    const imagePublicId = result.public_id;
-
-    console.log("imageUrl:", imageUrl);
-    console.log("imagePublicId:", imagePublicId);
-
-
+      images.push({ imageUrl, imagePublicId });
+    }
 
     const { name, type, description } = req.body;
     const owner = req.user.userId;
@@ -168,7 +227,7 @@ router.post(
     }
 
 
-    const product = await createProduct({ name, type, valid, price, owner, description, imageUrl, imagePublicId });
+    const product = await createProduct({ name, type, valid, price, owner, description, images });
     res.status(201).json(product);
   }));
 
@@ -177,10 +236,8 @@ router.post(
 router.put(
   "/:id",
   auth,
-  upload.single("image"),
+  upload.array("images"),
   asyncHandler(async (req, res) => {
-
-
     const { name, type, description } = req.body;
     let { valid, price } = req.body;
 
@@ -228,12 +285,20 @@ router.put(
       valid = d;
     }
 
-    let updateData = { name, type, valid, price, description };
+    let updateData = { name, type, valid, price, description, };
+    const files = req.files;
 
-    if (req.file) {
-      const result = await uploadToCloudinary(req.file.buffer);
-      updateData.imageUrl = result.secure_url;
-      updateData.imagePublicId = result.public_id;
+    if (files) {
+      let images = [];
+      for (const file of files) {
+        const result = await uploadToCloudinary(file.buffer);
+
+        const imageUrl = result.secure_url;
+        const imagePublicId = result.public_id;
+
+        images.push({ imageUrl, imagePublicId });
+      }
+      updateData.images = images;
     }
 
     const updated = await updateProduct(req.params.id, updateData);
