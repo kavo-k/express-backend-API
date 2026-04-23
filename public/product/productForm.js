@@ -39,14 +39,32 @@ async function outputInCard(id) {
         const res = await authFetch(`/products/${id}`);
         const product = await res.json();
 
-        productImagePut.src = product.imageOptimizedUrl || product.imageUrl || '/img/placeholder.png';
+        console.log(product);
+
+        productImagePut.src = product.images[0].imageUrl || '/img/placeholder.png';
         productImagePut.hidden = false;
 
         nameInput.value = product.name || ""
         priceInput.value = product.price ?? ""
         descriptionInput.value = product.description || ""
-        typeSelect.value = product.type || ""
-        categoryInput.value = product.type || ""
+
+        let findSelect = false;
+
+        for (const select of typeSelect.options) {
+            if (product.type === select.value) {
+                findSelect = true;
+            }
+        }
+
+        if (findSelect) {
+            typeSelect.value = product.type
+            otherCategoryContainer.hidden = true;
+        } else {
+            typeSelect.value = "customCategory";
+            otherCategoryContainer.hidden = false;
+            categoryInput.value = product.type;
+        }
+
     } catch (err) {
         errorMessage.textContent = err.message;
     }

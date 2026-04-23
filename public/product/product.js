@@ -122,8 +122,8 @@ async function loadProduct(id) {
         }
 
         console.log(product);
-        productPageImage.src = product.imageOptimizedUrl || '/img/placeholder.png';
-        productPageFullImage.src = product.imageUrl || '/img/placeholder.png';
+        productPageImage.src = product.images[0].imageUrl || '/img/placeholder.png';
+        productPageFullImage.src = product.images[0].imageUrl || '/img/placeholder.png';
         productPageFullImage.hidden = false;
         productPageImage.hidden = false;
 

@@ -265,7 +265,7 @@ router.put(
     }
 
     if (product.owner._id.toString() !== req.user.userId && req.user.role !== "admin") {
-      return res.status(403).json({ error: "я не знаю как вы сюда попали, но вы не можете редактировать этот продукт :)" });
+      return res.status(403).json({ error: "вы не можете редактировать этот продукт" });
     }
 
     if (description !== undefined && typeof description !== "string") {
