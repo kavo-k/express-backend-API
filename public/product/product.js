@@ -21,6 +21,7 @@ const errorMessage = document.getElementById("errorMessage");
 const tokenInfo = document.getElementById("TokenIsAvailable");
 const search = document.getElementById("inputSearch");
 const modalImage = document.getElementById("modalImage");
+const productGallery = document.querySelector(".product-gallery-strip");
 
 const productPageActions = document.getElementById("productPageActions");
 const addToCartBtn = document.getElementById("addToCartBtn");
@@ -134,6 +135,27 @@ async function loadProduct(id) {
         productOwner.innerHTML = `owner: ${product.owner.userName || product.owner.name || ""}`;
         productCreatedAt.innerHTML = `Created: ${new Date(product.createdAt).toLocaleDateString("ru-RU") || ""}`;
 
+        for (let i = 0; i < product.images.length; i++) {
+            const productThumb = document.createElement("div");
+            productThumb.className = "product-gallery-thumb";
+
+            if (i === 0) productThumb.classList.add("product-gallery-thumb-active");
+            
+            const productImg = document.createElement("img");
+            productImg.src = product.images[i].imageOptimizedUrl;
+
+            productThumb.appendChild(productImg);
+            productGallery.appendChild(productThumb);
+
+
+            productThumb.addEventListener("click", () => {
+                const activeThumb = productGallery.querySelector(".product-gallery-thumb-active");
+                if (activeThumb) activeThumb.classList.remove("product-gallery-thumb-active");
+                productPageImage.src = product.images[i].imageUrl || '/img/placeholder.png';
+                productPageFullImage.src = product.images[i].imageUrl || '/img/placeholder.png';
+                productThumb.classList.add("product-gallery-thumb-active");
+            });
+        }
     } catch (err) {
         errorMessage.textContent = err.message;
     }

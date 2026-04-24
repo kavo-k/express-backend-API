@@ -141,32 +141,26 @@ router.get(
 
     console.log("after: ", productObject);
 
-    let imageOptimizedUrl = null;
-
-    if (product.imagePublicId) {
-      imageOptimizedUrl = cloudinary.url(product.imagePublicId, {
-        transformation: [
-          { quality: "auto", fetch_format: "auto" },
-          { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
-        ],
-      });
-    }
+    let images = product.images;
 
     if (product.images) {
       if (product.images.length >= 1) {
-        imageOptimizedUrl = cloudinary.url(product.images[0].imagePublicId,
-          {
-            transformation: [
-              { quality: "auto", fetch_format: "auto" },
-              { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
-            ],
-          });
+        images = productObject.images.map((image) => {
+          const optimizedUrl  = cloudinary.url(image.imagePublicId,
+            {
+              transformation: [
+                { quality: "auto", fetch_format: "auto" },
+                { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
+              ],
+            })
+            return { ...image, imageOptimizedUrl: optimizedUrl};
+        });
       }
     }
 
     const result = {
       ...productObject,
-      imageOptimizedUrl,
+      images: images,
     };
 
     res.json(result);

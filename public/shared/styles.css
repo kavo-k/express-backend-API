@@ -2080,15 +2080,19 @@ form {
 .product-page-media {
   padding: 0;
   min-height: 520px;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
   overflow: hidden;
 }
 
 .product-page-image-frame {
-  min-height: 100%;
+  min-height: 520px;
   border-radius: 0;
-  padding: 18px;
-  background: #efefeb;
+  padding: 22px;
+  background:
+    linear-gradient(145deg, #f5f4ef, #e6e3dc);
   border: 0;
+  border-bottom: 1px solid rgba(18, 21, 28, .14);
   display: grid;
   place-items: center;
   position: relative;
@@ -2112,34 +2116,64 @@ form {
 
 #productPageImage {
   width: 100%;
-  max-height: 680px;
+  height: min(62vh, 620px);
+  min-height: 340px;
   aspect-ratio: auto;
   object-fit: contain;
   margin: 0;
   border-width: 0;
-  background: transparent;
+  border-radius: 18px;
+  background: #f8f7f3;
+  box-shadow:
+    0 18px 40px rgba(25, 28, 36, .16),
+    inset 0 0 0 1px rgba(255, 255, 255, .68);
 }
 
 .product-gallery-strip {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+  display: flex;
+  gap: 12px;
   padding: 14px;
   background: #12151c;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #424a58 transparent;
 }
 
 .product-gallery-thumb {
+  flex: 0 0 88px;
   aspect-ratio: 1 / 1;
-  border-radius: 14px;
+  border-radius: 12px;
   border: 1px solid #404656;
-  background:
-    radial-gradient(70% 70% at 50% 32%, rgba(198, 106, 43, .52), transparent 42%),
-    linear-gradient(180deg, #f0efec, #ece8e2);
+  background: #ece8e2;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.product-gallery-thumb:hover {
+  border-color: #ff9f1f;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .24);
+}
+
+.product-gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: inherit;
 }
 
 .product-gallery-thumb-active {
   border-color: #ff9f1f;
-  box-shadow: 0 0 0 2px rgba(255, 159, 31, .18);
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 2px rgba(255, 159, 31, .26),
+    0 10px 22px rgba(0, 0, 0, .28);
+}
+
+.product-gallery-thumb-active img {
+  filter: saturate(1.06) contrast(1.04);
 }
 
 .product-page-content {
@@ -2689,6 +2723,24 @@ form {
 
   #productPageCard {
     grid-template-columns: 1fr;
+  }
+
+  .product-page-image-frame {
+    min-height: 340px;
+    padding: 14px;
+  }
+
+  #productPageImage {
+    height: min(56vh, 430px);
+    min-height: 280px;
+  }
+
+  .product-gallery-strip {
+    padding: 12px;
+  }
+
+  .product-gallery-thumb {
+    flex-basis: 72px;
   }
 
   .product-purchase-panel {
