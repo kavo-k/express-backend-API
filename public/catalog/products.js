@@ -127,7 +127,7 @@ function renderProducts(products, dataFavorites) {
     <path d="m12 21-1.45-1.32C5.4 15.02 2 11.9 2 8.09 2 5 4.42 2.5 7.5 2.5c1.74 0 3.41.81 4.5 2.09A6 6 0 0 1 16.5 2.5C19.58 2.5 22 5 22 8.09c0 3.81-3.4 6.93-8.55 11.6z"></path>
     </svg>
     </button>
-    <img class="product-image" src="${product.imageOptimizedUrl || product.images[0].imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
+    <img class="product-image" src="${product.imageOptimizedUrl || product.images?.[0]?.imageUrl || '/img/placeholder.png'}" alt="${product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
     </div>
     <div class="product-card-copy">
     <div class="product-card-topline">
@@ -229,7 +229,7 @@ async function loadProducts() {
     const favoritesLinkElement = document.querySelector(".favorites-link");
 
     await updateFavoriteCount(favoritesCount, favoritesLinkElement);
-    
+
     let favoritesItems = []
     const dataFavorites = await loadFavorites();
     favoritesItems = dataFavorites.favorites.items;

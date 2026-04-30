@@ -139,21 +139,20 @@ router.get(
 
     const productObject = product.toObject();
 
-    console.log("after: ", productObject);
 
     let images = product.images;
 
     if (product.images) {
       if (product.images.length >= 1) {
         images = productObject.images.map((image) => {
-          const optimizedUrl  = cloudinary.url(image.imagePublicId,
+          const optimizedUrl = cloudinary.url(image.imagePublicId,
             {
               transformation: [
                 { quality: "auto", fetch_format: "auto" },
                 { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
               ],
             })
-            return { ...image, imageOptimizedUrl: optimizedUrl};
+          return { ...image, imageOptimizedUrl: optimizedUrl };
         });
       }
     }
@@ -190,7 +189,7 @@ router.post(
 
     const { name, type, description } = req.body;
     const owner = req.user.userId;
-    let { valid, price } = req.body;
+    let { price } = req.body;
 
     if (!name || !type || price === undefined || !price.trim()) {
       res.status(400).json({ error: "name, type, price обязательны" });
@@ -207,11 +206,6 @@ router.post(
       return res.status(400).json({ error: "owner должен иметь Id пользователя" });
     }
 
-    if (valid !== undefined && isNaN(Date.parse(valid))) {
-      res.status(400).json({ error: "valid должна быть датой" });
-      return;
-    }
-
     if (description !== undefined && typeof description !== "string") {
       return res.status(400).json({ error: "description должен быть строкой" });
     }
@@ -221,7 +215,7 @@ router.post(
     }
 
 
-    const product = await createProduct({ name, type, valid, price, owner, description, images });
+    const product = await createProduct({ name, type, price, owner, description, images });
     res.status(201).json(product);
   }));
 
@@ -232,8 +226,10 @@ router.put(
   auth,
   upload.array("images"),
   asyncHandler(async (req, res) => {
-    const { name, type, description } = req.body;
-    let { valid, price } = req.body;
+    const { name, type, description, selectedMainImagePublicId } = req.body;
+    let { price } = req.body;
+    console.log(req.body);
+    console.log(selectedMainImagePublicId);
 
     if (!name || !type || price === undefined || !price.trim()) {
       res.status(400).json({ error: "name, type, price обязательны" });
@@ -244,12 +240,6 @@ router.put(
 
     if (Number.isNaN(price)) {
       return res.status(400).json({ error: "Price должен быть числом" });
-    }
-
-
-    if (valid !== undefined && isNaN(Date.parse(valid))) {
-      res.status(400).json({ error: "valid должна быть датой" });
-      return;
     }
 
     const product = await getProductById(req.params.id);
@@ -270,19 +260,14 @@ router.put(
       return res.status(400).json({ error: "description слишком длинный (max 1000)" });
     }
 
+    const mainImageIndex = product.images.findIndex((image) => {
+      return image.imagePublicId === selectedMainImagePublicId;
+    });
 
-    console.log("Product to update:", product);
-
-    if (valid) {
-      const d = new Date(valid);
-      d.setHours(0, 0, 0, 0);
-      valid = d;
-    }
-
-    let updateData = { name, type, valid, price, description, };
+    let updateData = { name, type, price, description, };
     const files = req.files;
 
-    if (files) {
+    if (files.length > 0) {
       let images = [];
       for (const file of files) {
         const result = await uploadToCloudinary(file.buffer);
@@ -294,6 +279,16 @@ router.put(
       }
       updateData.images = images;
     }
+
+
+    if (mainImageIndex > 0) {
+      let images = [...product.images];
+      const image = images[mainImageIndex]
+      images.splice(mainImageIndex, 1);
+      images.unshift(image);
+      updateData.images = images;
+    }
+
 
     const updated = await updateProduct(req.params.id, updateData);
 

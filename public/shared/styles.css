@@ -931,17 +931,103 @@ main {
   transform: scale(1.08);
 }
 
-#productImagePut {
-  width: min(100%, 340px);
-  margin: 8px auto 4px;
-  border-radius: 14px;
-  border: 1px solid #697581;
+.product-form-preview {
+  margin: 10px 0 18px;
+  border: 1px solid rgba(84, 92, 108, .9);
+  border-radius: 18px;
   background:
-    radial-gradient(120% 120% at 20% 0%, rgba(180, 197, 207, .16), transparent 45%),
-    linear-gradient(180deg, #181b1f, #14171a);
+    linear-gradient(145deg, #222833, #171b23);
+  padding: 12px;
+}
+
+.product-form-gallery {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(84, 92, 108, .72);
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #424a58 transparent;
+}
+
+.product-form-gallery:empty {
+  display: none;
+}
+
+.product-form-gallery .product-gallery-thumb {
+  flex: 0 0 72px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.product-form-main-image-btn {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: auto;
+  min-height: 36px;
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(18, 21, 28, .88);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.2;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, .32);
+}
+
+.product-form-main-image-btn:hover {
+  transform: translateY(-1px);
+  background: #ff9f1f;
+  color: #15181d;
+}
+
+.product-gallery-thumb-active .product-form-main-image-btn {
+  background: #ff9f1f;
+  color: #15181d;
+}
+
+.product-form-preview-frame {
+  min-height: 260px;
+  border-radius: 14px;
+  background:
+    linear-gradient(145deg, #f5f4ef, #e7e2d9);
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-form-preview-frame::before {
+  content: "";
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  border: 1px dashed rgba(74, 83, 97, .7);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, .56), rgba(210, 205, 195, .42));
+}
+
+.product-form-preview-frame:has(#productImagePut:not([hidden]))::before {
+  display: none;
+}
+
+#productImagePut {
+  width: calc(100% - 32px);
+  height: min(48vh, 420px);
+  min-height: 260px;
+  margin: 0 16px;
+  border-radius: 14px;
+  border: 0;
+  object-fit: contain;
+  background: #f7f5ef;
   box-shadow:
-    0 0 0 1px rgba(166, 205, 255, .12) inset,
-    0 10px 22px rgba(0, 0, 0, .34);
+    inset 0 0 0 1px rgba(255, 255, 255, .7),
+    0 16px 34px rgba(0, 0, 0, .18);
 }
 
 img[hidden],

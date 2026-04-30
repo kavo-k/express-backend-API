@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const router = express.Router();
 const Product = require("../models/Product");
 const jwt = require("jsonwebtoken");
+const auth = require("../middlewares/auth");
 
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -85,17 +86,17 @@ router.post(
 
     const normalizedEmail = String(email).toLowerCase().trim();
 
-    
+
     if (!userName) {
       res.status(400).json({ error: "userName обязателен" });
       return;
     }
-    
+
     if (age !== undefined && typeof age !== "number") {
       res.status(400).json({ error: "age должен быть числом" });
       return;
     }
-    
+
     if (!password) {
       res.status(400).json({ error: "password обязателен" });
       return;
@@ -103,7 +104,7 @@ router.post(
       res.status(400).json({ error: "password должен быть строкой не менее 6 символов" });
       return;
     }
-    
+
     const user = await createUser({
       userName,
       age,
@@ -113,7 +114,7 @@ router.post(
 
     const safeUser = user.toObject();
     delete safeUser.passwordHash;
-    
+
     res.status(201).json({ user: safeUser, message: `Пользователь ${userName} успешно зарегистрирован` });
   })
 );
@@ -170,7 +171,7 @@ router.post(
 router.post(
   "/forgot-password",
   asyncHandler(async (req, res) => {
-    
+
     const { email } = req.body;
 
     if (!email) {
@@ -222,7 +223,7 @@ router.put(
     const passwordHash = await bcrypt.hash(password, 10);
 
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-    
+
     const user = await getUserByToken(tokenHash);
 
     if (!user) {
@@ -248,11 +249,12 @@ router.put(
 
 
 router.put(
-  "/:id",
+  "/me",
+  auth,
   asyncHandler(async (req, res) => {
     const { userName, age } = req.body;
 
-    const updated = await updateUser(req.params.id, { userName, age });
+    const updated = await updateUser(req.user.userId, { userName, age });
 
     if (!updated) {
       res.status(404).json({ error: "Пользователь не найден" });
@@ -261,21 +263,6 @@ router.put(
 
     res.json(updated);
 
-  })
-);
-
-
-
-router.delete(
-  "/:id",
-  asyncHandler(async (req, res) => {
-    const deleted = await deleteUser(req.params.id);
-
-    if (!deleted) {
-      res.status(404).json({ error: "Пользователь не найден, или уже удалён" });
-      return;
-    }
-    res.json(deleted);
   })
 );
 
