@@ -986,6 +986,14 @@ main {
   color: #15181d;
 }
 
+.product-form-main-image-btn.btn-active {
+  background: #ff9f1f;
+  color: #15181d;
+  box-shadow:
+    0 0 0 2px rgba(255, 159, 31, .28),
+    0 12px 24px rgba(0, 0, 0, .32);
+}
+
 .product-gallery-thumb-active .product-form-main-image-btn {
   background: #ff9f1f;
   color: #15181d;

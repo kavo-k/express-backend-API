@@ -241,8 +241,8 @@ router.put(
     if (Number.isNaN(price)) {
       return res.status(400).json({ error: "Price должен быть числом" });
     }
-
     const product = await getProductById(req.params.id);
+    console.log(req.params.id);
 
     if (!product) {
       return res.status(404).json({ error: "Продукт не найден" });

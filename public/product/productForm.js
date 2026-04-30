@@ -70,6 +70,7 @@ async function outputInCard(id) {
                 productImagePut.src = product.images[i].imageUrl || '/img/placeholder.png';
                 modalImage.src = product.images[i].imageUrl || '/img/placeholder.png';
                 productThumb.classList.add("product-gallery-thumb-active");
+                mainImageBtn.classList.remove("btn-active");
                 selectedImagePublicId = product.images[i].imagePublicId;
             });
 
@@ -99,7 +100,8 @@ async function outputInCard(id) {
         }
         mainImageBtn.addEventListener("click", () => {
             selectedMainImagePublicId = selectedImagePublicId;
-            console.log(selectedMainImagePublicId);
+            mainImageBtn.classList.add("btn-active");
+            console.log(selectedImagePublicId);
         });
     } catch (err) {
         errorMessage.textContent = err.message;

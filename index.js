@@ -11,17 +11,21 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("Подключение к MongoDB успешно"))
   .catch((err) => console.error("Ошибка подключения к MongoDB:", err));
 
-  const usersRoutes = require("./routes/users.routes");
-  app.use("/users", usersRoutes);
-  
-  const productRoutes = require("./routes/products.routes");
-  app.use("/products", productRoutes);
-  
-  const cartRoutes = require("./routes/cart.routes");
-  app.use("/cart", cartRoutes);
-  
-  const favoritesRoutes = require("./routes/favorites.routes");
-  app.use("/favorites", favoritesRoutes);
+const usersRoutes = require("./routes/users.routes");
+app.use("/users", usersRoutes);
+
+const productRoutes = require("./routes/products.routes");
+app.use("/products", productRoutes);
+
+const reviewsRoutes = require("./routes/review.routes");
+app.use("/products", reviewsRoutes);
+
+const cartRoutes = require("./routes/cart.routes");
+app.use("/cart", cartRoutes);
+
+const favoritesRoutes = require("./routes/favorites.routes");
+app.use("/favorites", favoritesRoutes);
+
 
 app.use((err, req, res, next) => {
   console.log("ERROR:", err.message);
