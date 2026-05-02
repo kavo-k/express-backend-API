@@ -17,10 +17,10 @@ router.get(
   asyncHandler(async (req, res) => {
     const productId = req.params.productID;
 
-    const { reviews } = await getItems({ productId });
-
+    const reviews = await getReviews({ productId });
+    console.log(reviews);
     if (!reviews) {
-      return res.json({ reviews: { items: [] } });
+      return res.json({ reviews });
     }
 
     res.json({ reviews });

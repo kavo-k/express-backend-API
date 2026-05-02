@@ -31,6 +31,12 @@ const productCartQuantity = document.getElementById("productCartQuantity");
 const productQuantityControls = document.getElementById("productQuantityControls");
 productQuantityControls.hidden = true;
 
+const reviewRating = document.getElementById("reviewRating");
+const reviewText = document.getElementById("reviewText");
+const productReviewSubmit = document.querySelector(".product-review-submit");
+const productReviewsList = document.querySelector(".product-reviews-list");
+
+
 let editProduct = document.getElementById("editProduct");
 
 const id = new URLSearchParams(window.location.search).get("id");
@@ -140,7 +146,7 @@ async function loadProduct(id) {
             productThumb.className = "product-gallery-thumb";
 
             if (i === 0) productThumb.classList.add("product-gallery-thumb-active");
-            
+
             const productImg = document.createElement("img");
             productImg.src = product.images[i].imageOptimizedUrl;
 
@@ -161,6 +167,34 @@ async function loadProduct(id) {
     }
 };
 
+async function loadReviews(id) {
+    try {
+        const reviews = await getReviews(id);
+        const result = reviews.reviews;
+        console.log(result);
+        for (const review of result) {
+
+            const reviewCard = document.createElement("article");
+            reviewCard.className = "product-review-card";
+
+            
+            reviewCard.innerHTML = `
+            <div class="product-review-card-top">
+            <strong>${review.user}</strong>
+            <span>${review.rating}</span>
+            </div>
+            <p>${review.text}</p>`;
+            
+            
+            console.log(review, reviewCard);
+            productReviewsList.appendChild(reviewCard);
+        }
+
+    } catch (err) {
+        errorMessage.textContent = err.message;
+    }
+};
 
 loadProduct(id);
 syncCartControls(id);
+loadReviews(id);

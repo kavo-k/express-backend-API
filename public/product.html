@@ -67,6 +67,53 @@
                 </div>
             </div>
         </section>
+
+        <section class="product-reviews-section" aria-labelledby="productReviewsTitle">
+            <div class="product-reviews-header">
+                <div>
+                    <p class="product-reviews-eyebrow">Отзывы</p>
+                    <h3 id="productReviewsTitle">Мнения покупателей</h3>
+                </div>
+                <div class="product-reviews-summary">
+                    <span class="product-reviews-score">4.2</span>
+                    <span class="product-reviews-stars">★★★★☆</span>
+                    <span class="product-reviews-count">67 отзывов</span>
+                </div>
+            </div>
+
+            <form class="product-review-form">
+                <label for="reviewRating">Оценка</label>
+                <select id="reviewRating" name="rating">
+                    <option value="">Выбрать</option>
+                    <option value="5">★★★★★</option>
+                    <option value="4">★★★★☆</option>
+                    <option value="3">★★★☆☆</option>
+                    <option value="2">★★☆☆☆</option>
+                    <option value="1">★☆☆☆☆</option>
+                </select>
+                <textarea id="reviewText" name="text" rows="1" placeholder="Что стоит знать о товаре?"></textarea>
+
+                <button type="button" class="product-review-submit">Оставить отзыв</button>
+            </form>
+
+            <div class="product-reviews-list">
+                <!-- <article class="product-review-card">
+                    <div class="product-review-card-top">
+                        <strong>Покупатель</strong>
+                        <span>★★★★★</span>
+                    </div>
+                    <p>Товар соответствует описанию, упаковка аккуратная. Покупкой доволен.</p>
+                </article>
+
+                <article class="product-review-card">
+                    <div class="product-review-card-top">
+                        <strong>Алексей</strong>
+                        <span>★★★★☆</span>
+                    </div>
+                    <p>Все нормально, но хотелось бы больше фотографий в карточке.</p>
+                </article> -->
+            </div>
+        </section>
     </main>
 
     <div id="modalImage" class="modal-overlay" aria-hidden="true">

@@ -189,6 +189,19 @@ async function removeFavoriteAllItems() {
 }
 
 
+async function getReviews(productId) {
+    const res = await fetch(`/products/${productId}/reviews`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) { throw new Error(data.error || "Ошибка при загрузке отзывов"); }
+    return data;
+}
+
+
 function getCurrentUser() {
     const userJson = localStorage.getItem("user");
     return userJson ? JSON.parse(userJson) : null;

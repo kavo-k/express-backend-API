@@ -1,17 +1,8 @@
-const Reviews = require("../models/Review");
-const Product = require("../models/Product");
-
-
-const {
-    getProductById,
-} = require("../services/product.service");
 const Review = require("../models/Review");
 
 
-
 const getReviews = async ({ productId }) => {
-    const product = getProductById(productId);
-    return { reviews };
+    return Review.find({ product: productId }).populate("user", "userName name age");
 };
 
 
