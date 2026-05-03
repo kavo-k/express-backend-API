@@ -236,7 +236,7 @@ async function authFetch(url, options = {}) {
     const response = await fetch(url, { ...options, headers });
 
     if (response.status === 401) {
-        // logout();
+        logout();
     }
     return response;
 }
