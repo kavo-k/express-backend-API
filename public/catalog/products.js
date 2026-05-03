@@ -87,7 +87,7 @@ function matchFavorites(itemFavorite, productsFavorites) {
 }
 
 
-function renderProducts(products, dataFavorites) {
+async function renderProducts(products, dataFavorites) {
   productsList.innerHTML = "";
 
   if (products.length === 0) {
@@ -99,10 +99,24 @@ function renderProducts(products, dataFavorites) {
     const card = document.createElement("div");
     card.className = "product-card";
 
-    console.log(product, dataFavorites);
-
     const foundItem = matchFavorites(product, dataFavorites)
+    const reviews = await getReviews(product._id);
 
+    const reviewsAllCount = reviews.reviews.length;
+    let reviewsAllStars = 0;
+    let averageReview = 0;
+
+    for (const review of reviews.reviews) {
+      reviewsAllStars += review.rating;
+    }
+
+    if (reviewsAllCount > 0) {
+      averageReview = (reviewsAllStars / reviewsAllCount);
+    }
+
+      const fullStars = "★".repeat(Math.round(averageReview));
+      const emptyStars = "☆".repeat(5 - Math.round(averageReview));
+      const stars = fullStars + emptyStars;
 
     const ownerId = user ? user._id : null;
 
@@ -134,13 +148,16 @@ function renderProducts(products, dataFavorites) {
     <h3>${product.name}</h3>
     </div>
     <div class="product-card-rating">
-    <span class="product-card-star">★★★★★</span>
-    <span class="product-card-rating-value">4.2</span>
-    <span class="product-card-rating-count">(67)</span>
+    <span class="product-card-star">${stars || "☆☆☆☆☆"}</span>
+    <span class="product-card-rating-value">${averageReview.toFixed(1) || "0.0"}</span>
+    <span class="product-card-rating-count">(${reviews.reviews.length})</span>
     </div>
     <p class="product-card-price">${product.price}₽</p>
     </div>
     `;
+
+
+
     const favoriteToggleBtn = card.querySelector(".favorite-toggle-btn");
 
     if (foundItem) {

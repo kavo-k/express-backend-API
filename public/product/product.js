@@ -33,6 +33,7 @@ productQuantityControls.hidden = true;
 
 const reviewRating = document.getElementById("reviewRating");
 const reviewText = document.getElementById("reviewText");
+const productReviewForm = document.querySelector(".product-review-form");
 const productReviewSubmit = document.querySelector(".product-review-submit");
 const productReviewsList = document.querySelector(".product-reviews-list");
 
@@ -72,6 +73,30 @@ productPageImage.addEventListener("click", (e) => {
         return modalImage.ariaHidden = false;
     }
 })
+
+
+productReviewSubmit.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const rating = reviewRating.value;
+    const text = reviewText.value;
+
+    try {
+        const res = await authFetch(`/products/${id}/reviews`, {
+            method: "POST",
+            body: JSON.stringify({ text, rating }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Ошибка создания оценки");
+        loadReviews(id);
+        return;
+    } catch (err) {
+        errorMessage.textContent = err.message;
+        return;
+    }
+
+});
+
 
 productPageActions.addEventListener("click", async (e) => {
     const addToCartBtnTg = e.target.closest(".cart-action-btn");
@@ -169,26 +194,58 @@ async function loadProduct(id) {
 
 async function loadReviews(id) {
     try {
-        const reviews = await getReviews(id);
-        const result = reviews.reviews;
-        console.log(result);
-        for (const review of result) {
+        const productReviewsCount = document.querySelector(".product-reviews-count");
+        const productReviewScore = document.querySelector(".product-reviews-score");
+        const productReviewsStars = document.querySelector(".product-reviews-stars");
 
+        const productRaitingCount = document.querySelector(".product-rating-count");
+        const productRaitingScore = document.querySelector(".product-rating-score");
+        const productRaitingStars = document.querySelector(".product-rating-stars");
+
+        productReviewsList.innerHTML = "";
+        const reviews = await getReviews(id);
+        const reviewsAllCount = reviews.reviews.length;
+        let reviewsAllStars = 0;
+        let averageReview = 0;
+        console.log(reviews);
+
+        productReviewsCount.textContent = `(${reviewsAllCount}) отзывов`;
+        productRaitingCount.textContent = `(${reviewsAllCount}) отзывов`;
+
+        for (const review of reviews.reviews) {
             const reviewCard = document.createElement("article");
             reviewCard.className = "product-review-card";
 
-            
+            const rating = Number(review.rating);
+            const fullStars = "★".repeat(rating);
+            const emptyStars = "☆".repeat(5 - rating);
+            const stars = fullStars + emptyStars;
+
             reviewCard.innerHTML = `
             <div class="product-review-card-top">
-            <strong>${review.user}</strong>
-            <span>${review.rating}</span>
+            <strong>${review.user.userName || review.user.name}</strong>
+            <span>${stars}</span>
             </div>
             <p>${review.text}</p>`;
-            
-            
+
+
             console.log(review, reviewCard);
             productReviewsList.appendChild(reviewCard);
+            reviewsAllStars += review.rating;
         }
+
+        if (reviewsAllCount > 0) {
+            averageReview = (reviewsAllStars / reviewsAllCount);
+        }
+
+        productReviewScore.textContent = `${averageReview.toFixed(1)}`;
+        productRaitingScore.textContent = `${averageReview.toFixed(1)}`;
+
+        const fullStars = "★".repeat(Math.round(averageReview));
+        const emptyStars = "☆".repeat(5 - Math.round(averageReview));
+        const stars = fullStars + emptyStars;
+        productReviewsStars.textContent = `${stars}`;
+        productRaitingStars.textContent = `${stars}`;
 
     } catch (err) {
         errorMessage.textContent = err.message;

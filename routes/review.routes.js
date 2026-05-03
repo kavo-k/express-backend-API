@@ -18,7 +18,6 @@ router.get(
     const productId = req.params.productID;
 
     const reviews = await getReviews({ productId });
-    console.log(reviews);
     if (!reviews) {
       return res.json({ reviews });
     }
