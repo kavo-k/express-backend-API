@@ -47,7 +47,7 @@ async function renderProducts(products) {
 
     card.innerHTML = `
     <div class="cart-item-image">
-    <img data-full-image="${item.product.imageOptimizedUrl || item.product.imageUrl}" src="${item.product.imageOptimizedUrl || item.product.imageUrl || '/img/placeholder.png'}" alt="${item.product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
+    <img data-full-image="${item.product.images[0].imageOptimizedUrl || item.product.images[0].imageUrl}" src="${item.product.images[0].imageOptimizedUrl || item.product.images[0].imageUrl || '/img/placeholder.png'}" alt="${item.product.images[0].name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
     </div>
     <div class="cart-item-content">
     <div class="cart-item-copy">

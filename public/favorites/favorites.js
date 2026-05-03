@@ -29,8 +29,10 @@ async function initFavorites() {
 }
 
 function matchItems(itemFavorite, productsCart) {
+  if (!itemFavorite.product) return "";
   let foundItem = false;
   for (const productCart of productsCart) {
+    if (!productCart.product) continue;
     if (productCart.product._id === itemFavorite.product._id) {
       foundItem = true;
       return productCart;
@@ -56,7 +58,7 @@ async function renderProducts(productsFavorites, productsCart) {
 
     card.innerHTML = `
     <div class="cart-item-image">
-    <img data-full-image="${item.product.imageOptimizedUrl || item.product.imageUrl}" src="${item.product.imageOptimizedUrl || item.product.imageUrl || '/img/placeholder.png'}" alt="${item.product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
+    <img data-full-image="${item.product.images[0].imageOptimizedUrl || item.product.images[0].imageUrl}" src="${item.product.images[0].imageOptimizedUrl || item.product.images[0].imageUrl || '/img/placeholder.png'}" alt="${item.product.name}" onerror="this.onerror=null;this.src='/img/placeholder.png';">
     </div>
     <div class="cart-item-content">
     <div class="cart-item-copy">

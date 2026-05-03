@@ -113,10 +113,10 @@ async function renderProducts(products, dataFavorites) {
     if (reviewsAllCount > 0) {
       averageReview = (reviewsAllStars / reviewsAllCount);
     }
-
-      const fullStars = "★".repeat(Math.round(averageReview));
-      const emptyStars = "☆".repeat(5 - Math.round(averageReview));
-      const stars = fullStars + emptyStars;
+    
+    const fullStars = "★".repeat(Math.round(averageReview));
+    const emptyStars = "☆".repeat(5 - Math.round(averageReview));
+    const stars = fullStars + emptyStars;
 
     const ownerId = user ? user._id : null;
 
