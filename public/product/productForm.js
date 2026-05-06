@@ -26,6 +26,7 @@ const productFormFrame = document.querySelector(".product-form-preview");
 const mainImageBtn = document.querySelector(".product-form-main-image-btn");
 let selectedMainImagePublicId = "";
 let selectedImagePublicId = 0;
+let selectedFileIndex = 0;
 
 const accessToken = localStorage.getItem("accessToken");
 const isToken = Boolean(accessToken);
@@ -41,38 +42,49 @@ const user = getCurrentUser();
 const id = new URLSearchParams(window.location.search).get("id");
 const isId = Boolean(id);
 
+function createProductThumb(i, length, src, publicId) {
+    productImagePut.src = src || '/img/placeholder.png';
+    const productThumb = document.createElement("div");
+    productThumb.className = "product-gallery-thumb";
+    selectedImagePublicId = publicId;
+    selectedFileIndex = i;
+
+    if (i === length - 1) productThumb.classList.add("product-gallery-thumb-active");
+
+    const productImg = document.createElement("img");
+    productImg.src = src;
+
+    productThumb.appendChild(productImg);
+    productGallery.appendChild(productThumb);
+
+    productThumb.addEventListener("click", () => {
+        const activeThumb = productGallery.querySelector(".product-gallery-thumb-active");
+        if (activeThumb) activeThumb.classList.remove("product-gallery-thumb-active");
+        mainImageBtn.classList.remove("btn-active");
+
+        productImagePut.src = src || '/img/placeholder.png';
+        modalImage.src = src || '/img/placeholder.png';
+
+        productThumb.classList.add("product-gallery-thumb-active");
+        selectedImagePublicId = publicId;
+        selectedFileIndex = i;
+    });
+};
+
+
 async function outputInCard(id) {
     try {
         const res = await authFetch(`/products/${id}`);
         const product = await res.json();
         productFormFrame.hidden = false;
-
+        const productImagesLength = product.images.length;
         console.log(product);
 
-        productImagePut.src = product.images[0].imageUrl || '/img/placeholder.png';
-
         for (let i = 0; i < product.images.length; i++) {
-            const productThumb = document.createElement("div");
-            productThumb.className = "product-gallery-thumb";
+            const src = product.images[i].imageUrl;
+            const publicId = product.images[i].imagePublicId;
 
-            if (i === 0) productThumb.classList.add("product-gallery-thumb-active");
-
-            const productImg = document.createElement("img");
-            productImg.src = product.images[i].imageOptimizedUrl;
-
-            productThumb.appendChild(productImg);
-            productGallery.appendChild(productThumb);
-
-
-            productThumb.addEventListener("click", () => {
-                const activeThumb = productGallery.querySelector(".product-gallery-thumb-active");
-                if (activeThumb) activeThumb.classList.remove("product-gallery-thumb-active");
-                productImagePut.src = product.images[i].imageUrl || '/img/placeholder.png';
-                modalImage.src = product.images[i].imageUrl || '/img/placeholder.png';
-                productThumb.classList.add("product-gallery-thumb-active");
-                mainImageBtn.classList.remove("btn-active");
-                selectedImagePublicId = product.images[i].imagePublicId;
-            });
+            createProductThumb(i, productImagesLength, src, publicId);
 
         }
 
@@ -119,34 +131,23 @@ if (isId) {
 
 productImage.addEventListener("change", (e) => {
     const files = e.target.files;
+    const filesArray = Array.from(files);
+
+    productFormFrame.hidden = false;
     productGallery.innerHTML = "";
-    for (const file of files) {
-        const fileUrl = URL.createObjectURL(file);
-        console.log(file);
-        const productThumb = document.createElement("div");
-        productThumb.className = "product-gallery-thumb";
 
-        const productImg = document.createElement("img");
-        productImg.src = fileUrl;
-
-        productThumb.appendChild(productImg);
-        productGallery.appendChild(productThumb);
-
-
-        productThumb.addEventListener("click", () => {
-            const activeThumb = productGallery.querySelector(".product-gallery-thumb-active");
-            if (activeThumb) activeThumb.classList.remove("product-gallery-thumb-active");
-            productImagePut.src = fileUrl || '/img/placeholder.png';
-            modalImage.src = fileUrl || '/img/placeholder.png';
-            productThumb.classList.add("product-gallery-thumb-active");
-        });
-
-
-        productImagePut.src = fileUrl || '/img/placeholder.png';
-    }
+    const filesArrayLength = filesArray.length;
+    filesArray.forEach((file, index) => {
+        const src = URL.createObjectURL(file);
+        createProductThumb(index, filesArrayLength, src);
+    })
     productImagePut.hidden = false;
 });
 
+mainImageBtn.addEventListener("click", () => {
+    mainImageBtn.classList.add("btn-active");
+    console.log(selectedFfileIndex);
+});
 
 productForm.addEventListener("submit", async (e) => {
     e.preventDefault();

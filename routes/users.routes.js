@@ -69,10 +69,6 @@ router.get(
 router.post(
   "/register",
   asyncHandler(async (req, res) => {
-
-    console.log("headers:", req.headers["content-type"]);
-    console.log(req.body);
-
     const { userName, age, email, password } = req.body;
 
 
