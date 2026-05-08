@@ -29,7 +29,7 @@ const categoryChip = document.querySelectorAll(".category-chip");
 
 const user = getCurrentUser();
 
-const LIMIT = 8;
+const LIMIT = 12;
 
 
 

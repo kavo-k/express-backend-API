@@ -27,6 +27,7 @@ const mainImageBtn = document.querySelector(".product-form-main-image-btn");
 let selectedMainImagePublicId = "";
 let selectedImagePublicId = 0;
 let selectedFileIndex = 0;
+let selectedFilesArray = [];
 
 const accessToken = localStorage.getItem("accessToken");
 const isToken = Boolean(accessToken);
@@ -43,15 +44,20 @@ const id = new URLSearchParams(window.location.search).get("id");
 const isId = Boolean(id);
 
 function createProductThumb(i, length, src, publicId) {
-    productImagePut.src = src || '/img/placeholder.png';
+    if (i === 0) {
+        selectedMainImagePublicId = publicId;
+        selectedImagePublicId = publicId;
+    }
     const productThumb = document.createElement("div");
     productThumb.className = "product-gallery-thumb";
-    selectedImagePublicId = publicId;
-    selectedFileIndex = i;
+    console.log(selectedFileIndex);
 
-    if (i === length - 1) productThumb.classList.add("product-gallery-thumb-active");
+    if (i === selectedFileIndex) productThumb.classList.add("product-gallery-thumb-active");
 
     const productImg = document.createElement("img");
+    if (i === 0) {
+        productImagePut.src = src || '/img/placeholder.png';
+    }
     productImg.src = src;
 
     productThumb.appendChild(productImg);
@@ -61,13 +67,25 @@ function createProductThumb(i, length, src, publicId) {
         const activeThumb = productGallery.querySelector(".product-gallery-thumb-active");
         if (activeThumb) activeThumb.classList.remove("product-gallery-thumb-active");
         mainImageBtn.classList.remove("btn-active");
-
         productImagePut.src = src || '/img/placeholder.png';
         modalImage.src = src || '/img/placeholder.png';
 
         productThumb.classList.add("product-gallery-thumb-active");
         selectedImagePublicId = publicId;
         selectedFileIndex = i;
+        if (selectedFilesArray.length > 0) {
+            if (i === 0) {
+                mainImageBtn.classList.add("btn-active");
+            } else {
+                mainImageBtn.classList.remove("btn-active");
+            }
+        } else {
+            if (selectedImagePublicId === selectedMainImagePublicId) {
+                mainImageBtn.classList.add("btn-active");
+            } else {
+                mainImageBtn.classList.remove("btn-active");
+            }
+        }
     });
 };
 
@@ -80,6 +98,7 @@ async function outputInCard(id) {
         const productImagesLength = product.images.length;
         console.log(product);
 
+        selectedFileIndex = 0;
         for (let i = 0; i < product.images.length; i++) {
             const src = product.images[i].imageUrl;
             const publicId = product.images[i].imagePublicId;
@@ -110,11 +129,6 @@ async function outputInCard(id) {
             otherCategoryContainer.hidden = false;
             categoryInput.value = product.type;
         }
-        mainImageBtn.addEventListener("click", () => {
-            selectedMainImagePublicId = selectedImagePublicId;
-            mainImageBtn.classList.add("btn-active");
-            console.log(selectedImagePublicId);
-        });
     } catch (err) {
         errorMessage.textContent = err.message;
     }
@@ -130,24 +144,52 @@ if (isId) {
 
 
 productImage.addEventListener("change", (e) => {
+    selectedFileIndex = 0;
     const files = e.target.files;
-    const filesArray = Array.from(files);
+    selectedFilesArray = Array.from(files);
+    const filesArrayLength = selectedFilesArray.length;
 
     productFormFrame.hidden = false;
     productGallery.innerHTML = "";
+    console.log(selectedFilesArray);
 
-    const filesArrayLength = filesArray.length;
-    filesArray.forEach((file, index) => {
+    selectedFilesArray.forEach((file, index) => {
         const src = URL.createObjectURL(file);
         createProductThumb(index, filesArrayLength, src);
     })
     productImagePut.hidden = false;
 });
 
+// productGallery = .product-form-gallery
+
+
 mainImageBtn.addEventListener("click", () => {
+    console.log(selectedFilesArray);
+    if (selectedFilesArray.length > 0) {
+        const [selectedFile] = selectedFilesArray.splice(selectedFileIndex, 1);
+        selectedFilesArray.unshift(selectedFile);
+        const filesArrayLength = selectedFilesArray.length;
+        console.log(selectedFilesArray, selectedFile);
+
+        productGallery.innerHTML = "";
+
+        selectedFileIndex = 0;
+        selectedFilesArray.forEach((file, index) => {
+            const src = URL.createObjectURL(file);
+            createProductThumb(index, filesArrayLength, src);
+        })
+    } else if (isId) {
+        selectedMainImagePublicId = selectedImagePublicId;
+    }
+
     mainImageBtn.classList.add("btn-active");
-    console.log(selectedFfileIndex);
 });
+
+// mainImageBtn.addEventListener("click", () => {
+//     console.log(42);
+//     mainImageBtn.classList.add("btn-active");
+//     console.log(selectedImagePublicId);
+// });
 
 productForm.addEventListener("submit", async (e) => {
     e.preventDefault();
