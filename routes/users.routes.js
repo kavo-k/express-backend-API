@@ -5,6 +5,8 @@ const router = express.Router();
 const Product = require("../models/Product");
 const jwt = require("jsonwebtoken");
 const auth = require("../middlewares/auth");
+const upload = require("../middlewares/upload");
+const cloudinary = require("../config/cloudinary")
 
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -261,6 +263,44 @@ router.put(
 
   })
 );
+
+
+router.put(
+  "/me/avatar",
+  auth,
+  upload.single("avatar"),
+  asyncHandler(async (req, res) => {
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ error: "avatar обязателен" });
+    }
+
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "avatars" },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+
+      stream.end(file.buffer);
+    });
+
+    const avatarUrl = result.secure_url;
+
+    const updated = await updateUser(req.user.userId, { avatarUrl });
+
+    if (!updated) {
+      res.status(404).json({ error: "Пользователь не найден" });
+      return;
+    }
+
+    res.json(updated);
+  })
+);
+
 
 router.use((err, req, res, next) => {
   if (res.headersSent) {

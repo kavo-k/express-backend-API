@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema( {
   role: { type: String, enum: ["user", "admin"], default: "user"},
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date},
+  avatarUrl: { type: String },
 },
 { timestamps: true, versionKey: false}
 );

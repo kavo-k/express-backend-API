@@ -2,7 +2,7 @@ const Review = require("../models/Review");
 
 
 const getReviews = async ({ productId }) => {
-    return Review.find({ product: productId }).populate("user", "userName name age");
+    return Review.find({ product: productId }).populate("user", "userName name age avatarUrl");
 };
 
 

@@ -36,7 +36,7 @@ const createUser = async ({ userName, age, email, password }) => {
   };
 
   const passwordHash = await bcrypt.hash(password, 10);
-  
+
 
   return User.create({ userName, age, email, passwordHash });
 };
@@ -52,7 +52,7 @@ const getUserByEmail = async (email) => {
 };
 
 const updateUser = async (id, data) => {
-  return User.findByIdAndUpdate(id, data, { new: true }).select("-passwordHash");
+  return User.findByIdAndUpdate(id, data, { returnDocument: "after" }).select("-passwordHash");
 };
 
 const deleteUser = async (id) => {

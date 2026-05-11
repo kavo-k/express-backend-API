@@ -29,9 +29,11 @@
   <div class="profile-container">
     <section class="profile-hero">
       <div class="profile-top">
-        <p class="home-hero-badge">Личный кабинет</p>
-        <h1>Профиль</h1>
-        <p class="profile-top-note">Управляй аккаунтом, публикуй объявления и следи за своими товарами.</p>
+        <div>
+          <p class="home-hero-badge">Личный кабинет</p>
+          <h1>Профиль</h1>
+          <p class="profile-top-note">Управляй аккаунтом, публикуй объявления и следи за своими товарами.</p>
+        </div>
       </div>
 
       <div class="profile-bottom">
@@ -43,9 +45,21 @@
 
     <section class="profile-main">
       <div class="profile-facts">
-        <p><strong>Имя</strong><span id="name">Loading...</span></p>
-        <p><strong>Email</strong><span id="email">Loading...</span></p>
-        <p><strong>Возраст</strong><span id="age">Loading...</span></p>
+        <p class="profile-name-card">
+          <label class="profile-avatar-picker" for="avatarInput" aria-label="Выбрать аватар">
+            <img id="profileAvatarImage" src="" alt="Аватар профиля" hidden>
+            <span id="profileAvatarInitials" class="profile-avatar-initials">?</span>
+            <span class="profile-avatar-camera" aria-hidden="true"></span>
+          </label>
+          <input id="avatarInput" name="avatar" type="file" accept="image/*" hidden>
+          <strong>Имя</strong>
+          <span id="name">Loading...</span>
+        </p>
+        <div class="profile-info-card">
+          <strong>Детали профиля</strong>
+          <p><span>Email</span><b id="email">Loading...</b></p>
+          <p><span>Возраст</span><b id="age">Loading...</b></p>
+        </div>
       </div>
 
       <div class="profile-details-card">

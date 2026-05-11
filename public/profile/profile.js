@@ -31,6 +31,8 @@ const pageInfo = document.getElementById("pageInfo");
 const btnPrev = document.getElementById("btnPrev");
 const btnNext = document.getElementById("btnNext");
 const search = document.getElementById("inputSearch");
+const avatarInput = document.getElementById("avatarInput");
+const profileAvatarImage = document.getElementById("profileAvatarImage");
 
 const LIMIT = 5;
 
@@ -41,8 +43,12 @@ if (!getToken()) {
   window.location.href = "/login.html";
 }
 
-
+console.log(user);
 if (user) {
+  if (user.avatarUrl) {
+    profileAvatarImage.hidden = false;
+    profileAvatarImage.src = user.avatarUrl || "";
+  }
   name.textContent = user.userName || user.name || "";
   email.textContent = user.email || "";
   age.textContent = user.age || "не указано";
@@ -178,6 +184,29 @@ function renderProducts(products) {
 function print(data) {
   myProductsList.textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);
 }
+
+avatarInput.addEventListener("change", async (e) => {
+  const avatarImage = e.target.files[0];
+  const formData = new FormData();
+  formData.set("avatar", avatarImage);
+  console.log(formData);
+
+  try {
+    const res = await authFetch(`/users/me/avatar`, {
+      method: "PUT",
+      body: formData,
+    })
+    console.log(res);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Ошибка");
+    localStorage.setItem("user", JSON.stringify(data));
+    window.location.href = `/profile.html`;
+    return;
+  } catch (err) {
+    console.log(err.message);
+    return;
+  }
+});
 
 myProductsList.addEventListener("click", (e) => {
   const productCard = e.target.closest(".product-card");

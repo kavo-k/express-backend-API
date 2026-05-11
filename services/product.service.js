@@ -53,7 +53,7 @@ const createProduct = async ({ name, type, valid, price, owner, description, ima
 
 
 const updateProduct = async (id, data) => {
-  return Product.findByIdAndUpdate(id, data, { new: true });
+  return Product.findByIdAndUpdate(id, data, { returnDocument: "after" });
 };
 
 

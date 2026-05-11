@@ -160,8 +160,6 @@ productImage.addEventListener("change", (e) => {
     productImagePut.hidden = false;
 });
 
-// productGallery = .product-form-gallery
-
 
 mainImageBtn.addEventListener("click", () => {
     console.log(selectedFilesArray);
@@ -184,12 +182,6 @@ mainImageBtn.addEventListener("click", () => {
 
     mainImageBtn.classList.add("btn-active");
 });
-
-// mainImageBtn.addEventListener("click", () => {
-//     console.log(42);
-//     mainImageBtn.classList.add("btn-active");
-//     console.log(selectedImagePublicId);
-// });
 
 productForm.addEventListener("submit", async (e) => {
     e.preventDefault();

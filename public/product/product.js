@@ -220,11 +220,21 @@ async function loadReviews(id) {
             const fullStars = "★".repeat(rating);
             const emptyStars = "☆".repeat(5 - rating);
             const stars = fullStars + emptyStars;
+            const reviewerName = review.user.userName || review.user.name || "Пользователь";
+            const reviewerInitial = reviewerName.trim()[0] || "?";
+            const reviewerAvatar = review.user.avatarUrl || "";
 
             reviewCard.innerHTML = `
             <div class="product-review-card-top">
-            <strong>${review.user.userName || review.user.name}</strong>
-            <span>${stars}</span>
+            <div class="product-review-user">
+            <div class="product-review-avatar">
+            ${reviewerAvatar
+                    ? `<img src="${reviewerAvatar}" alt="${reviewerName}">`
+                    : `<span>${reviewerInitial.toUpperCase()}</span>`}
+            </div>
+            <strong>${reviewerName}</strong>
+            </div>
+            <span class="product-review-stars">${stars}</span>
             </div>
             <p>${review.text}</p>`;
 

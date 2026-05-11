@@ -69,7 +69,8 @@ function renderSharedHeader(container, options = {}) {
     ? `
   <div class="userMenu">
   <a href="/profile.html" id="profileBtn" class="header-icon-link profile-link" type="button" aria-label="Profile">
-  <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none"
+  <img class="header-avatar-img" src="" alt="Profile avatar" hidden>
+  <svg class="header-avatar-fallback" xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none"
   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <path d="M20 21v-2a4 4 0 0 0-3-3.87"></path>
   <path d="M4 21v-2a4 4 0 0 1 3-3.87"></path>
@@ -107,6 +108,9 @@ function renderSharedHeader(container, options = {}) {
   const favoritesCount = container.querySelector(".favorites-count");
   const favoritesLinkElement = container.querySelector(".favorites-link");
 
+  const avatarImg = container.querySelector(".header-avatar-img");
+  const fallbackIcon = container.querySelector(".header-avatar-fallback");
+
   if (searchForm) {
     searchForm.addEventListener("submit", (e) => {
       if (typeof onSearchSubmit === "function") {
@@ -116,6 +120,16 @@ function renderSharedHeader(container, options = {}) {
         console.log("submit works")
       }
     });
+  }
+
+  if (showProfile) {
+    const user = getCurrentUser();
+    if (user.avatarUrl) {
+      avatarImg.src = user.avatarUrl;
+      avatarImg.hidden = false;
+      fallbackIcon.hidden = true;
+      fallbackIcon.style.display = "none";
+    }
   }
 
   if (showCart) {
