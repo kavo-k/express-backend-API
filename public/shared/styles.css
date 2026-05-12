@@ -775,6 +775,23 @@ main {
   text-transform: uppercase;
 }
 
+.product-card-new {
+  position: absolute;
+  top: 48px;
+  left: 12px;
+  z-index: 2;
+  min-height: 28px;
+  padding: 6px 11px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #5fff2e, #2affdc);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .favorite-toggle-btn {
   position: absolute;
   top: 12px;

@@ -131,11 +131,16 @@ async function renderProducts(products, dataFavorites) {
     if (canEdit) {
       card.classList.add("owner-product");
     }
+    const productCreatedAt = new Date(product.createdAt);
+    const FiveDaysMs = 5 * 24 * 60 * 60 * 1000;
 
+    const isNew = Date.now() - productCreatedAt <= FiveDaysMs;
+    console.log(isNew);
 
     card.innerHTML = `
     <div class="product-card-media">
     <span class="product-card-badge">${product.type ? product.type : "лот"}</span>
+    ${isNew ? `<span class="product-card-new">новинка!</span>` : ``}
     <button class="favorite-toggle-btn" type="button" aria-label="Добавить в избранное">
     <svg viewBox="0 0 24 24" aria-hidden="true">
     <path d="m12 21-1.45-1.32C5.4 15.02 2 11.9 2 8.09 2 5 4.42 2.5 7.5 2.5c1.74 0 3.41.81 4.5 2.09A6 6 0 0 1 16.5 2.5C19.58 2.5 22 5 22 8.09c0 3.81-3.4 6.93-8.55 11.6z"></path>

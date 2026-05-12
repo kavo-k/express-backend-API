@@ -226,15 +226,15 @@ async function loadReviews(id) {
 
             reviewCard.innerHTML = `
             <div class="product-review-card-top">
-            <div class="product-review-user">
-            <div class="product-review-avatar">
-            ${reviewerAvatar
-                    ? `<img src="${reviewerAvatar}" alt="${reviewerName}">`
-                    : `<span>${reviewerInitial.toUpperCase()}</span>`}
-            </div>
-            <strong>${reviewerName}</strong>
-            </div>
-            <span class="product-review-stars">${stars}</span>
+                <div class="product-review-user">
+                    <div class="product-review-avatar">
+                    ${reviewerAvatar
+                        ? `<img src="${reviewerAvatar}" alt="${reviewerName}">`
+                        : `<span>${reviewerInitial.toUpperCase()}</span>`}
+                    </div>
+                    <strong>${reviewerName}</strong>
+                </div>
+                <span class="product-review-stars">${stars}</span>
             </div>
             <p>${review.text}</p>`;
 
