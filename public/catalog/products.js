@@ -113,7 +113,7 @@ async function renderProducts(products, dataFavorites) {
     if (reviewsAllCount > 0) {
       averageReview = (reviewsAllStars / reviewsAllCount);
     }
-    
+
     const fullStars = "★".repeat(Math.round(averageReview));
     const emptyStars = "☆".repeat(5 - Math.round(averageReview));
     const stars = fullStars + emptyStars;
@@ -207,10 +207,12 @@ productsList.addEventListener("click", async (e) => {
 
     if (isActive) {
       await removeFavoriteItem(id);
+      favoriteBtn.classList.remove("is-active")
     } else {
       await addToFavorite(id);
+      favoriteBtn.classList.add("is-active");
     }
-    loadProducts();
+    await renderFavorites();
     return
   }
 
@@ -246,21 +248,25 @@ async function loadProducts() {
     state.maxPage = Math.max(1, Math.ceil(data.total / LIMIT));
     clampPage();
     pageInfo.textContent = state.currentPage;
-
-    const favoritesCount = document.querySelector(".favorites-count");
-    const favoritesLinkElement = document.querySelector(".favorites-link");
-
-    await updateFavoriteCount(favoritesCount, favoritesLinkElement);
-
-    let favoritesItems = []
-    const dataFavorites = await loadFavorites();
-    favoritesItems = dataFavorites.favorites.items;
+    
+    const favoritesItems = await renderFavorites();
+    console.log(favoritesItems);
 
     renderProducts(data.products, favoritesItems);
     updatePageButtons();
   } catch (e) {
     print({ error: e.message });
   }
+}
+
+async function renderFavorites() {
+  const favoritesCount = document.querySelector(".favorites-count");
+  const favoritesLinkElement = document.querySelector(".favorites-link");
+  
+  await updateFavoriteCount(favoritesCount, favoritesLinkElement);
+  
+  const dataFavorites = await loadFavorites();
+  return dataFavorites.favorites.items;
 }
 
 sortSelect.addEventListener("change", () => {
