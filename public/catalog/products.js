@@ -26,6 +26,9 @@ const search = document.getElementById("inputSearch");
 const sortSelect = document.getElementById("sortSelect");
 const catalogCategories = document.querySelector(".catalog-categories");
 const categoryChip = document.querySelectorAll(".category-chip");
+const catalogLoadingModal = document.getElementById("catalogLoadingModal");
+
+catalogLoadingModal.classList.add("is-active");
 
 const user = getCurrentUser();
 
@@ -95,49 +98,54 @@ async function renderProducts(products, dataFavorites) {
     return;
   }
 
-  for (const product of products) {
-    const card = document.createElement("div");
-    card.className = "product-card";
+  const reviewsList = await Promise.all(
+    products.map((product) => getReviews(product._id))
+  );
 
-    const foundItem = matchFavorites(product, dataFavorites)
-    const reviews = await getReviews(product._id);
+  try {
+    for (let i = 0; i < products.length; i++) {
+      const product = products[i];
+      const card = document.createElement("div");
+      card.className = "product-card";
 
-    const reviewsAllCount = reviews.reviews.length;
-    let reviewsAllStars = 0;
-    let averageReview = 0;
+      const foundItem = matchFavorites(product, dataFavorites)
+      const reviews = reviewsList[i];
 
-    for (const review of reviews.reviews) {
-      reviewsAllStars += review.rating;
-    }
+      const reviewsAllCount = reviews.reviews.length;
+      let reviewsAllStars = 0;
+      let averageReview = 0;
 
-    if (reviewsAllCount > 0) {
-      averageReview = (reviewsAllStars / reviewsAllCount);
-    }
+      for (const review of reviews.reviews) {
+        reviewsAllStars += review.rating;
+      }
 
-    const fullStars = "★".repeat(Math.round(averageReview));
-    const emptyStars = "☆".repeat(5 - Math.round(averageReview));
-    const stars = fullStars + emptyStars;
+      if (reviewsAllCount > 0) {
+        averageReview = (reviewsAllStars / reviewsAllCount);
+      }
 
-    const ownerId = user ? user._id : null;
+      const fullStars = "★".repeat(Math.round(averageReview));
+      const emptyStars = "☆".repeat(5 - Math.round(averageReview));
+      const stars = fullStars + emptyStars;
 
-    const productOwnerId =
-      product.owner && typeof product.owner === "object"
-        ? product.owner._id
-        : product.owner;
+      const ownerId = user ? user._id : null;
 
-    const canEdit =
-      ownerId && productOwnerId && String(ownerId) === String(productOwnerId);
+      const productOwnerId =
+        product.owner && typeof product.owner === "object"
+          ? product.owner._id
+          : product.owner;
 
-    if (canEdit) {
-      card.classList.add("owner-product");
-    }
-    const productCreatedAt = new Date(product.createdAt);
-    const FiveDaysMs = 5 * 24 * 60 * 60 * 1000;
+      const canEdit =
+        ownerId && productOwnerId && String(ownerId) === String(productOwnerId);
 
-    const isNew = Date.now() - productCreatedAt <= FiveDaysMs;
-    console.log(isNew);
+      if (canEdit) {
+        card.classList.add("owner-product");
+      }
+      const productCreatedAt = new Date(product.createdAt);
+      const FiveDaysMs = 5 * 24 * 60 * 60 * 1000;
 
-    card.innerHTML = `
+      const isNew = Date.now() - productCreatedAt <= FiveDaysMs;
+
+      card.innerHTML = `
     <div class="product-card-media">
     <span class="product-card-badge">${product.type ? product.type : "лот"}</span>
     ${isNew ? `<span class="product-card-new">новинка!</span>` : ``}
@@ -163,17 +171,20 @@ async function renderProducts(products, dataFavorites) {
 
 
 
-    const favoriteToggleBtn = card.querySelector(".favorite-toggle-btn");
+      const favoriteToggleBtn = card.querySelector(".favorite-toggle-btn");
 
-    if (foundItem) {
-      favoriteToggleBtn.classList.add("is-active");
-    } else {
-      favoriteToggleBtn.classList.remove("is-active")
+      if (foundItem) {
+        favoriteToggleBtn.classList.add("is-active");
+      } else {
+        favoriteToggleBtn.classList.remove("is-active")
+      }
+
+      card.dataset.productId = product._id;
+
+      productsList.appendChild(card);
     }
-
-    card.dataset.productId = product._id;
-
-    productsList.appendChild(card);
+  } finally {
+    catalogLoadingModal.classList.remove("is-active");
   }
 }
 
@@ -248,7 +259,7 @@ async function loadProducts() {
     state.maxPage = Math.max(1, Math.ceil(data.total / LIMIT));
     clampPage();
     pageInfo.textContent = state.currentPage;
-    
+
     const favoritesItems = await renderFavorites();
     console.log(favoritesItems);
 
@@ -262,9 +273,9 @@ async function loadProducts() {
 async function renderFavorites() {
   const favoritesCount = document.querySelector(".favorites-count");
   const favoritesLinkElement = document.querySelector(".favorites-link");
-  
+
   await updateFavoriteCount(favoritesCount, favoritesLinkElement);
-  
+
   const dataFavorites = await loadFavorites();
   return dataFavorites.favorites.items;
 }
