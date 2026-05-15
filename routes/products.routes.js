@@ -268,6 +268,15 @@ router.put(
     const files = req.files;
 
     if (files.length > 0) {
+      if (product.images && product.images.length > 0) {
+        for (const image of product.images) {
+          if (image.imagePublicId) {
+            await cloudinary.uploader.destroy(image.imagePublicId);
+            console.log(image.imagePublicId);
+          }
+        }
+      }
+
       let images = [];
       for (const file of files) {
         const result = await uploadToCloudinary(file.buffer);
@@ -278,17 +287,15 @@ router.put(
         images.push({ imageUrl, imagePublicId });
       }
       updateData.images = images;
+    } else {
+      if (mainImageIndex > 0) {
+        let images = [...product.images];
+        const image = images[mainImageIndex];
+        images.splice(mainImageIndex, 1);
+        images.unshift(image);
+        updateData.images = images;
+      }
     }
-
-
-    if (mainImageIndex > 0) {
-      let images = [...product.images];
-      const image = images[mainImageIndex]
-      images.splice(mainImageIndex, 1);
-      images.unshift(image);
-      updateData.images = images;
-    }
-
 
     const updated = await updateProduct(req.params.id, updateData);
 
@@ -323,9 +330,13 @@ router.delete(
       return res.status(403).json({ error: "я не знаю как вы сюда попали, но вы не можете удалить этот продукт :)" });
     }
 
-    if (product.imagePublicId) {
-      await cloudinary.uploader.destroy(product.imagePublicId);
-      console.log(product.imagePublicId);
+    if (product.images && product.images.length > 0) {
+      for (const image of product.images) {
+        if (image.imagePublicId) {
+          await cloudinary.uploader.destroy(image.imagePublicId);
+          console.log(image.imagePublicId);
+        }
+      }
     }
 
     const deleted = await deleteProduct(req.params.id);

@@ -271,9 +271,15 @@ router.put(
   upload.single("avatar"),
   asyncHandler(async (req, res) => {
     const file = req.file;
+    const user = await getUserById(req.user.userId);
+    console.log(user);
 
     if (!file) {
       return res.status(400).json({ error: "avatar обязателен" });
+    }
+
+    if (user.avatarPublicId) {
+      await cloudinary.uploader.destroy(user.avatarPublicId);
     }
 
     const result = await new Promise((resolve, reject) => {
@@ -289,8 +295,9 @@ router.put(
     });
 
     const avatarUrl = result.secure_url;
+    const avatarPublicId = result.public_id;
 
-    const updated = await updateUser(req.user.userId, { avatarUrl });
+    const updated = await updateUser(req.user.userId, { avatarUrl, avatarPublicId });
 
     if (!updated) {
       res.status(404).json({ error: "Пользователь не найден" });
