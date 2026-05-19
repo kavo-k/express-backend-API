@@ -1,5 +1,3 @@
-console.log("productForm.js Loaded");
-
 const backBtn = document.getElementById("backBtn");
 const creatorName = document.getElementById("creatorName");
 const errorMessage = document.getElementById("errorMessage");
@@ -50,7 +48,6 @@ function createProductThumb(i, length, src, publicId) {
     }
     const productThumb = document.createElement("div");
     productThumb.className = "product-gallery-thumb";
-    console.log(selectedFileIndex);
 
     if (i === selectedFileIndex) productThumb.classList.add("product-gallery-thumb-active");
 
@@ -96,7 +93,6 @@ async function outputInCard(id) {
         const product = await res.json();
         productFormFrame.hidden = false;
         const productImagesLength = product.images.length;
-        console.log(product);
 
         selectedFileIndex = 0;
         for (let i = 0; i < product.images.length; i++) {
@@ -151,7 +147,6 @@ productImage.addEventListener("change", (e) => {
 
     productFormFrame.hidden = false;
     productGallery.innerHTML = "";
-    console.log(selectedFilesArray);
 
     selectedFilesArray.forEach((file, index) => {
         const src = URL.createObjectURL(file);
@@ -162,12 +157,10 @@ productImage.addEventListener("change", (e) => {
 
 
 mainImageBtn.addEventListener("click", () => {
-    console.log(selectedFilesArray);
     if (selectedFilesArray.length > 0) {
         const [selectedFile] = selectedFilesArray.splice(selectedFileIndex, 1);
         selectedFilesArray.unshift(selectedFile);
         const filesArrayLength = selectedFilesArray.length;
-        console.log(selectedFilesArray, selectedFile);
 
         productGallery.innerHTML = "";
 
@@ -200,7 +193,6 @@ productForm.addEventListener("submit", async (e) => {
             return;
         }
     }
-    console.log("formData:", Array.from(formData.entries()));
 
 
     if (isId) {
@@ -255,7 +247,6 @@ productForm.addEventListener("click", (e) => {
         modalImage.ariaHidden = false;
         modalImage.innerHTML = `
     <img class="product-image" data-full-image="${img.imageOptimizedUrl || img.imageUrl}" src="${img.dataset.fullImage || img.src}" alt="${img.alt}" onerror="this.onerror=null;this.src='/img/placeholder.png';">`
-        console.log("modalImage: ", modalImage);
     }
 
     modalImage.addEventListener("click", () => {
@@ -293,8 +284,6 @@ confirmDeleteBtn.addEventListener("click", async () => {
         return;
     }
 });
-
-console.log(user);
 
 if (user) {
     creatorName.textContent = `Продукт от лица: ${user ? user.userName || user.name : "null"}`;

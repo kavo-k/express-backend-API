@@ -47,7 +47,6 @@ async function syncCartControls(id) {
     const data = await loadCart()
     let itemFound = false;
 
-    console.log(data);
 
     for (let i = 0; i < data.cart.items.length; i++) {
         if (data.cart.items[i].product._id === id) {
@@ -55,7 +54,6 @@ async function syncCartControls(id) {
             addToCartBtn.hidden = true;
             productQuantityControls.hidden = false;
             productCartQuantity.innerHTML = data.cart.items[i].quantity;
-            console.log(data.cart.items[i].product);
             productPlusBtn.disabled = data.cart.items[i].quantity >= 99;
         }
     }
@@ -153,7 +151,6 @@ async function loadProduct(id) {
             editProduct.href = `productForm.html?id=${product._id}`;
         }
 
-        console.log(product);
         productPageImage.src = product.images[0].imageUrl || '/img/placeholder.png';
         productPageFullImage.src = product.images[0].imageUrl || '/img/placeholder.png';
         productPageFullImage.hidden = false;
@@ -207,7 +204,6 @@ async function loadReviews(id) {
         const reviewsAllCount = reviews.reviews.length;
         let reviewsAllStars = 0;
         let averageReview = 0;
-        console.log(reviews);
 
         productReviewsCount.textContent = `(${reviewsAllCount}) отзывов`;
         productRaitingCount.textContent = `(${reviewsAllCount}) отзывов`;
@@ -239,7 +235,6 @@ async function loadReviews(id) {
             <p>${review.text}</p>`;
 
 
-            console.log(review, reviewCard);
             productReviewsList.appendChild(reviewCard);
             reviewsAllStars += review.rating;
         }

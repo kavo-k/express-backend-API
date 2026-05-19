@@ -1,5 +1,3 @@
-console.log("Profile page loaded");
-
 let state = { currentPage: 1, maxPage: 1, search: "", sort: "desc" };
 
 renderSharedHeader(document.getElementById("siteHeader"), {
@@ -13,7 +11,6 @@ renderSharedHeader(document.getElementById("siteHeader"), {
   onSearchSubmit: function (searchValue) {
     state.search = searchValue;
     state.currentPage = 1;
-    console.log(state);
     loadProducts();
   }
 });
@@ -34,6 +31,8 @@ const search = document.getElementById("inputSearch");
 const avatarInput = document.getElementById("avatarInput");
 const profileAvatarImage = document.getElementById("profileAvatarImage");
 
+const profileFacts = document.querySelector(".profile-facts");
+
 const LIMIT = 5;
 
 
@@ -43,7 +42,6 @@ if (!getToken()) {
   window.location.href = "/login.html";
 }
 
-console.log(user);
 if (user) {
   if (user.avatarUrl) {
     profileAvatarImage.hidden = false;
@@ -59,16 +57,68 @@ if (!user) {
   window.location.href = "/login.html";
 } else {
   details.innerHTML = `
-    <p>Пользователь: ${user.userName || user.name} (id: ${user._id})</p>
-    Открыть API: <a href="/users/${user._id}" target="_blank" rel="noopener noreferrer" > 
-    /users/${user._id} (потом убрать)</a>`;
+  <p>Пользователь: ${user.userName || user.name} (id: ${user._id})</p>
+  Открыть API: <a href="/users/${user._id}" target="_blank" rel="noopener noreferrer" > 
+  /users/${user._id} (потом убрать)</a>`;
 };
+
+
+profileFacts.addEventListener("click", async (e) => {
+  const profileInlineEditBtn = e.target.closest(".profile-inline-edit-btn");
+  const profileAgeCancelBtn = e.target.closest("#profileAgeCancelBtn")
+  const profileNameCancelBtn = e.target.closest("#profileNameCancelBtn");
+  const profileNameSaveBtn = e.target.closest("#profileNameSaveBtn");
+  const profileAgeSaveBtn = e.target.closest("#profileAgeSaveBtn");
+  let updated = null;
+
+
+  if (profileInlineEditBtn) {
+    const editField = profileInlineEditBtn.dataset.editField;
+    const editBlock = editField === "age" ? document.querySelector(".profile-age-edit") : document.querySelector(".profile-name-edit")
+    const isActive = profileInlineEditBtn.classList.contains("is-active");
+    if (isActive) {
+      editBlock.hidden = true;
+      profileInlineEditBtn.classList.remove("is-active");
+    } else {
+      editBlock.hidden = false;
+      profileInlineEditBtn.classList.add("is-active");
+    }
+  }
+
+  if (profileNameCancelBtn) {
+    document.querySelector(".profile-name-edit").hidden = true;
+    document.querySelector(`[data-edit-field="name"]`).classList.remove("is-active");
+    console.log("name");
+  }
+
+  if (profileAgeCancelBtn) {
+    document.querySelector(".profile-age-edit").hidden = true;
+    document.querySelector(`[data-edit-field="age"]`).classList.remove("is-active");
+    console.log("age");
+  }
+
+  if (profileNameSaveBtn) {
+    const profileNameInput = document.getElementById("profileNameInput");
+    const newName = profileNameInput.value.trim();
+    updated = await updateUser({ userName: newName });
+  }
+
+  if (profileAgeSaveBtn) {
+    const profileAgeInput = document.getElementById("profileAgeInput");
+    const newAge = Number(profileAgeInput.value);
+    updated = await updateUser({ age: newAge });
+  }
+  if (updated) {
+    console.log(updated);
+    localStorage.setItem("user", JSON.stringify(updated));
+    window.location.href = "/profile.html";
+  }
+});
 
 
 function readStateFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const page = parseInt(params.get("page"), 10);
-  console.log(params);
 
   state.search = (params.get("search") || "").trim();
   state.sort = params.get("sort") || "desc";
@@ -101,11 +151,9 @@ function updatePageButtons() {
 
 async function loadProducts() {
   try {
-    console.log(state);
     const data = await getJson(
       `/products/my?search=${state.search}&limit=${LIMIT}&page=${state.currentPage}&sort=${state.sort}`
     );
-    console.log(data.page, data.limit, data.total, data.products);
 
     state.maxPage = Math.max(1, Math.ceil(data.total / LIMIT));
 
@@ -149,8 +197,6 @@ function renderProducts(products) {
       card.classList.add("owner-product");
     }
 
-    console.log(product);
-
 
     card.innerHTML = `
       <div class="product-card-media">
@@ -189,21 +235,18 @@ avatarInput.addEventListener("change", async (e) => {
   const avatarImage = e.target.files[0];
   const formData = new FormData();
   formData.set("avatar", avatarImage);
-  console.log(formData);
 
   try {
     const res = await authFetch(`/users/me/avatar`, {
       method: "PUT",
       body: formData,
     })
-    console.log(res);
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Ошибка");
     localStorage.setItem("user", JSON.stringify(data));
     window.location.href = `/profile.html`;
     return;
   } catch (err) {
-    console.log(err.message);
     return;
   }
 });

@@ -24,15 +24,15 @@ async function login(email, password) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
     });
-    
+
     const data = await res.json();
-    
+
     const user = data.user;
     const message = data.message;
     const result = { user, message };
-    
+
     if (!res.ok) { throw new Error(data.error || "Ошибка при входе"); }
-    
+
     localStorage.setItem("accessToken", data.token || data.accessToken);
     localStorage.setItem("user", JSON.stringify(data.user));
     return result;
@@ -45,9 +45,9 @@ async function forgotPassword(email) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
     });
-    
+
     const data = await res.json();
-    
+
     if (!res.ok) { throw new Error(data.error || "Ошибка при сбросе пароля"); }
     return data;
 }
@@ -198,6 +198,19 @@ async function getReviews(productId) {
     const data = await res.json();
 
     if (!res.ok) { throw new Error(data.error || "Ошибка при загрузке отзывов"); }
+    return data;
+}
+
+async function updateUser(newValue) {
+    const res = await authFetch("/users/me", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newValue)
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) { throw new Error(data.error || "Ошибка при обновлении пользователя");}
     return data;
 }
 

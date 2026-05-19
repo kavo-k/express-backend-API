@@ -35,7 +35,6 @@ router.get(
     const { users, total } = await getUsers({ page, limit, search, sort });
 
     res.json({ page, limit, total, users, });
-    console.log("page:", page, "limit:", limit, "total:", total, "search:", users.length);
   })
 );
 
@@ -251,16 +250,17 @@ router.put(
   auth,
   asyncHandler(async (req, res) => {
     const { userName, age } = req.body;
+    const updateData = {};
+    if (userName !== undefined) updateData.userName = userName; 
+    if (age !== undefined) updateData.age = age; 
+    if (Object.keys(updateData).length === 0) return res.status(400).json({ error: "Нет данных для обновления" });
 
-    const updated = await updateUser(req.user.userId, { userName, age });
-
+    const updated = await updateUser(req.user.userId, updateData);
     if (!updated) {
       res.status(404).json({ error: "Пользователь не найден" });
       return;
     }
-
     res.json(updated);
-
   })
 );
 
@@ -272,7 +272,6 @@ router.put(
   asyncHandler(async (req, res) => {
     const file = req.file;
     const user = await getUserById(req.user.userId);
-    console.log(user);
 
     if (!file) {
       return res.status(400).json({ error: "avatar обязателен" });

@@ -20,7 +20,6 @@ resetSubmitBtn.addEventListener("click", async (e) => {
         const result = await newPassword(token, password);
 
         if (result) {
-            console.log(result);
             errorMessage.textContent = "";
             successMessage.textContent = result.message || "Пароль успешно изменен";
             window.location.href = "/login.html";

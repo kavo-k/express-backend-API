@@ -117,7 +117,6 @@ function renderSharedHeader(container, options = {}) {
         e.preventDefault();
         const inputSearch = document.getElementById("inputSearch").value.trim();
         onSearchSubmit(inputSearch);
-        console.log("submit works")
       }
     });
   }
@@ -146,7 +145,6 @@ async function updateCartCount(cartCount, cartLink) {
   if (cartCount && cartLink) {
     if (typeof loadCart === "function") {
       const data = await loadCart();
-      console.log(data.totalItems)
       if (data.totalItems <= 0) {
         cartCount.textContent = "";
         cartLink.classList.remove("cart-link-active")
@@ -166,7 +164,6 @@ async function updateFavoriteCount(favoritesCount, favoritesLinkElement) {
   if (favoritesCount && favoritesLinkElement) {
     if (typeof loadFavorites === "function") {
       const data = await loadFavorites();
-      console.log(data);
       if (data.favorites.items.length <= 0) {
         favoritesCount.textContent = "";
         favoritesLinkElement.classList.remove("favorites-link-active")

@@ -1,5 +1,3 @@
-console.log("products.js LOADED");
-
 let state = { currentPage: 1, maxPage: 1, search: "", type: "", sort: "desc" };
 
 renderSharedHeader(document.getElementById("siteHeader"), {
@@ -12,7 +10,6 @@ renderSharedHeader(document.getElementById("siteHeader"), {
   onSearchSubmit: function (searchValue) {
     state.search = searchValue;
     state.currentPage = 1;
-    console.log(state);
     loadProducts();
   }
 });
@@ -261,7 +258,6 @@ async function loadProducts() {
     pageInfo.textContent = state.currentPage;
 
     const favoritesItems = await renderFavorites();
-    console.log(favoritesItems);
 
     renderProducts(data.products, favoritesItems);
     updatePageButtons();

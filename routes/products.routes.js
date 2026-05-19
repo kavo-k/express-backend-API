@@ -228,8 +228,6 @@ router.put(
   asyncHandler(async (req, res) => {
     const { name, type, description, selectedMainImagePublicId } = req.body;
     let { price } = req.body;
-    console.log(req.body);
-    console.log(selectedMainImagePublicId);
 
     if (!name || !type || price === undefined || !price.trim()) {
       res.status(400).json({ error: "name, type, price обязательны" });
@@ -242,7 +240,6 @@ router.put(
       return res.status(400).json({ error: "Price должен быть числом" });
     }
     const product = await getProductById(req.params.id);
-    console.log(req.params.id);
 
     if (!product) {
       return res.status(404).json({ error: "Продукт не найден" });
@@ -272,7 +269,6 @@ router.put(
         for (const image of product.images) {
           if (image.imagePublicId) {
             await cloudinary.uploader.destroy(image.imagePublicId);
-            console.log(image.imagePublicId);
           }
         }
       }
@@ -319,8 +315,6 @@ router.delete(
 
     const product = await getProductById(req.params.id);
 
-    console.log("Product to delete:", product);
-
     if (!product) {
       res.status(404).json({ error: "Продукт не найден" });
       return;
@@ -334,7 +328,6 @@ router.delete(
       for (const image of product.images) {
         if (image.imagePublicId) {
           await cloudinary.uploader.destroy(image.imagePublicId);
-          console.log(image.imagePublicId);
         }
       }
     }

@@ -1,4 +1,3 @@
-console.log("favorites.js loaded");
 renderSharedHeader(document.getElementById("siteHeader"), {
   showSearch: false,
   showBack: true,
@@ -53,7 +52,6 @@ async function renderProducts(productsFavorites, productsCart) {
     if (!item.product) continue;
     const card = document.createElement("div");
     card.className = "cart-item-card";
-    console.log(item);
     const foundItem = matchItems(item, productsCart)
 
     card.innerHTML = `

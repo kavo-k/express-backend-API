@@ -45,7 +45,7 @@
 
     <section class="profile-main">
       <div class="profile-facts">
-        <p class="profile-name-card">
+        <div class="profile-name-card">
           <label class="profile-avatar-picker" for="avatarInput" aria-label="Выбрать аватар">
             <img id="profileAvatarImage" src="" alt="Аватар профиля" hidden>
             <span id="profileAvatarInitials" class="profile-avatar-initials">?</span>
@@ -53,12 +53,31 @@
           </label>
           <input id="avatarInput" name="avatar" type="file" accept="image/*" hidden>
           <strong>Имя</strong>
-          <span id="name">Loading...</span>
-        </p>
+          <span class="profile-edit-value-row">
+            <span id="name">Loading...</span>
+            <button class="profile-inline-edit-btn" type="button" data-edit-field="name">Изменить</button>
+          </span>
+          <div class="profile-inline-edit profile-name-edit" hidden>
+            <input id="profileNameInput" name="userName" type="text" placeholder="Новое имя">
+            <button id="profileNameSaveBtn" type="button">Сохранить</button>
+            <button id="profileNameCancelBtn" type="button">Отмена</button>
+          </div>
+        </div>
         <div class="profile-info-card">
           <strong>Детали профиля</strong>
           <p><span>Email</span><b id="email">Loading...</b></p>
-          <p><span>Возраст</span><b id="age">Loading...</b></p>
+          <p class="profile-age-row">
+            <span>Возраст</span>
+            <b class="profile-edit-value-row">
+              <span id="age">Loading...</span>
+              <button class="profile-inline-edit-btn" type="button" data-edit-field="age">Изменить</button>
+            </b>
+          </p>
+          <div class="profile-inline-edit profile-age-edit" hidden>
+            <input id="profileAgeInput" name="age" type="number" min="1" max="120" placeholder="Новый возраст">
+            <button id="profileAgeSaveBtn" type="button">Сохранить</button>
+            <button id="profileAgeCancelBtn" type="button">Отмена</button>
+          </div>
         </div>
       </div>
 

@@ -1,5 +1,3 @@
-console.log("cart.js loaded");
-
 renderSharedHeader(document.getElementById("siteHeader"), {
   showSearch: false,
   showBack: true,
@@ -20,7 +18,6 @@ const confirmClearCartBtn = document.getElementById("confirmClearCartBtn");
 
 async function initCart() {
   const data = await loadCart();
-  console.log(data);
   cartTotalItems.innerHTML = `${data.totalItems || 0}`;
   cartSubtotal.innerHTML = `${data.totalPrice || 0} ₽`;
   cartTotalPrice.innerHTML = `${data.totalPrice || 0} ₽`;
@@ -43,7 +40,6 @@ async function renderProducts(products) {
     if (!item.product) continue;
     const card = document.createElement("div");
     card.className = "cart-item-card";
-    console.log(item);
 
     card.innerHTML = `
     <div class="cart-item-image">
