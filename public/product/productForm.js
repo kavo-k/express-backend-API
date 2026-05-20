@@ -161,6 +161,7 @@ mainImageBtn.addEventListener("click", () => {
         const [selectedFile] = selectedFilesArray.splice(selectedFileIndex, 1);
         selectedFilesArray.unshift(selectedFile);
         const filesArrayLength = selectedFilesArray.length;
+        console.log(selectedFilesArray);
 
         productGallery.innerHTML = "";
 
@@ -182,7 +183,15 @@ productForm.addEventListener("submit", async (e) => {
     const categoryInputFix = categoryInput.value.trim()
 
     const formData = new FormData(productForm);
-    formData.set("selectedMainImagePublicId", selectedMainImagePublicId);
+    if (selectedFilesArray.length > 0) {
+        formData.delete("images");
+        selectedFilesArray.forEach(file => {
+            formData.append("images", file);
+        })
+    } else {
+        formData.set("selectedMainImagePublicId", selectedMainImagePublicId);
+    }
+    console.log(Array.from(formData.entries()));
 
     if (typeSelect.value === "customCategory") {
         if (categoryInputFix) {
@@ -193,7 +202,8 @@ productForm.addEventListener("submit", async (e) => {
             return;
         }
     }
-
+    submitBtn.disabled = true;
+    errorMessage.textContent = "загрузка...";
 
     if (isId) {
         try {
@@ -269,6 +279,7 @@ cancelDeleteBtn.addEventListener("click", () => {
 });
 
 confirmDeleteBtn.addEventListener("click", async () => {
+    deleteModalText.textContent = `Удаление продукта...`;
     try {
         const res = await authFetch(`/products/${id}`, {
             method: "DELETE",

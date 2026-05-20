@@ -1,4 +1,4 @@
-# market-catalog-api
+# market-catalog-site
 Express + MongoDB pet project with a products catalog page on vanilla JS.
 
 ## Stack

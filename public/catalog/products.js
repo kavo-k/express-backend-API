@@ -30,6 +30,7 @@ catalogLoadingModal.classList.add("is-active");
 const user = getCurrentUser();
 
 const LIMIT = 12;
+let loading = true;
 
 
 
@@ -260,6 +261,7 @@ async function loadProducts() {
     const favoritesItems = await renderFavorites();
 
     renderProducts(data.products, favoritesItems);
+    loading = false;
     updatePageButtons();
   } catch (e) {
     print({ error: e.message });
@@ -283,11 +285,17 @@ sortSelect.addEventListener("change", () => {
 });
 
 btnNext.onclick = () => {
+  loading = true;
+  btnNext.disabled = true;
+  btnPrev.disabled = true;
   state.currentPage = Math.min(state.currentPage + 1, state.maxPage);
   loadProducts();
 };
 
 btnPrev.onclick = () => {
+  loading = true;
+  btnNext.disabled = true;
+  btnPrev.disabled = true;
   state.currentPage = Math.max(state.currentPage - 1, 1);
   loadProducts();
 };
