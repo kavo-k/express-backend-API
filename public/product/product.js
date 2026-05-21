@@ -228,6 +228,10 @@ async function loadReviews(id) {
             const reviewerName = review.user.userName || review.user.name || "Пользователь";
             const reviewerInitial = reviewerName.trim()[0] || "?";
             const reviewerAvatar = review.user.avatarUrl || "";
+            const reviewCreatedAt = new Date(review.createdAt).toLocaleDateString("ru-RU", {
+                day: "numeric",
+                month: "long"
+            });
 
             reviewCard.innerHTML = `
             <div class="product-review-card-top">
@@ -239,10 +243,10 @@ async function loadReviews(id) {
                     </div>
                     <strong>${reviewerName}</strong>
                 </div>
+                <span class="product-review-created">${reviewCreatedAt}</span>
                 <span class="product-review-stars">${stars}</span>
             </div>
             <p>${review.text}</p>`;
-
 
             productReviewsList.appendChild(reviewCard);
             reviewsAllStars += review.rating;

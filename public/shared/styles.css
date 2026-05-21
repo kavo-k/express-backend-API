@@ -3070,7 +3070,7 @@ form {
 }
 
 .product-reviews-stars,
-.product-review-card-top span {
+.product-review-stars {
   color: #ffb22b;
   letter-spacing: .08em;
 }
@@ -3182,6 +3182,16 @@ form {
 .product-review-stars {
   flex: 0 0 auto;
   font-size: 14px;
+}
+
+.product-review-created {
+  margin-left: auto;
+  flex: 0 0 auto;
+  color: #8f98aa;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  white-space: nowrap;
 }
 
 .product-review-card p {

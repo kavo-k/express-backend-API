@@ -5,9 +5,12 @@ const getReviews = async ({ productId }) => {
     return Review.find({ product: productId }).populate("user", "userName name age avatarUrl");
 };
 
+const getUserReview = async ( userId, productId ) => {
+    return Review.findOne({ product: productId, user: userId });
+}
 
 const addReview = async ({ productId, userId, text, rating }) => {
-    const review = await Review.findOne({ product: productId, user: userId})
+    const review = await Review.findOne({ product: productId, user: userId });
     if (!review) {
         return Review.create({ product: productId, user: userId, text, rating });
     } else {
@@ -15,7 +18,15 @@ const addReview = async ({ productId, userId, text, rating }) => {
     }
 }
 
+const PutReview = async (productId, userId, data) => {
+    const review = await Review.findOne({ product: productId, user: userId });
+    if (!review) return null;
+    return Review.findByIdAndUpdate(review._id, data, { returnDocument: "after" });
+}
+
 module.exports = {
     getReviews,
-    addReview
+    getUserReview,
+    addReview,
+    PutReview,
 };
