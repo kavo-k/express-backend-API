@@ -44,23 +44,28 @@ const id = new URLSearchParams(window.location.search).get("id");
 
 
 async function syncCartControls(id) {
-    const data = await loadCart()
-    let itemFound = false;
+    try {
+        const data = await loadCart()
+        let itemFound = false;
 
 
-    for (let i = 0; i < data.cart.items.length; i++) {
-        if (data.cart.items[i].product._id === id) {
-            itemFound = true;
-            addToCartBtn.hidden = true;
-            productQuantityControls.hidden = false;
-            productCartQuantity.innerHTML = data.cart.items[i].quantity;
-            productPlusBtn.disabled = data.cart.items[i].quantity >= 99;
+        for (let i = 0; i < data.cart.items.length; i++) {
+            if (data.cart.items[i].product._id === id) {
+                itemFound = true;
+                addToCartBtn.hidden = true;
+                productQuantityControls.hidden = false;
+                productCartQuantity.innerHTML = data.cart.items[i].quantity;
+            }
         }
-    }
 
-    if (!itemFound) {
-        addToCartBtn.hidden = false;
-        productQuantityControls.hidden = true;
+        if (!itemFound) {
+            addToCartBtn.hidden = false;
+            productQuantityControls.hidden = true;
+        }
+    } finally {
+        const quantity = Number(productCartQuantity.textContent || 0);
+        productPlusBtn.disabled = quantity >= 99;
+        productMinusBtn.disabled = false;
     }
 }
 
@@ -103,10 +108,14 @@ productPageActions.addEventListener("click", async (e) => {
     let result = null;
 
     if (productPlusBtnTg) {
+        productPlusBtn.disabled = true;
+        productMinusBtn.disabled = true;
         result = await addToCart(id);
     }
 
     if (productMinusBtnTg) {
+        productPlusBtn.disabled = true;
+        productMinusBtn.disabled = true;
         result = await decreaseCartItem(id);
     }
 
@@ -225,8 +234,8 @@ async function loadReviews(id) {
                 <div class="product-review-user">
                     <div class="product-review-avatar">
                     ${reviewerAvatar
-                        ? `<img src="${reviewerAvatar}" alt="${reviewerName}">`
-                        : `<span>${reviewerInitial.toUpperCase()}</span>`}
+                    ? `<img src="${reviewerAvatar}" alt="${reviewerName}">`
+                    : `<span>${reviewerInitial.toUpperCase()}</span>`}
                     </div>
                     <strong>${reviewerName}</strong>
                 </div>
