@@ -84,13 +84,7 @@ productReviewSubmit.addEventListener("click", async (e) => {
     const text = reviewText.value;
 
     try {
-        const res = await authFetch(`/products/${id}/reviews`, {
-            method: "POST",
-            body: JSON.stringify({ text, rating }),
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Ошибка создания оценки");
+        await postReview(id, text, rating)
         loadReviews(id);
         return;
     } catch (err) {
@@ -217,6 +211,7 @@ async function loadReviews(id) {
         productReviewsCount.textContent = `(${reviewsAllCount}) отзывов`;
         productRaitingCount.textContent = `(${reviewsAllCount}) отзывов`;
 
+        console.log(user);
         for (const review of reviews.reviews) {
             const reviewCard = document.createElement("article");
             reviewCard.className = "product-review-card";
@@ -232,6 +227,13 @@ async function loadReviews(id) {
                 day: "numeric",
                 month: "long"
             });
+            console.log(review)
+
+            const canEdit = review.user._id === user._id ? true : false;
+
+            if (canEdit) {
+                reviewCard.classList.add("owner-product");
+            }
 
             reviewCard.innerHTML = `
             <div class="product-review-card-top">
@@ -242,15 +244,62 @@ async function loadReviews(id) {
                     : `<span>${reviewerInitial.toUpperCase()}</span>`}
                     </div>
                     <strong>${reviewerName}</strong>
+                    ${canEdit ? `<span class="product-review-owner-badge">ваш отзыв</span>` : ``}
                 </div>
-                <span class="product-review-created">${reviewCreatedAt}</span>
-                <span class="product-review-stars">${stars}</span>
+                <div class="product-review-meta">
+                    <span class="product-review-created">${reviewCreatedAt}</span>
+                    <span class="product-review-stars">${stars}</span>
+                    ${canEdit ? `
+                    <div class="product-review-actions">
+                        <button class="product-review-action-btn product-review-edit-btn" type="button">Изменить</button>
+                    </div>` : ``}
+                </div>
             </div>
-            <p>${review.text}</p>`;
+            <div class="product-review-body">
+                <p class="product-review-text">${review.text}</p>
+                <div class="product-review-edit-form" hidden>
+                    <textarea class="product-review-edit-textarea">${review.text}</textarea>
+                    <div class="product-review-edit-actions">
+                        <button class="product-review-save-btn" type="button">Сохранить</button>
+                        <button class="product-review-cancel-btn" type="button">Отмена</button>
+                    </div>
+                </div>
+            </div>`;
+
+            reviewCard.dataset.reviewId = review._id;
 
             productReviewsList.appendChild(reviewCard);
             reviewsAllStars += review.rating;
+            reviewCard.addEventListener("click", (e) => {
+                const editBtn = e.target.closest(".product-review-edit-btn");
+                const saveBtn = e.target.closest(".product-review-save-btn");
+                const cancelBtn = e.target.closest(".product-review-cancel-btn");
+
+                const productReviewEditBtn = reviewCard.querySelector(".product-review-edit-btn");
+                const productReviewEditForm = reviewCard.querySelector(".product-review-edit-form");
+                const productReviewText = reviewCard.querySelector(".product-review-text");
+
+                if (editBtn) {
+                    productReviewEditForm.hidden = false;
+                    productReviewText.hidden = true;
+                    productReviewEditBtn.hidden = true;
+                }
+
+                if (cancelBtn) {
+                    productReviewEditForm.hidden = true;
+                    productReviewText.hidden = false;
+                    productReviewEditBtn.hidden = false;
+                }
+
+                if (saveBtn) {
+                    productReviewEditForm.hidden = true;
+                    productReviewText.hidden = false;
+                    productReviewEditBtn.hidden = false;
+                }
+            })
+
         }
+
 
         if (reviewsAllCount > 0) {
             averageReview = (reviewsAllStars / reviewsAllCount);

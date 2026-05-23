@@ -70,14 +70,14 @@ async function renderProducts(productsFavorites, productsCart) {
     <button class="cart-action-btn product-add-btn favorites-cart-btn favorites-add-to-cart-btn" type="button">В корзину</button>
     
     <div class="product-quantity-card favorites-quantity-controls" hidden>
-    <button class="product-qty-btn favorites-minus-btn" type="button" aria-label="Decrease quantity">-</button>
-    <span class="product-qty-value favorites-quantity-value">${foundItem.quantity || ""}</span>
-    <button class="product-qty-btn favorites-plus-btn" type="button" aria-label="Increase quantity">+</button>
+        <button class="product-qty-btn favorites-minus-btn" type="button" aria-label="Decrease quantity">-</button>
+        <span class="product-qty-value favorites-quantity-value">${foundItem.quantity || ""}</span>
+        <button class="product-qty-btn favorites-plus-btn" type="button" aria-label="Increase quantity">+</button>
     </div>
     </div>
-    </div>
-    <button class="delete-btn favorites-remove-btn" type="button">Убрать</button>
-    </div>
+      </div>
+        <button class="delete-btn favorites-remove-btn" type="button">Убрать</button>
+      </div>
     </div>
     `;
 

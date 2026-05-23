@@ -5,7 +5,7 @@ const getReviews = async ({ productId }) => {
     return Review.find({ product: productId }).populate("user", "userName name age avatarUrl");
 };
 
-const getUserReview = async ( userId, productId ) => {
+const getUserReview = async (userId, productId) => {
     return Review.findOne({ product: productId, user: userId });
 }
 
@@ -24,9 +24,16 @@ const PutReview = async (productId, userId, data) => {
     return Review.findByIdAndUpdate(review._id, data, { returnDocument: "after" });
 }
 
+const deleteReview = async (productId, userId) => {
+    const review = await Review.findOne({ product: productId, user: userId });
+    if (!review) return null;
+    return Review.findByIdAndDelete(review._id, { returnDocument: "after" });
+}
+
 module.exports = {
     getReviews,
     getUserReview,
     addReview,
     PutReview,
+    deleteReview,
 };

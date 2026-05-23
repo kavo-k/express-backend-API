@@ -3132,6 +3132,11 @@ form {
   background: linear-gradient(180deg, rgba(24, 28, 36, .9), rgba(20, 23, 30, .96));
 }
 
+.product-review-card.owner-product {
+  border-color: rgba(255, 178, 43, .42);
+  box-shadow: inset 3px 0 0 rgba(255, 178, 43, .82);
+}
+
 .product-review-card-top {
   display: flex;
   align-items: center;
@@ -3153,6 +3158,19 @@ form {
   font-size: 15px;
   line-height: 1.2;
   overflow-wrap: anywhere;
+}
+
+.product-review-owner-badge {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 178, 43, .38);
+  border-radius: 999px;
+  background: rgba(255, 178, 43, .1);
+  color: #ffb22b;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 .product-review-avatar {
@@ -3184,8 +3202,15 @@ form {
   font-size: 14px;
 }
 
+.product-review-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .product-review-created {
-  margin-left: auto;
   flex: 0 0 auto;
   color: #8f98aa;
   font-size: 13px;
@@ -3194,10 +3219,127 @@ form {
   white-space: nowrap;
 }
 
-.product-review-card p {
+.product-review-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.product-review-action-btn {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #3a4252;
+  border-radius: 999px;
+  background: #141923;
+  color: #dce5f3;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: border-color .18s ease, background .18s ease, color .18s ease, transform .18s ease;
+}
+
+.product-review-action-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 178, 43, .5);
+  color: #fff;
+}
+
+.product-review-edit-btn:hover {
+  background: rgba(255, 178, 43, .14);
+}
+
+.product-review-delete-btn:hover {
+  border-color: rgba(219, 82, 82, .72);
+  background: rgba(219, 82, 82, .14);
+}
+
+.product-review-body {
+  display: grid;
+  gap: 12px;
+}
+
+.product-review-text {
   margin: 0;
   color: #aab3c5;
   line-height: 1.6;
+}
+
+.product-review-edit-form {
+  display: grid;
+  gap: 10px;
+}
+
+.product-review-edit-form[hidden] {
+  display: none;
+}
+
+.product-review-edit-textarea {
+  width: 100%;
+  min-height: 96px;
+  padding: 12px 14px;
+  border: 1px solid #3a4252;
+  border-radius: 12px;
+  background: #11151d;
+  color: #eef2f8;
+  font: inherit;
+  line-height: 1.55;
+  resize: vertical;
+  outline: none;
+}
+
+.product-review-edit-textarea:focus {
+  border-color: rgba(255, 178, 43, .72);
+  box-shadow: 0 0 0 3px rgba(255, 178, 43, .12);
+}
+
+.product-review-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.product-review-save-btn,
+.product-review-cancel-btn {
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.product-review-save-btn {
+  border: 1px solid rgba(255, 178, 43, .7);
+  background: #ffb22b;
+  color: #15181d;
+}
+
+.product-review-cancel-btn {
+  border: 1px solid #3a4252;
+  background: #141923;
+  color: #dce5f3;
+}
+
+.product-review-save-btn:hover,
+.product-review-cancel-btn:hover {
+  transform: translateY(-1px);
+}
+
+.product-review-cancel-btn:hover {
+  border-color: #566176;
+}
+
+@media (max-width: 620px) {
+  .product-review-card-top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .product-review-meta {
+    justify-content: flex-start;
+  }
 }
 
 #editProduct:hover {

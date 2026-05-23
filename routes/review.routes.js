@@ -11,6 +11,7 @@ const {
   getUserReview,
   addReview,
   PutReview,
+  deleteReview,
 } = require("../services/review.service");
 
 
@@ -30,7 +31,7 @@ router.get(
 
 
 router.post(
-  "/:productId/reviews",
+  "/:productId/review",
   auth,
   asyncHandler(async (req, res) => {
     const productId = req.params.productId;
@@ -57,7 +58,7 @@ router.post(
 
 
 router.put(
-  "/:productId/reviews",
+  "/:productId/review",
   auth,
   asyncHandler(async (req, res) => {
     const productId = req.params.productId;
@@ -81,6 +82,24 @@ router.put(
     }
 
     res.json({ newReview });
+  })
+);
+
+
+router.delete(
+  "/:productId/review",
+  auth,
+  asyncHandler(async (req, res) => {
+    const productId = req.params.productId;
+    const userId = req.user.userId;
+
+    const deleted = await deleteReview(productId, userId);
+
+    if (deleted === null) {
+      return res.status(404).json({ error: "отзыв не найден, или уже удалён" });
+    }
+
+    res.status(200).json({ error: "отзыв успешно удалён" });
   })
 );
 

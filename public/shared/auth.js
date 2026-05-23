@@ -201,6 +201,38 @@ async function getReviews(productId) {
     return data;
 }
 
+async function postReview(productId, text, rating) {
+    const res = await authFetch(`/products/${productId}/review`, {
+        method: "POST",
+        body: JSON.stringify({ text, rating }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || "Ошибка создания отзыва");
+    return data
+}
+
+async function putReview(productId, text, rating) {
+    const res = await authFetch(`/products/${productId}/review`, {
+        method: "PUT",
+        body: JSON.stringify({ text, rating }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || "Ошибка изменения отзыва");
+    return data
+}
+
+async function deleteReview(productId) {
+    const res = await authFetch(`/products/${productId}/review`, {
+        method: "PUT",
+    });
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || "Ошибка удаления отзыва");
+    return data
+}
+
 async function updateUser(newValue) {
     const res = await authFetch("/users/me", {
         method: "PUT",
@@ -210,7 +242,7 @@ async function updateUser(newValue) {
 
     const data = await res.json();
 
-    if (!res.ok) { throw new Error(data.error || "Ошибка при обновлении пользователя");}
+    if (!res.ok) { throw new Error(data.error || "Ошибка при обновлении пользователя"); }
     return data;
 }
 
