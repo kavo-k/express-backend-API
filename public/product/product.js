@@ -227,9 +227,8 @@ async function loadReviews(id) {
                 day: "numeric",
                 month: "long"
             });
-            console.log(review)
 
-            const canEdit = review.user._id === user._id ? true : false;
+            const canEdit = user ? review.user._id === user._id : false;
 
             if (canEdit) {
                 reviewCard.classList.add("owner-product");
@@ -270,7 +269,7 @@ async function loadReviews(id) {
 
             productReviewsList.appendChild(reviewCard);
             reviewsAllStars += review.rating;
-            reviewCard.addEventListener("click", (e) => {
+            reviewCard.addEventListener("click", async (e) => {
                 const editBtn = e.target.closest(".product-review-edit-btn");
                 const saveBtn = e.target.closest(".product-review-save-btn");
                 const cancelBtn = e.target.closest(".product-review-cancel-btn");
@@ -278,6 +277,7 @@ async function loadReviews(id) {
                 const productReviewEditBtn = reviewCard.querySelector(".product-review-edit-btn");
                 const productReviewEditForm = reviewCard.querySelector(".product-review-edit-form");
                 const productReviewText = reviewCard.querySelector(".product-review-text");
+                const productReviewEditTextarea = reviewCard.querySelector(".product-review-edit-textarea");
 
                 if (editBtn) {
                     productReviewEditForm.hidden = false;
@@ -292,9 +292,15 @@ async function loadReviews(id) {
                 }
 
                 if (saveBtn) {
-                    productReviewEditForm.hidden = true;
-                    productReviewText.hidden = false;
-                    productReviewEditBtn.hidden = false;
+                    const text = productReviewEditTextarea.value;
+
+                    try {
+                        await putReview(id, text, rating);
+                        await loadReviews(id);
+                    } catch (err) {
+                        errorMessage.textContent = err.message;
+                    }
+                    return;
                 }
             })
 

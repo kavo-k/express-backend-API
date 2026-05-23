@@ -225,7 +225,7 @@ async function putReview(productId, text, rating) {
 
 async function deleteReview(productId) {
     const res = await authFetch(`/products/${productId}/review`, {
-        method: "PUT",
+        method: "DELETE",
     });
     const data = await res.json();
 
