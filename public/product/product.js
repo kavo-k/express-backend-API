@@ -134,51 +134,51 @@ modalImage.addEventListener("click", () => {
 
 
 const user = getCurrentUser();
+let isAdmin = false;
 
 async function loadProduct(id) {
     try {
         const res = await authFetch(`/products/${id}`);
         const product = await res.json();
         let canEdit = false;
-        let isAdmin = false;
-
+        
         user && user.role === "admin" ? isAdmin = true : null;
-
+        
         const ownerId = user ? user._id : null;
         let owner = product.owner._id;
-
+        
         if (String(owner) === String(ownerId) || isAdmin === true) {
             canEdit = true;
             editProduct.hidden = false;
             editProduct.innerHTML = `Edit`;
             editProduct.href = `productForm.html?id=${product._id}`;
         }
-
+        
         productPageImage.src = product.images[0].imageUrl || '/img/placeholder.png';
         productPageFullImage.src = product.images[0].imageUrl || '/img/placeholder.png';
         productPageFullImage.hidden = false;
         productPageImage.hidden = false;
-
+        
         productName.innerHTML = product.name || "";
         productPrice.innerHTML = `Price: ${product.price ?? ""} ₽`;
         productDescription.innerHTML = `description: ${product.description || ""}`;
         productType.innerHTML = `type: ${product.type || ""}`;
         productOwner.innerHTML = `owner: ${product.owner.userName || product.owner.name || ""}`;
         productCreatedAt.innerHTML = `Created: ${new Date(product.createdAt).toLocaleDateString("ru-RU") || ""}`;
-
+        
         for (let i = 0; i < product.images.length; i++) {
             const productThumb = document.createElement("div");
             productThumb.className = "product-gallery-thumb";
-
+            
             if (i === 0) productThumb.classList.add("product-gallery-thumb-active");
-
+            
             const productImg = document.createElement("img");
             productImg.src = product.images[i].imageOptimizedUrl;
-
+            
             productThumb.appendChild(productImg);
             productGallery.appendChild(productThumb);
-
-
+            
+            
             productThumb.addEventListener("click", () => {
                 const activeThumb = productGallery.querySelector(".product-gallery-thumb-active");
                 if (activeThumb) activeThumb.classList.remove("product-gallery-thumb-active");
@@ -197,25 +197,26 @@ async function loadReviews(id) {
         const productReviewsCount = document.querySelector(".product-reviews-count");
         const productReviewScore = document.querySelector(".product-reviews-score");
         const productReviewsStars = document.querySelector(".product-reviews-stars");
-
+        
         const productRaitingCount = document.querySelector(".product-rating-count");
         const productRaitingScore = document.querySelector(".product-rating-score");
         const productRaitingStars = document.querySelector(".product-rating-stars");
-
+        
+        if (user) isAdmin = user.role === "admin";
         productReviewsList.innerHTML = "";
         const reviews = await getReviews(id);
         const reviewsAllCount = reviews.reviews.length;
         let reviewsAllStars = 0;
         let averageReview = 0;
-
+        
         productReviewsCount.textContent = `(${reviewsAllCount}) отзывов`;
         productRaitingCount.textContent = `(${reviewsAllCount}) отзывов`;
-
-        console.log(user);
+        
         for (const review of reviews.reviews) {
             const reviewCard = document.createElement("article");
             reviewCard.className = "product-review-card";
-
+            console.log(review);
+            const reviewId = review._id;
             const rating = Number(review.rating);
             const fullStars = "★".repeat(rating);
             const emptyStars = "☆".repeat(5 - rating);
@@ -248,7 +249,7 @@ async function loadReviews(id) {
                 <div class="product-review-meta">
                     <span class="product-review-created">${reviewCreatedAt}</span>
                     <span class="product-review-stars">${stars}</span>
-                    ${canEdit ? `
+                    ${canEdit || isAdmin ? `
                     <div class="product-review-actions">
                         <button class="product-review-action-btn product-review-edit-btn" type="button">Изменить</button>
                     </div>` : ``}
@@ -295,7 +296,7 @@ async function loadReviews(id) {
                     const text = productReviewEditTextarea.value;
 
                     try {
-                        await putReview(id, text, rating);
+                        await putReview(id, reviewId, text, rating);
                         await loadReviews(id);
                     } catch (err) {
                         errorMessage.textContent = err.message;

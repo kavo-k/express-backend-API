@@ -212,8 +212,8 @@ async function postReview(productId, text, rating) {
     return data
 }
 
-async function putReview(productId, text, rating) {
-    const res = await authFetch(`/products/${productId}/review`, {
+async function putReview(productId, reviewId, text, rating) {
+    const res = await authFetch(`/products/${productId}/review/${reviewId}`, {
         method: "PUT",
         body: JSON.stringify({ text, rating }),
     });
@@ -223,8 +223,8 @@ async function putReview(productId, text, rating) {
     return data
 }
 
-async function deleteReview(productId) {
-    const res = await authFetch(`/products/${productId}/review`, {
+async function deleteReview(productId, reviewId) {
+    const res = await authFetch(`/products/${productId}/review/${reviewId}`, {
         method: "DELETE",
     });
     const data = await res.json();

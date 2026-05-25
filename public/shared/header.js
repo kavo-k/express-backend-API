@@ -123,7 +123,7 @@ function renderSharedHeader(container, options = {}) {
 
   if (showProfile) {
     const user = getCurrentUser();
-    if (user.avatarUrl) {
+    if (user && user.avatarUrl) {
       avatarImg.src = user.avatarUrl;
       avatarImg.hidden = false;
       fallbackIcon.hidden = true;
@@ -145,16 +145,18 @@ async function updateCartCount(cartCount, cartLink) {
   if (cartCount && cartLink) {
     if (typeof loadCart === "function") {
       const data = await loadCart();
-      if (data.totalItems <= 0) {
-        cartCount.textContent = "";
-        cartLink.classList.remove("cart-link-active")
-        cartLink.classList.add("cart-link-empty");
-        cartCount.style.display = "none";
-      } else {
-        cartCount.textContent = data.totalItems.toString();
-        cartLink.classList.remove("cart-link-empty");
-        cartLink.classList.add("cart-link-active")
-        cartCount.style.display = "grid";
+      if (data.totalItems) {
+        if (data.totalItems <= 0) {
+          cartCount.textContent = "";
+          cartLink.classList.remove("cart-link-active")
+          cartLink.classList.add("cart-link-empty");
+          cartCount.style.display = "none";
+        } else {
+          cartCount.textContent = data.totalItems.toString();
+          cartLink.classList.remove("cart-link-empty");
+          cartLink.classList.add("cart-link-active")
+          cartCount.style.display = "grid";
+        }
       }
     }
   }

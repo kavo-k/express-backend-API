@@ -9,6 +9,10 @@ const getUserReview = async (userId, productId) => {
     return Review.findOne({ product: productId, user: userId });
 }
 
+const getReviewById = async (reviewId) => {
+    return Review.findOne({ _id: reviewId});
+}
+
 const addReview = async ({ productId, userId, text, rating }) => {
     const review = await Review.findOne({ product: productId, user: userId });
     if (!review) {
@@ -18,14 +22,12 @@ const addReview = async ({ productId, userId, text, rating }) => {
     }
 }
 
-const PutReview = async (productId, userId, data) => {
-    const review = await Review.findOne({ product: productId, user: userId });
+const PutReview = async (review, data) => {
     if (!review) return null;
     return Review.findByIdAndUpdate(review._id, data, { returnDocument: "after" });
 }
 
-const deleteReview = async (productId, userId) => {
-    const review = await Review.findOne({ product: productId, user: userId });
+const deleteReview = async (review) => {
     if (!review) return null;
     return Review.findByIdAndDelete(review._id, { returnDocument: "after" });
 }
@@ -33,6 +35,7 @@ const deleteReview = async (productId, userId) => {
 module.exports = {
     getReviews,
     getUserReview,
+    getReviewById,
     addReview,
     PutReview,
     deleteReview,

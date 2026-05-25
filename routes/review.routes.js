@@ -9,6 +9,7 @@ const asyncHandler = (fn) => (req, res, next) =>
 const {
   getReviews,
   getUserReview,
+  getReviewById,
   addReview,
   PutReview,
   deleteReview,
@@ -58,12 +59,14 @@ router.post(
 
 
 router.put(
-  "/:productId/review",
+  "/:productId/review/:reviewId",
   auth,
   asyncHandler(async (req, res) => {
+    const reviewId = req.params.reviewId;
     const productId = req.params.productId;
     const userId = req.user.userId;
     const { text, rating } = req.body;
+    const isAdmin = req.user.role === "admin";
 
     if (!rating) {
       return res.status(400).json({ error: "Необходимо обязательно поставить оценку." });
@@ -73,9 +76,20 @@ router.put(
       return res.status(400).json({ error: "Отзыв не может быть пустым." });
     }
 
+
+    const review = await getReviewById(reviewId);
+
+    if (review === null) {
+      return res.status(404).json({ error: "отзыв не найден." });
+    }
+
+    if (review.user._id.toString() !== userId && !isAdmin) {
+      return res.status(403).json({ error: "я не знаю как вы сюда попали, но вы не можете менять этот отзыв" });
+    }
+
     let updateData = { text, rating };
 
-    const newReview = await PutReview(productId, userId, updateData);
+    const newReview = await PutReview(review, updateData);
 
     if (newReview === null) {
       return res.status(404).json({ error: "отзыв не найден." });
@@ -87,13 +101,25 @@ router.put(
 
 
 router.delete(
-  "/:productId/review",
+  "/:productId/review/:reviewId",
   auth,
   asyncHandler(async (req, res) => {
+    const reviewId = req.params.reviewId;
     const productId = req.params.productId;
     const userId = req.user.userId;
+    const isAdmin = req.user.role === "admin";
 
-    const deleted = await deleteReview(productId, userId);
+    const review = await getReviewById(reviewId);
+
+    if (review === null) {
+      return res.status(404).json({ error: "отзыв не найден." });
+    }
+
+    if (review.user._id.toString() !== userId && !isAdmin) {
+      return res.status(403).json({ error: "я не знаю как вы сюда попали, но вы не можете удалять этот отзыв" });
+    }
+
+    const deleted = await deleteReview(review);
 
     if (deleted === null) {
       return res.status(404).json({ error: "отзыв не найден, или уже удалён" });
