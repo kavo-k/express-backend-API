@@ -8,15 +8,6 @@ const cloudinary = require("../config/cloudinary");
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
 
-const uploadToCloudinary = (buffer) =>
-  new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { folder: "products" },
-      (error, result) => (error ? reject(error) : resolve(result))
-    );
-    stream.end(buffer);
-  });
-
 const {
   getProducts,
   getProductById,
@@ -25,6 +16,11 @@ const {
   updateProduct,
   deleteProduct,
 } = require("../services/product.service");
+
+const {
+  uploadToCloudinary,
+  deleteFromCloudinary,
+} = require("../services/upload.service");
 
 
 router.get(
@@ -179,7 +175,7 @@ router.post(
     if (files.length <= 0) return res.status(400).json({ error: "image обязателен" });
 
     for (const file of files) {
-      const result = await uploadToCloudinary(file.buffer);
+      const result = await uploadToCloudinary(file.buffer, "products");
 
       const imageUrl = result.secure_url;
       const imagePublicId = result.public_id;
@@ -268,14 +264,14 @@ router.put(
       if (product.images && product.images.length > 0) {
         for (const image of product.images) {
           if (image.imagePublicId) {
-            await cloudinary.uploader.destroy(image.imagePublicId);
+            await deleteFromCloudinary(image.imagePublicId);
           }
         }
       }
 
       let images = [];
       for (const file of files) {
-        const result = await uploadToCloudinary(file.buffer);
+        const result = await uploadToCloudinary(file.buffer, "products");
 
         const imageUrl = result.secure_url;
         const imagePublicId = result.public_id;
@@ -327,7 +323,7 @@ router.delete(
     if (product.images && product.images.length > 0) {
       for (const image of product.images) {
         if (image.imagePublicId) {
-          await cloudinary.uploader.destroy(image.imagePublicId);
+          await deleteFromCloudinary(image.imagePublicId);
         }
       }
     }

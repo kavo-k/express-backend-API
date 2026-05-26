@@ -215,7 +215,6 @@ async function loadReviews(id) {
         for (const review of reviews.reviews) {
             const reviewCard = document.createElement("article");
             reviewCard.className = "product-review-card";
-            console.log(review);
             const reviewId = review._id;
             const rating = Number(review.rating);
             const fullStars = "★".repeat(rating);

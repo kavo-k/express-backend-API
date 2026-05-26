@@ -6,7 +6,11 @@ const Product = require("../models/Product");
 const jwt = require("jsonwebtoken");
 const auth = require("../middlewares/auth");
 const upload = require("../middlewares/upload");
-const cloudinary = require("../config/cloudinary")
+
+const {
+  uploadToCloudinary,
+  deleteFromCloudinary,
+} = require("../services/upload.service");
 
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -251,8 +255,8 @@ router.put(
   asyncHandler(async (req, res) => {
     const { userName, age } = req.body;
     const updateData = {};
-    if (userName !== undefined) updateData.userName = userName; 
-    if (age !== undefined) updateData.age = age; 
+    if (userName !== undefined) updateData.userName = userName;
+    if (age !== undefined) updateData.age = age;
     if (Object.keys(updateData).length === 0) return res.status(400).json({ error: "Нет данных для обновления" });
 
     const updated = await updateUser(req.user.userId, updateData);
@@ -278,20 +282,10 @@ router.put(
     }
 
     if (user.avatarPublicId) {
-      await cloudinary.uploader.destroy(user.avatarPublicId);
+      await deleteFromCloudinary(user.avatarPublicId);
     }
 
-    const result = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        { folder: "avatars" },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        }
-      );
-
-      stream.end(file.buffer);
-    });
+    const result = await uploadToCloudinary(file.buffer, "avatars");
 
     const avatarUrl = result.secure_url;
     const avatarPublicId = result.public_id;
