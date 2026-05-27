@@ -3,7 +3,6 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const auth = require("../middlewares/auth");
 const upload = require("../middlewares/upload");
-const cloudinary = require("../config/cloudinary");
 
 const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -20,6 +19,7 @@ const {
 const {
   uploadToCloudinary,
   deleteFromCloudinary,
+  getOptimizedImageUrl,
 } = require("../services/upload.service");
 
 
@@ -40,23 +40,12 @@ router.get(
       let imageOptimizedUrl = null;
 
       if (p.imagePublicId) {
-        imageOptimizedUrl = cloudinary.url(p.imagePublicId, {
-          transformation: [
-            { quality: "auto", fetch_format: "auto" },
-            { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
-          ],
-        });
+        imageOptimizedUrl = getOptimizedImageUrl(p.imagePublicId);
       }
 
       if (p.images && p.images.length >= 1) {
         if (p.images[0].imagePublicId) {
-          imageOptimizedUrl = cloudinary.url(p.images[0].imagePublicId,
-            {
-              transformation: [
-                { quality: "auto", fetch_format: "auto" },
-                { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
-              ],
-            });
+          imageOptimizedUrl = getOptimizedImageUrl(p.images[0].imagePublicId);
         }
       }
 
@@ -90,23 +79,12 @@ router.get(
       let imageOptimizedUrl = null;
 
       if (p.imagePublicId) {
-        imageOptimizedUrl = cloudinary.url(p.imagePublicId, {
-          transformation: [
-            { quality: "auto", fetch_format: "auto" },
-            { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
-          ],
-        });
+        imageOptimizedUrl = getOptimizedImageUrl(p.imagePublicId);
       }
 
       if (p.images && p.images.length >= 1) {
         if (p.images[0].imagePublicId) {
-          imageOptimizedUrl = cloudinary.url(p.images[0].imagePublicId,
-            {
-              transformation: [
-                { quality: "auto", fetch_format: "auto" },
-                { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
-              ],
-            });
+          imageOptimizedUrl = getOptimizedImageUrl(p.images[0].imagePublicId);
         }
       }
 
@@ -141,13 +119,7 @@ router.get(
     if (product.images) {
       if (product.images.length >= 1) {
         images = productObject.images.map((image) => {
-          const optimizedUrl = cloudinary.url(image.imagePublicId,
-            {
-              transformation: [
-                { quality: "auto", fetch_format: "auto" },
-                { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
-              ],
-            })
+          const optimizedUrl = getOptimizedImageUrl(image.imagePublicId)
           return { ...image, imageOptimizedUrl: optimizedUrl };
         });
       }

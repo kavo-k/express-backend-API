@@ -138,7 +138,7 @@ async function renderProducts(products, dataFavorites) {
         card.classList.add("owner-product");
       }
       const productCreatedAt = new Date(product.createdAt);
-      const FiveDaysMs = 5 * 24 * 60 * 60 * 1000;
+      const FiveDaysMs = 7 * 24 * 60 * 60 * 1000;
 
       const isNew = Date.now() - productCreatedAt <= FiveDaysMs;
 

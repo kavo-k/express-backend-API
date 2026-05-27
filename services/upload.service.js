@@ -14,8 +14,19 @@ const deleteFromCloudinary = (publicId) => {
     return cloudinary.uploader.destroy(publicId);
 }
 
+const getOptimizedImageUrl = (imagePublicId) => {
+    if (!imagePublicId) return null;
+    return cloudinary.url(imagePublicId, {
+        transformation: [
+            { quality: "auto", fetch_format: "auto" },
+            { width: 1200, height: 1200, crop: "fill", gravity: "auto" },
+        ],
+    });
+}
+
 
 module.exports = {
     uploadToCloudinary,
     deleteFromCloudinary,
+    getOptimizedImageUrl,
 };
